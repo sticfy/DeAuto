@@ -1,0 +1,14 @@
+
+<section >
+    <div class="sidebar">
+        <div >
+            <img src="assets/images/logo.png" alt="">
+        </div>
+        <div class="mt-5 p-2">
+            <nav class="nav flex-column">
+                <a *ngFor="let val of data"class="nav-link" aria-current="page" routerLink="{{val.link}}" routerLinkActive="active">
+                    {{val.name}}</a>
+              </nav>
+        </div>
+    </div>
+</section>

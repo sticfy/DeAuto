@@ -1,0 +1,76 @@
+.btn-color{
+    background-color: #F74C07;
+    color: white;
+}
+.box{
+    width: 280px;
+    height: 144px;
+    border: solid 1px #E8E8E8;
+    border-radius: 12px;
+    
+}
+.number{
+    font-size: 46px;
+    font-weight: 500;
+}
+.rate-Up{
+    margin-top:32px;
+    margin-left: 8px;
+    padding:6px 12px 4px 12px;
+    background-color: #E6F2E6;
+    color:#007400;
+    svg{
+        fill:#007400;
+    }
+}
+.rate-Down{
+    margin-top:32px;
+    margin-left: 8px;
+    padding:6px 12px 4px 12px;
+    background-color: #E6F2E6;
+    color:#BB1916;
+    svg{
+        fill:#BB1916;
+    }
+} 
+.box div span{
+    font-size: 14px;
+}
+.inner{
+    padding: 32px 0 0 32px;
+}
+.outer{
+    padding-right: 24px;
+}
+.section{
+    margin-top: 32px;
+}
+.chart{
+    width: 60%;   
+}
+.calender{
+    padding-left: 24px;
+    width: 38%;
+    border: solid 2px #E8E8E8;
+    border-radius: 14px;
+}
+.table_body{
+    font-family: "Poppins", serif;
+  border: 1px solid #E8E8E8;
+  margin-top: 18px;
+  border-radius: 14px;
+  font-size: 14px;
+}
+.table_inner{
+    padding: 24px;
+}
+
+.booking{
+    background-color: #E6F2E6;
+    color: #005B00;
+    border-radius: 4px;
+}
+table {
+    border-collapse:separate; 
+    border-spacing: 0 1em;
+}

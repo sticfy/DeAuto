@@ -1,0 +1,16 @@
+.active{
+    color:#F74C07 !important;
+    background-color: white;
+    border-radius: 8px;
+    border: solid#E8E8E8 1px;
+}
+.nav-link{
+    font-family:Poppins;
+    color: black;
+    margin-bottom:8px;
+}
+.sidebar{
+    padding-top: 24px;
+    padding-left: 40px;
+    font-size: 18px;
+}
