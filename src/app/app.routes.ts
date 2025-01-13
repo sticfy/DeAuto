@@ -6,6 +6,8 @@ import { CustomDashboardComponent } from './CustomAdmin/custom-dashboard/custom-
 import { CustomLayoutComponent } from './CustomAdmin/custom-layout/custom-layout.component';
 import { BookingComponent } from './CustomAdmin/booking/booking.component';
 import { BookingDetailsComponent } from './Service/booking-details/booking-details.component';
+import { CustomServiceComponent } from './CustomAdmin/custom-service/custom-service.component';
+import { CustomSettingComponent } from './CustomAdmin/custom-setting/custom-setting.component';
 
 export const routes: Routes = [
     {
@@ -33,8 +35,14 @@ export const routes: Routes = [
         { path:'booking',
             component:BookingComponent
         },
+        { path:'service',
+            component:CustomServiceComponent
+        },
         { path:'booking-details',
             component:BookingDetailsComponent
+        },
+        { path:'setting',
+            component:CustomSettingComponent
         },
         ]
     }
