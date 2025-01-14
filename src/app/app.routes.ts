@@ -8,6 +8,7 @@ import { BookingComponent } from './CustomAdmin/booking/booking.component';
 import { BookingDetailsComponent } from './Service/booking-details/booking-details.component';
 import { CustomServiceComponent } from './CustomAdmin/custom-service/custom-service.component';
 import { CustomSettingComponent } from './CustomAdmin/custom-setting/custom-setting.component';
+import { CustomBillComponent } from './CustomAdmin/custom-bill/custom-bill.component';
 
 export const routes: Routes = [
     {
@@ -43,6 +44,9 @@ export const routes: Routes = [
         },
         { path:'setting',
             component:CustomSettingComponent
+        },
+        { path:'billing',
+            component:CustomBillComponent
         },
         ]
     }

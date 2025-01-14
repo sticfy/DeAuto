@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  password:any=true
+  
  
   constructor(private router:Router){}
   ngOnInit(): void {
@@ -23,6 +23,7 @@ export class LoginComponent {
   login(){
     this.router.navigate(['admin/dashboard'])
   }
+  password:any=true
   togglePassword(){
     this.password=!this.password
   }

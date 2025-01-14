@@ -4,14 +4,59 @@
     </div>
     <div class="ms-2">
         <ul class="nav">
-            <li class="nav-item active">
-              <a class="nav-link ">Security</a>
+            <li class="nav-item "[class]="!hideForm?'active':''">
+              <a class="nav-link" (click)="toggle('Security')">Security</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link " aria-current="page">Notification</a>
+            <li class="nav-item"[class]="hideForm?'active':''">
+              <a class="nav-link " aria-current="page"(click)="toggle('Notification')">Notification</a>
             </li>
           </ul>
     </div>
-
+    <div class="form_box">
+      <div class="security"[class.display]="hideForm">
+        <div class="title">Change password</div>
+        <form class="col-6"[formGroup]="userForm">
+          <div class="mb-3 ">
+            <label for="exampleFormControlInput1" class="form-label">Enter current password</label>
+            <div class="d-flex">
+                <input [type]="password?'password':'text'"formControlName="currentPassword" class="form-control" id="exampleFormControlInput1" >
+                <i [class]="password?'far fa-eye-slash':'far fa-eye'" id="togglePassword"(click)="togglePassword()" style="margin-left: -30px; margin-top: 11px; cursor: pointer; color:#676767;"></i>
+            </div>
+          </div>
+          <div class="mb-3 ">
+            <label for="exampleFormControlInput1" class="form-label">New Password</label>
+            <div class="d-flex">
+                <input [type]="password1?'password':'text'"formControlName="password" class="form-control"(input)="passcheck()" id="exampleFormControlInput1">
+                <i [class]="password?'far fa-eye-slash':'far fa-eye'" id="togglePassword"(click)="togglePassword1()" style="margin-left: -30px; margin-top: 11px; cursor: pointer; color:#676767;"></i>
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="">
+              <div class="f-s-14" style="color: {{color}}">Password must contains</div>
+                <div class="f-s-14 ms-3">
+                  <li style="color: {{color_mini}}">Minimum of 8 characters</li>
+                  <li style="color: {{color_case}}">At least 1 uppercase & 1 lowercase letter</li>
+                  <li style="color: {{color_num}}">At least 1 number (0-9)</li>
+                  <li style="color: {{color_sp}}">At least 1 special characters {{'(!@#$%^&*.)'}}</li>
+                </div>
+              </div>
+          </div>
+          <div class="mb-4">
+            <label for="exampleFormControlInput1" class="form-label">Confirm new password</label>
+            <div class="d-flex">
+                <input [type]="password2?'password':'text'"formControlName="newPassword" class="form-control" id="exampleFormControlInput1">
+                <i [class]="password?'far fa-eye-slash':'far fa-eye'" id="togglePassword"(click)="togglePassword2()" style="margin-left: -30px; margin-top: 11px; cursor: pointer; color:#676767;"></i>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-color col-4">Change password</button>
+        </form>
+      </div>
+      <div class="notification"[class.display]="!hideForm">
+          <div class="d-flex">
+            <div class="get_btn" style="color: #0F0F0F;">Get a new booking</div>
+            <div><label class="switch" for="switch2"><input type="checkbox" id="switch2" ><span class="slider round"></span></label><span class="ms-3">Email</span></div>
+          </div>
+      </div>
+    </div>
 </section>
 
