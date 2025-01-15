@@ -85,7 +85,11 @@ th{
 }
 .plan_s{
     background-color: #FEEDE6;
-    padding: 8px;
+    padding:8px;
+}
+.plan_ss{
+    background-color: #FEEDE6;
+    padding:14px;
 }
 .plan_t{
     font-weight: 500;
@@ -98,9 +102,14 @@ th{
 }
 .plan_n{
     font-size: 8px;
+    color: #676767;
 }
 .plan_D{
     font-size: 10px;
+    color: #676767;
+}
+.paymatName{
+    font-size: 12px;
 }
 .plan_name{
     font-size: 14px;
@@ -109,9 +118,21 @@ th{
     padding: 16px;
     margin-top: 10px;
 }
+.plan_bb{
+    padding: 12px 12px 32px 12px;
+    margin: 32px 12px 10px 12px;
+    border: 0.8px solid #ECECEC;
+    border-radius: 4px;
+}
 .planDay{
     padding: 16px;
 }
 .progress{
     --bs-progress-bar-bg: #F74C07 !important;
+}
+.card{
+    text-indent: 24px;
+  }
+.pass{
+    padding-right: 30px;
 }

@@ -34,6 +34,20 @@
             </div>
         </div>
       </div>
+      <div class="col-5 plan ms-3">
+        <div class="d-flex plan_ss">
+            <div class="plan_t">Payment Method</div>
+        </div>
+        <div class="d-flex plan_bb" >
+          <div><img src="assets/images/masterCard.png" alt=""></div>
+          <div class="ms-3">
+            <div class="paymatName">Master Card</div>
+            <div class="paymatName">**** **** **** 4002</div>
+            <div class="plan_D">Expiry on 20/2024</div>
+          </div>
+          <div class="ms-auto"data-bs-target="#addCard" data-bs-toggle="modal"><button class="btn btn-light border plan_D">Change</button></div>
+        </div>
+      </div>
       <div>
         
       </div>   
@@ -193,6 +207,58 @@
         <div class="modal-footer">
           <button type="button" class="btn border px-3 col-5" data-bs-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-color px-3 col-5">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="modal fade" id="addCard" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-confirm modal-dialog-centered">
+      <div class="modal-content p-3">
+        <div class="modal-header">
+          <h5 class="modal-title">Add payment method</h5>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex mb-3">
+            <div class="plan_name my-auto">Credit or debit card</div>
+            <div class="ms-auto">
+              <img src="assets/images/VisaCard.png" alt="">
+              <img class="ms-3" src="assets/images/mastercard1.png" alt="">
+            </div>
+          </div>
+          <form>
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Card number</label>
+              <input type="text" class="form-control card" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="000-000-999-777">
+              <i class="fa-solid fa-credit-card" style="margin-top: -27px;position: absolute;margin-left: 10px;color: #979797;"></i>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">Expiry date</label>
+                  <input type="date" class="form-control" id="exampleInputPassword1">
+                </div>
+              </div>
+              <div class="col">
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">Password</label>
+                    <input type="password" class="form-control pass" id="exampleInputPassword1">
+                    <i class="" style="margin-top: -32px;position: absolute;right: 24px;color: #979797;">
+                      <svg width="13" height="16" viewBox="0 0 13 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0.987516 12.7912C1.14493 13.9604 2.11334 14.8764 3.29181 14.9305C4.28344 14.9761 5.29076 14.9999 6.40005 14.9999C7.50934 14.9999 8.51664 14.9761 9.50826 14.9305C10.6868 14.8764 11.6552 13.9604 11.8126 12.7912C11.9153 12.0282 12 11.2462 12 10.4499C12 9.65358 11.9153 8.87161 11.8126 8.10861C11.6552 6.9394 10.6868 6.02345 9.50826 5.96927C8.51664 5.92368 7.50934 5.8999 6.40005 5.8999C5.29076 5.8999 4.28344 5.92368 3.29181 5.96927C2.11334 6.02345 1.14493 6.9394 0.987516 8.10861C0.884777 8.87161 0.800049 9.65358 0.800049 10.4499C0.800049 11.2462 0.884777 12.0282 0.987516 12.7912Z" stroke="#1C1C1C" stroke-width="1.5"/>
+                        <path d="M3.25 5.9V4.15C3.25 2.4103 4.6603 1 6.4 1C8.13971 1 9.55 2.4103 9.55 4.15V5.9" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M6.39734 10.4502H6.40364" stroke="#1C1C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>                        
+                    </i>                 
+                </div>
+              </div>
+            </div>
+            <div class="row mt-4">
+              <div class="col"><button type="submit" class="btn btn-light border col-12">Cancel</button></div>
+              <div class="col"><button type="submit" class="btn btn-color col-12">Save</button></div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
