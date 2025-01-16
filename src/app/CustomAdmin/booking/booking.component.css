@@ -53,3 +53,6 @@ th{
     border-top: unset !important;
     padding-top: unset !important;
 }
+input{
+    text-indent: 25px;
+}

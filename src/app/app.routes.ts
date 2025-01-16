@@ -11,6 +11,8 @@ import { CustomSettingComponent } from './CustomAdmin/custom-setting/custom-sett
 import { CustomBillComponent } from './CustomAdmin/custom-bill/custom-bill.component';
 import { ProfileSettingComponent } from './CustomAdmin/profile-setting/profile-setting.component';
 import { ProfileLayoutComponent } from './CustomAdmin/profile-layout/profile-layout.component';
+import { ProfileEditComponent } from './CustomAdmin/profile-edit/profile-edit.component';
+import { CompanyListComponent } from './SuperAdmin/company-list/company-list.component';
 
 export const routes: Routes = [
     {
@@ -25,6 +27,9 @@ export const routes: Routes = [
     children:[
         { path:'dashboard',
         component:DashboardComponent
+        },
+        { path:'company',
+            component:CompanyListComponent
         },
         ]
     },
@@ -61,6 +66,9 @@ export const routes: Routes = [
         children:[
             { path:'profile',
                 component:ProfileSettingComponent
+            },
+            { path:'profile-update',
+                component:ProfileEditComponent
             },
         ]
     }

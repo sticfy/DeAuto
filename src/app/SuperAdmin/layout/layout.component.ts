@@ -17,16 +17,32 @@ import { CommonModule } from '@angular/common';
 export class LayoutComponent {
   data=[
     {
-      link:'admin/dashboard',
-      name:'All Shop'
+      link:'dashboard',
+      name:'Dashboard'
+    },
+    {
+      link:'company',
+      name:'Company list'
+    },
+    {
+      link:'/new',
+      name:'New shops'
     },
     {
       link:'/custom/dashboard',
-      name:'New Shop'
+      name:'Inactive Shop'
     },
     {
-      link:'/nav',
-      name:'Inactive Shop'
+      link:'/new',
+      name:'Promotional cover'
+    },
+    {
+      link:'/new',
+      name:'Manage subscription'
+    },
+    {
+      link:'/new',
+      name:'Manage FAQ’s'
     },
   ]
 }
