@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 12, 2025 at 07:02 PM
+-- Generation Time: Jan 19, 2025 at 11:03 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.2
 
@@ -108,24 +108,24 @@ INSERT INTO `deautodb_categories` (`id`, `title`, `status`, `created_by`, `updat
 CREATE TABLE `deautodb_companies` (
   `id` int(15) NOT NULL,
   `current_package_id` int(11) NOT NULL DEFAULT 0,
-  `company_name` varchar(255) NOT NULL DEFAULT 'N/A',
-  `owner_first_name` varchar(255) NOT NULL DEFAULT 'N/A',
-  `owner_last_name` varchar(255) NOT NULL DEFAULT 'N/A',
-  `phone_number` varchar(20) DEFAULT NULL,
+  `kvk_no` varchar(255) DEFAULT NULL,
+  `company_name` varchar(255) DEFAULT NULL,
+  `owner_first_name` varchar(255) DEFAULT NULL,
+  `owner_last_name` varchar(255) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
   `email` varchar(20) DEFAULT NULL,
   `logo` varchar(255) NOT NULL DEFAULT 'default_profile_image.png',
   `cover_image` varchar(255) NOT NULL DEFAULT 'default_profile_image.png',
   `year_of_establishment` int(11) NOT NULL DEFAULT 1970,
   `company_size` varchar(255) NOT NULL DEFAULT 'N/A',
-  `latitude` varchar(255) NOT NULL DEFAULT 'N/A',
-  `longitude` varchar(255) NOT NULL DEFAULT 'N/A',
+  `latitude` varchar(255) DEFAULT NULL,
+  `longitude` varchar(255) DEFAULT NULL,
   `tagline` text DEFAULT NULL,
-  `trade_license_no` varchar(255) NOT NULL DEFAULT 'N/A',
   `street` varchar(255) NOT NULL DEFAULT 'N/A',
-  `house_no` varchar(255) NOT NULL DEFAULT 'N/A',
-  `postal_code` varchar(255) NOT NULL DEFAULT 'N/A',
-  `province` varchar(255) NOT NULL DEFAULT 'N/A',
-  `city` varchar(255) NOT NULL DEFAULT 'N/A',
+  `house_no` varchar(255) DEFAULT NULL,
+  `postal_code` varchar(255) DEFAULT NULL,
+  `province` varchar(255) DEFAULT NULL,
+  `city` varchar(255) DEFAULT NULL,
   `website_url` varchar(255) NOT NULL DEFAULT 'N/A',
   `status` int(2) NOT NULL DEFAULT 1 COMMENT '1 = Approve, 2 = Pending',
   `created_by` int(15) DEFAULT NULL,
@@ -133,6 +133,14 @@ CREATE TABLE `deautodb_companies` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `deautodb_companies`
+--
+
+INSERT INTO `deautodb_companies` (`id`, `current_package_id`, `kvk_no`, `company_name`, `owner_first_name`, `owner_last_name`, `phone`, `email`, `logo`, `cover_image`, `year_of_establishment`, `company_size`, `latitude`, `longitude`, `tagline`, `street`, `house_no`, `postal_code`, `province`, `city`, `website_url`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(2, 0, '', 'title 4', NULL, NULL, '01745123456', 'dutch@gmail.com', 'default_profile_image.png', 'default_profile_image.png', 1970, 'N/A', NULL, NULL, NULL, 'dutch 4', 'dutch 4', 'dutch 4', 'dutch 4', 'dutch 4', 'N/A', 1, NULL, NULL, '2025-01-18 10:31:47', '2025-01-18 10:31:47'),
+(3, 0, '2131', 'company 4', NULL, NULL, '01745123456', 'dutch2@gmail.com', 'default_profile_image.png', 'default_profile_image.png', 1970, 'N/A', NULL, NULL, NULL, 'dutch 4', 'dutch 4', 'dutch 4', 'dutch 4', 'dutch 4', 'N/A', 1, NULL, NULL, '2025-01-18 10:45:10', '2025-01-18 10:45:10');
 
 -- --------------------------------------------------------
 
@@ -207,8 +215,8 @@ CREATE TABLE `deautodb_company_users` (
   `id` int(11) NOT NULL,
   `company_id` int(11) NOT NULL,
   `role_id` int(11) NOT NULL,
-  `owner_first_name` varchar(255) NOT NULL DEFAULT 'N/A',
-  `owner_last_name` varchar(255) NOT NULL DEFAULT 'N/A',
+  `owner_first_name` varchar(255) DEFAULT 'N/A',
+  `owner_last_name` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `phone` varchar(255) DEFAULT NULL,
   `profile_image` varchar(255) NOT NULL DEFAULT 'default_profile_image.png',
@@ -218,6 +226,14 @@ CREATE TABLE `deautodb_company_users` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `deautodb_company_users`
+--
+
+INSERT INTO `deautodb_company_users` (`id`, `company_id`, `role_id`, `owner_first_name`, `owner_last_name`, `email`, `phone`, `profile_image`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(2, 2, 2, 'Company User', NULL, 'dutch@gmail.com', '01745123456', 'default_profile_image.png', 1, NULL, NULL, '2025-01-18 10:31:47', '2025-01-18 10:31:47'),
+(3, 3, 2, 'Company User', NULL, 'dutch2@gmail.com', '01745123456', 'default_profile_image.png', 1, NULL, NULL, '2025-01-18 10:45:10', '2025-01-18 10:45:10');
 
 -- --------------------------------------------------------
 
@@ -364,7 +380,18 @@ INSERT INTO `deautodb_login_tracks` (`id`, `created_by`, `updated_by`, `user_id`
 (22, 2, 2, 2, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiI3ZmNhNjA0YTFhYzllZGE4NjliYjZlYmIzYWZkMDNlZCIsImVtYWlsIjoic2hvdm9uNTYuc3R1ZHlAZ21haWwuY29tIiwicGhvbmUiOiIxMjMiLCJyb2xlIjp7InJvbGVfaWQiOjMsInJvbGVfbmFtZSI6ImdlbmVyYWxfdXNlciJ9LCJwcm9maWxlIjp7ImZpcnN0X25hbWUiOiJTaG92b24gMyIsImxhc3RfbmFtZSI6IkNoYWtyb2JvcnR5IiwiZW1haWwiOiJzaG92b241Ni5zdHVkeUBnbWFpbC5jb20iLCJwaG9uZSI6IjEyMyIsInByb2ZpbGVfaW1hZ2UiOiJkZWZhdWx0X3Byb2ZpbGVfaW1hZ2UucG5nIiwic3RhdHVzIjoxLCJjcmVhdGVkX2J5IjpudWxsLCJ1cGRhdGVkX2J5IjpudWxsLCJjcmVhdGVkX2F0IjoiMjAyNS0wMS0wOFQwODo1NDowOC4wMDBaIiwidXBkYXRlZF9hdCI6IjIwMjUtMDEtMDhUMDg6NTQ6MDguMDAwWiJ9LCJ0aW1lX3BlcmlvZCI6MTczNjcwMzg3MDE4OSwiaWRlbnRpdHlfaWQiOiIwM2FlMjBkNi1lYmY5LTRmYjgtOTI4Mi1lNzE4ZDQ5ZmZmMTQiLCJpYXQiOjE3MzY3MDAyNzAsImV4cCI6MTc2ODI1Nzg3MH0.qbzeb1AsGDP1TsXhCsbp_1f50nHFPAHFXh7Qe3tru3Y', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', '03ae20d6-ebf9-4fb8-9282-e718d49fff14', 1, '2025-01-12 17:44:30', '2025-01-12 17:44:30'),
 (23, 2, 2, 2, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiI3ZmNhNjA0YTFhYzllZGE4NjliYjZlYmIzYWZkMDNlZCIsImVtYWlsIjoic2hvdm9uNTYuc3R1ZHlAZ21haWwuY29tIiwicGhvbmUiOiIwMTc0NDU0NTc4NiIsInJvbGUiOnsicm9sZV9pZCI6Mywicm9sZV9uYW1lIjoiZ2VuZXJhbF91c2VyIn0sInByb2ZpbGUiOnsiZmlyc3RfbmFtZSI6IlNob3ZvbiBMYWwiLCJsYXN0X25hbWUiOiJEaGFrYSIsImVtYWlsIjoic2hvdm9uNTYuc3R1ZHlAZ21haWwuY29tIiwicGhvbmUiOiIwMTc0NDU0NTc4NiIsInByb2ZpbGVfaW1hZ2UiOiIxNzM2NzAxMzA3NjAxLTFUZWliN2lLb1IucG5nIiwic3RhdHVzIjoxLCJjcmVhdGVkX2J5IjpudWxsLCJ1cGRhdGVkX2J5IjoyLCJjcmVhdGVkX2F0IjoiMjAyNS0wMS0wOFQwODo1NDowOC4wMDBaIiwidXBkYXRlZF9hdCI6IjIwMjUtMDEtMTJUMTg6MDE6NDcuMDAwWiJ9LCJ0aW1lX3BlcmlvZCI6MTczNjcwNzMyOTM4NiwiaWRlbnRpdHlfaWQiOiI2MWU2MjFjMC1iMTVjLTRjYjAtOGVlYy0wYzUxNmIwYjE2YmYiLCJpYXQiOjE3MzY3MDM3MjksImV4cCI6MTc2ODI2MTMyOX0.1-2ffCBza1_DexaS8nsPM-utskoB1PtikqF_JwKo1Pw', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', '61e621c0-b15c-4cb0-8eec-0c516b0b16bf', 1, '2025-01-12 18:42:09', '2025-01-12 18:42:09'),
 (24, 2, 2, 2, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiI3ZmNhNjA0YTFhYzllZGE4NjliYjZlYmIzYWZkMDNlZCIsImVtYWlsIjoic2hvdm9uNTdAZ21haWwuY29tIiwicGhvbmUiOiIwMTc0NDU0NTc4NiIsInJvbGUiOnsicm9sZV9pZCI6Mywicm9sZV9uYW1lIjoiZ2VuZXJhbF91c2VyIn0sInByb2ZpbGUiOnsiZmlyc3RfbmFtZSI6IlNob3ZvbiBMYWwiLCJsYXN0X25hbWUiOiJEaGFrYSIsImVtYWlsIjoic2hvdm9uNTdAZ21haWwuY29tIiwicGhvbmUiOiIwMTc0NDU0NTc4NiIsInByb2ZpbGVfaW1hZ2UiOiIxNzM2NzAxMzA3NjAxLTFUZWliN2lLb1IucG5nIiwic3RhdHVzIjoxLCJjcmVhdGVkX2J5IjpudWxsLCJ1cGRhdGVkX2J5IjoyLCJjcmVhdGVkX2F0IjoiMjAyNS0wMS0wOFQwODo1NDowOC4wMDBaIiwidXBkYXRlZF9hdCI6IjIwMjUtMDEtMTJUMTg6NTU6NTguMDAwWiJ9LCJ0aW1lX3BlcmlvZCI6MTczNjcwODE3ODg0MCwiaWRlbnRpdHlfaWQiOiI1ZGNmYzkwMS0zMTNhLTQyMzEtOGNiZC0wYThhNDQ4ODIwNTciLCJpYXQiOjE3MzY3MDQ1NzgsImV4cCI6MTc2ODI2MjE3OH0.R4d1h5Ns7txt0yxE6gD3f7ygiKjsC9BMw3xuMi8Libs', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', '5dcfc901-313a-4231-8cbd-0a8a44882057', 1, '2025-01-12 18:56:18', '2025-01-12 18:56:18'),
-(25, 6, 6, 6, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiIwYjQ1ZTJkNjI1MWU0Yzk1MjEyYzU5MTE2YzYxOGViNiIsImVtYWlsIjoicmFmaWtAZ21haWwuY29tIiwicGhvbmUiOm51bGwsInJvbGUiOnsicm9sZV9pZCI6MywidGl0bGUiOiJnZW5lcmFsX3VzZXIifSwicHJvZmlsZSI6eyJpZCI6Niwicm9sZV9pZCI6MywiZmlyc3RfbmFtZSI6IlJhZmlrIiwibGFzdF9uYW1lIjoiTi9BIiwiZW1haWwiOiJyYWZpa0BnbWFpbC5jb20iLCJwaG9uZSI6bnVsbCwicHJvZmlsZV9pbWFnZSI6ImRlZmF1bHRfcHJvZmlsZV9pbWFnZS5wbmciLCJzdGF0dXMiOjEsImNyZWF0ZWRfYnkiOjAsInVwZGF0ZWRfYnkiOjAsImNyZWF0ZWRfYXQiOiIyMDI1LTAxLTExVDE0OjM1OjAwLjAwMFoiLCJ1cGRhdGVkX2F0IjoiMjAyNS0wMS0xMVQxNDozNTowMC4wMDBaIn0sInRpbWVfcGVyaW9kIjoxNzM2NzA4MTg2MjkwLCJpZGVudGl0eV9pZCI6ImYzYTA2ZDA4LWZlYjAtNDFmMi04NWZmLWIyN2ZiMGIwOWQ1NCIsImlhdCI6MTczNjcwNDU4NiwiZXhwIjoxNzY4MjYyMTg2fQ.bVinMelrTIi37sYXEdVi5ZHEen0qDU9PXqIky1nHwpE', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', 'f3a06d08-feb0-41f2-85ff-b27fb0b09d54', 1, '2025-01-12 18:56:26', '2025-01-12 18:56:26');
+(25, 6, 6, 6, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiIwYjQ1ZTJkNjI1MWU0Yzk1MjEyYzU5MTE2YzYxOGViNiIsImVtYWlsIjoicmFmaWtAZ21haWwuY29tIiwicGhvbmUiOm51bGwsInJvbGUiOnsicm9sZV9pZCI6MywidGl0bGUiOiJnZW5lcmFsX3VzZXIifSwicHJvZmlsZSI6eyJpZCI6Niwicm9sZV9pZCI6MywiZmlyc3RfbmFtZSI6IlJhZmlrIiwibGFzdF9uYW1lIjoiTi9BIiwiZW1haWwiOiJyYWZpa0BnbWFpbC5jb20iLCJwaG9uZSI6bnVsbCwicHJvZmlsZV9pbWFnZSI6ImRlZmF1bHRfcHJvZmlsZV9pbWFnZS5wbmciLCJzdGF0dXMiOjEsImNyZWF0ZWRfYnkiOjAsInVwZGF0ZWRfYnkiOjAsImNyZWF0ZWRfYXQiOiIyMDI1LTAxLTExVDE0OjM1OjAwLjAwMFoiLCJ1cGRhdGVkX2F0IjoiMjAyNS0wMS0xMVQxNDozNTowMC4wMDBaIn0sInRpbWVfcGVyaW9kIjoxNzM2NzA4MTg2MjkwLCJpZGVudGl0eV9pZCI6ImYzYTA2ZDA4LWZlYjAtNDFmMi04NWZmLWIyN2ZiMGIwOWQ1NCIsImlhdCI6MTczNjcwNDU4NiwiZXhwIjoxNzY4MjYyMTg2fQ.bVinMelrTIi37sYXEdVi5ZHEen0qDU9PXqIky1nHwpE', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', 'f3a06d08-feb0-41f2-85ff-b27fb0b09d54', 1, '2025-01-12 18:56:26', '2025-01-12 18:56:26'),
+(26, 8, 8, 8, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiI1MmMyNjBhZGZiNGVjMjU3ZTA5NWNmODhmNGY1M2RmZSIsImVtYWlsIjoiZHV0Y2hAZ21haWwuY29tIiwicGhvbmUiOiIwMTc0NTEyMzQ1NiIsInJvbGUiOnsicm9sZV9pZCI6Miwicm9sZV9uYW1lIjoiY29tcGFueV9hZG1pbiJ9LCJwcm9maWxlIjp7Im93bmVyX2ZpcnN0X25hbWUiOiJDb21wYW55IFVzZXIiLCJlbWFpbCI6ImR1dGNoQGdtYWlsLmNvbSIsInByb2ZpbGVfaW1hZ2UiOiJkZWZhdWx0X3Byb2ZpbGVfaW1hZ2UucG5nIiwic3RhdHVzIjoxfSwidGltZV9wZXJpb2QiOjE3MzcxOTY1NDk2MDQsImlkZW50aXR5X2lkIjoiZjMyMzQwZWMtZDBhZC00YmNlLTlhZGQtMDk0OWE4NWJjMTVmIiwiaWF0IjoxNzM3MTkyOTQ5LCJleHAiOjE3Njg3NTA1NDl9.ruMeNB6Zl3MWF8duvgbyWftHvkD3sZr731wg9pBXyDk', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', 'f32340ec-d0ad-4bce-9add-0949a85bc15f', 1, '2025-01-18 10:35:49', '2025-01-18 10:35:49'),
+(27, 8, 8, 8, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiI1MmMyNjBhZGZiNGVjMjU3ZTA5NWNmODhmNGY1M2RmZSIsImVtYWlsIjoiZHV0Y2hAZ21haWwuY29tIiwicGhvbmUiOiIwMTc0NTEyMzQ1NiIsInJvbGUiOnsicm9sZV9pZCI6Miwicm9sZV9uYW1lIjoiY29tcGFueV9hZG1pbiJ9LCJwcm9maWxlIjp7Im93bmVyX2ZpcnN0X25hbWUiOiJDb21wYW55IFVzZXIiLCJlbWFpbCI6ImR1dGNoQGdtYWlsLmNvbSIsInByb2ZpbGVfaW1hZ2UiOiJkZWZhdWx0X3Byb2ZpbGVfaW1hZ2UucG5nIiwic3RhdHVzIjoxfSwidGltZV9wZXJpb2QiOjE3MzcxOTY1NjUxNDcsImlkZW50aXR5X2lkIjoiMDVlZDIxYzQtOTFlOS00NGYzLTllYzQtMDVhOGI4NGQzZDUwIiwiaWF0IjoxNzM3MTkyOTY1LCJleHAiOjE3Njg3NTA1NjV9.A_bDb7pPC4-T2g41TpuGrTkb1ROdFS2arCrabiattxg', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', '05ed21c4-91e9-44f3-9ec4-05a8b84d3d50', 1, '2025-01-18 10:36:05', '2025-01-18 10:36:05'),
+(28, 8, 8, 8, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiI1MmMyNjBhZGZiNGVjMjU3ZTA5NWNmODhmNGY1M2RmZSIsImVtYWlsIjoiZHV0Y2hAZ21haWwuY29tIiwicGhvbmUiOiIwMTc0NTEyMzQ1NiIsInJvbGUiOnsicm9sZV9pZCI6Miwicm9sZV9uYW1lIjoiY29tcGFueV9hZG1pbiJ9LCJwcm9maWxlIjp7Im93bmVyX2ZpcnN0X25hbWUiOiJDb21wYW55IFVzZXIiLCJlbWFpbCI6ImR1dGNoQGdtYWlsLmNvbSIsInByb2ZpbGVfaW1hZ2UiOiJkZWZhdWx0X3Byb2ZpbGVfaW1hZ2UucG5nIiwic3RhdHVzIjoxfSwidGltZV9wZXJpb2QiOjE3MzcxOTY2ODI2NjcsImlkZW50aXR5X2lkIjoiMjM3NzNhNWUtMDhlZS00OTZmLTg1OWMtODg3NDcyMmE1ODYyIiwiaWF0IjoxNzM3MTkzMDgyLCJleHAiOjE3Njg3NTA2ODJ9.sJ9NdMdH69lHKyEfR1onLsg9UzQZ7yABGqLOxq7LSpY', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', '23773a5e-08ee-496f-859c-8874722a5862', 1, '2025-01-18 10:38:02', '2025-01-18 10:38:02'),
+(29, 8, 8, 8, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiI1MmMyNjBhZGZiNGVjMjU3ZTA5NWNmODhmNGY1M2RmZSIsImVtYWlsIjoiZHV0Y2hAZ21haWwuY29tIiwicGhvbmUiOiIwMTc0NTEyMzQ1NiIsInJvbGUiOnsicm9sZV9pZCI6Miwicm9sZV9uYW1lIjoiY29tcGFueV9hZG1pbiJ9LCJwcm9maWxlIjp7Im93bmVyX2ZpcnN0X25hbWUiOiJDb21wYW55IFVzZXIiLCJlbWFpbCI6ImR1dGNoQGdtYWlsLmNvbSIsInByb2ZpbGVfaW1hZ2UiOiJkZWZhdWx0X3Byb2ZpbGVfaW1hZ2UucG5nIiwic3RhdHVzIjoxfSwidGltZV9wZXJpb2QiOjE3MzcxOTY4MzQ3MjksImlkZW50aXR5X2lkIjoiZjgxZmMxY2QtZTY2ZS00OTU0LWI3N2EtNzVlNzdkNmI0OTRjIiwiaWF0IjoxNzM3MTkzMjM0LCJleHAiOjE3Njg3NTA4MzR9.ujUefxf12uvQXrMmkgkkgY5lSqnCF2lpFjgNWEc_zWM', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', 'f81fc1cd-e66e-4954-b77a-75e77d6b494c', 1, '2025-01-18 10:40:34', '2025-01-18 10:40:34'),
+(30, 9, 9, 9, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiJmOWNjMmIxMWY1YmRlM2VmMjBjNjcxMWYzZDE4OGVjNyIsImVtYWlsIjoiZHV0Y2gyQGdtYWlsLmNvbSIsInBob25lIjoiMDE3NDUxMjM0NTYiLCJyb2xlIjp7InJvbGVfaWQiOjIsInJvbGVfbmFtZSI6ImNvbXBhbnlfYWRtaW4ifSwicHJvZmlsZSI6eyJvd25lcl9maXJzdF9uYW1lIjoiQ29tcGFueSBVc2VyIiwiZW1haWwiOiJkdXRjaDJAZ21haWwuY29tIiwicHJvZmlsZV9pbWFnZSI6ImRlZmF1bHRfcHJvZmlsZV9pbWFnZS5wbmciLCJzdGF0dXMiOjF9LCJ0aW1lX3BlcmlvZCI6MTczNzE5NzE0MDUxMiwiaWRlbnRpdHlfaWQiOiJkN2JlZWY3Zi0xNjMyLTQ2ZGMtYmI3MS0yYjM1NTFmY2NjNTUiLCJpYXQiOjE3MzcxOTM1NDAsImV4cCI6MTc2ODc1MTE0MH0.FzYbxnoNJvlIy_oeKuvfDHddVW1cifmOk85Bduj7GoM', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', 'd7beef7f-1632-46dc-bb71-2b3551fccc55', 1, '2025-01-18 10:45:40', '2025-01-18 10:45:40'),
+(31, 8, 8, 8, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiI1MmMyNjBhZGZiNGVjMjU3ZTA5NWNmODhmNGY1M2RmZSIsImVtYWlsIjoiZHV0Y2hAZ21haWwuY29tIiwicGhvbmUiOiIwMTc0NTEyMzQ1NiIsInJvbGUiOnsicm9sZV9pZCI6Miwicm9sZV9uYW1lIjoiY29tcGFueV9hZG1pbiJ9LCJwcm9maWxlIjp7Im93bmVyX2ZpcnN0X25hbWUiOiJDb21wYW55IFVzZXIiLCJlbWFpbCI6ImR1dGNoQGdtYWlsLmNvbSIsInByb2ZpbGVfaW1hZ2UiOiJkZWZhdWx0X3Byb2ZpbGVfaW1hZ2UucG5nIiwic3RhdHVzIjoxfSwidGltZV9wZXJpb2QiOjE3MzcxOTcxNTA4MjMsImlkZW50aXR5X2lkIjoiNzc5ZmE0YWMtNmY4MC00YjViLTllMjktNGVhODFhNTVkNTU0IiwiaWF0IjoxNzM3MTkzNTUwLCJleHAiOjE3Njg3NTExNTB9.IpUIl_FBh_orp6SJCgS6FE14KcNc-5S5jBiFG6TdnRk', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', '779fa4ac-6f80-4b5b-9e29-4ea81a55d554', 1, '2025-01-18 10:45:50', '2025-01-18 10:45:50'),
+(32, 1, 1, 1, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiJmM2ZlNDk2MWI3NjE4NjM4NmQ1MzM4NDZjODExM2I3ZCIsImVtYWlsIjoiaXNoZWlibHVAZ21haWwuY29tIiwicGhvbmUiOiIwMTY3MTc5NDA2MSIsInJvbGUiOnsicm9sZV9pZCI6MSwicm9sZV9uYW1lIjoic3VwZXJfYWRtaW4ifSwicHJvZmlsZSI6eyJuYW1lIjoiQXNocmFmdWwgSXNsYW0iLCJlbWFpbCI6ImlzaGVpYmx1QGdtYWlsLmNvbSIsInByb2ZpbGVfaW1hZ2UiOiJkZWZhdWx0X2ltYWdlLnBuZyIsInBob25lIjoiMDE2NzE3OTQwNjQiLCJzdGF0dXMiOjF9LCJ0aW1lX3BlcmlvZCI6MTczNzE5NzMxMTIxNiwiaWRlbnRpdHlfaWQiOiI3NjQwNzhjMy04ZTAyLTRlNjEtOGQ2Ny03ZTI1NjhlZTZiYjQiLCJpYXQiOjE3MzcxOTM3MTEsImV4cCI6MTc2ODc1MTMxMX0.s9uMJPcbxjtnY09LLn1UStZE5W3O_mL1b3jRbA18GDo', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', '764078c3-8e02-4e61-8d67-7e2568ee6bb4', 1, '2025-01-18 10:48:31', '2025-01-18 10:48:31'),
+(33, 1, 1, 1, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiJmM2ZlNDk2MWI3NjE4NjM4NmQ1MzM4NDZjODExM2I3ZCIsImVtYWlsIjoiaXNoZWlibHVAZ21haWwuY29tIiwicGhvbmUiOiIwMTY3MTc5NDA2MSIsInJvbGUiOnsicm9sZV9pZCI6MSwicm9sZV9uYW1lIjoic3VwZXJfYWRtaW4ifSwicHJvZmlsZSI6eyJuYW1lIjoiQXNocmFmdWwgSXNsYW0iLCJlbWFpbCI6ImlzaGVpYmx1QGdtYWlsLmNvbSIsInByb2ZpbGVfaW1hZ2UiOiJkZWZhdWx0X2ltYWdlLnBuZyIsInBob25lIjoiMDE2NzE3OTQwNjQiLCJzdGF0dXMiOjF9LCJ0aW1lX3BlcmlvZCI6MTczNzI3ODgwOTc2OSwiaWRlbnRpdHlfaWQiOiI2YmNmYjQ1OC1mNzMwLTQ5MWEtODEzMS0zMjFhMjM2YWNmNTYiLCJpYXQiOjE3MzcyNzUyMDksImV4cCI6MTc2ODgzMjgwOX0.z89H4wimSk2WUEuwEqWW-2OhY61q2_rje1KZvqf8wi4', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', '6bcfb458-f730-491a-8131-321a236acf56', 1, '2025-01-19 09:26:49', '2025-01-19 09:26:49'),
+(34, 1, 1, 1, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiJmM2ZlNDk2MWI3NjE4NjM4NmQ1MzM4NDZjODExM2I3ZCIsImVtYWlsIjoic2hvdm9uY2hha3JvYm9ydHkzOTVAZ21haWwuY29tIiwicGhvbmUiOiIwMTY3MTc5NDA2MSIsInJvbGUiOnsicm9sZV9pZCI6MSwicm9sZV9uYW1lIjoic3VwZXJfYWRtaW4ifSwicHJvZmlsZSI6eyJuYW1lIjoiQXNocmFmdWwgSXNsYW0iLCJlbWFpbCI6InNob3ZvbmNoYWtyb2JvcnR5Mzk1QGdtYWlsLmNvbSIsInByb2ZpbGVfaW1hZ2UiOiJkZWZhdWx0X2ltYWdlLnBuZyIsInBob25lIjoiMDE2NzE3OTQwNjQiLCJzdGF0dXMiOjF9LCJ0aW1lX3BlcmlvZCI6MTczNzI3ODkxOTQ3OSwiaWRlbnRpdHlfaWQiOiIwMjZlZTU2ZS1lN2RlLTQxYjYtYWJmYS00NDA2NjY0YmJjYWUiLCJpYXQiOjE3MzcyNzUzMTksImV4cCI6MTc2ODgzMjkxOX0.ob4vvxVthJHccSPy1evkGvRfxa2tkBwyg_2N2aNtisI', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', '026ee56e-e7de-41b6-abfa-4406664bbcae', 1, '2025-01-19 09:28:39', '2025-01-19 09:28:39'),
+(35, 1, 1, 1, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiJmM2ZlNDk2MWI3NjE4NjM4NmQ1MzM4NDZjODExM2I3ZCIsImVtYWlsIjoic2hvdm9uY2hha3JvYm9ydHkzOTVAZ21haWwuY29tIiwicGhvbmUiOiIwMTY3MTc5NDA2MSIsInJvbGUiOnsicm9sZV9pZCI6MSwicm9sZV9uYW1lIjoic3VwZXJfYWRtaW4ifSwicHJvZmlsZSI6eyJuYW1lIjoiU2hvdm9uIiwiZW1haWwiOiJzaG92b25jaGFrcm9ib3J0eTM5NUBnbWFpbC5jb20iLCJwcm9maWxlX2ltYWdlIjoiZGVmYXVsdF9pbWFnZS5wbmciLCJwaG9uZSI6IjAxNjcxNzk0MDY0Iiwic3RhdHVzIjoxfSwidGltZV9wZXJpb2QiOjE3MzcyNzg5MzQ1OTMsImlkZW50aXR5X2lkIjoiYWFmOWY1NTctNGUyYy00YWI5LTk1M2QtODQ2NDkzZTJiOWE5IiwiaWF0IjoxNzM3Mjc1MzM0LCJleHAiOjE3Njg4MzI5MzR9.5671_6hdqhi-_zvHUggICDtJjQrDtPvt49IebRuUKEo', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', 'aaf9f557-4e2c-4ab9-953d-846493e2b9a9', 1, '2025-01-19 09:28:54', '2025-01-19 09:28:54'),
+(36, 1, 1, 1, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfdG9rZW4iOiJmM2ZlNDk2MWI3NjE4NjM4NmQ1MzM4NDZjODExM2I3ZCIsImVtYWlsIjoic2hvdm9uY2hha3JvYm9ydHkzOTVAZ21haWwuY29tIiwicGhvbmUiOiIwMTY3MTc5NDA2MSIsInJvbGUiOnsicm9sZV9pZCI6MSwicm9sZV9uYW1lIjoic3VwZXJfYWRtaW4ifSwicHJvZmlsZSI6eyJuYW1lIjoiU2hvdm9uIiwiZW1haWwiOiJzaG92b25jaGFrcm9ib3J0eTM5NUBnbWFpbC5jb20iLCJwcm9maWxlX2ltYWdlIjoiZGVmYXVsdF9pbWFnZS5wbmciLCJwaG9uZSI6IjAxNjcxNzk0MDY0Iiwic3RhdHVzIjoxfSwidGltZV9wZXJpb2QiOjE3MzcyNzkxNjYwNzYsImlkZW50aXR5X2lkIjoiMGRkYTgzYzgtN2FkNi00NWZmLWIxYTEtMTM4NWQ5Yjg2ZmY2IiwiaWF0IjoxNzM3Mjc1NTY2LCJleHAiOjE3Njg4MzMxNjZ9.jdy_1hYfPFev73JLfXZz0VM0PUA-TALJ5R4eN1gwSgk', '{\"useragent\":\"PostmanRuntime/7.43.0\",\"os-name\":\"\",\"os-short-name\":\"\",\"os-family\":\"\",\"client-type\":\"library\",\"client-name\":\"Postman Desktop\",\"client-short-name\":\"\",\"client-version\":\"7.43.0\",\"device-id\":\"\",\"device-type\":\"\",\"device-brand\":\"\",\"device-model\":\"\"}', '0dda83c8-7ad6-45ff-b1a1-1385d9b86ff6', 1, '2025-01-19 09:32:46', '2025-01-19 09:32:46');
 
 -- --------------------------------------------------------
 
@@ -603,7 +630,7 @@ CREATE TABLE `deautodb_super_admins` (
 --
 
 INSERT INTO `deautodb_super_admins` (`id`, `name`, `email`, `phone`, `address`, `profile_image`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(1, 'Ashraful Islam', 'isheiblu@gmail.com', '01671794064', 'Dhaka', 'default_image.png', 1, 1, 1, '2025-01-03 15:17:37', '2025-01-03 15:17:37');
+(1, 'Shovon', 'shovonchakroborty395@gmail.com', '01671794064', 'Dhaka', 'default_image.png', 1, 1, 1, '2025-01-03 15:17:37', '2025-01-19 14:28:50');
 
 -- --------------------------------------------------------
 
@@ -658,10 +685,12 @@ CREATE TABLE `deautodb_users` (
 --
 
 INSERT INTO `deautodb_users` (`id`, `role_id`, `profile_id`, `email`, `phone`, `password`, `social_provider_name`, `social_provider_id`, `status`, `updated_by`, `updated_at`) VALUES
-(1, 1, 1, 'isheiblu@gmail.com', '01671794061', '$2b$10$REUeKiIvt2ftFOHfn0xuuehM0Rphdm6pQ93xYTYzrf9l0t7kPEc2e', NULL, NULL, 1, 1, '2025-01-07 07:47:53'),
+(1, 1, 1, 'shovonchakroborty395@gmail.com', '01671794061', '$2b$10$REUeKiIvt2ftFOHfn0xuuehM0Rphdm6pQ93xYTYzrf9l0t7kPEc2e', NULL, NULL, 1, 1, '2025-01-07 07:47:53'),
 (2, 3, 2, 'shovon57@gmail.com', '01744545786', '$2b$10$hdTBhvZK/LRf1ag.9eeDK.SM0TTVsm4IceInX/kE0xsjTgdrivJj6', NULL, NULL, 1, 2, '2025-01-12 18:55:58'),
 (3, 3, 3, 'shovon8@gmai6.com', '123', '$2b$10$IKVXYbPhkR23PEBXhNGay.Z40kLgOVHCQ2Bplm9gnXbunQXNKo2gC', NULL, NULL, 1, 0, '2025-01-08 09:18:43'),
-(6, 3, 6, 'rafik@gmail.com', NULL, 'no password set yet.', 'facebook', '106300062574083692889', 1, 0, '2025-01-11 14:35:00');
+(6, 3, 6, 'rafik@gmail.com', NULL, 'no password set yet.', 'facebook', '106300062574083692889', 1, 0, '2025-01-11 14:35:00'),
+(8, 2, 2, 'dutch@gmail.com', '01745123456', '$2b$10$b/9xPPayw/oCgWsxO7mzOOrhu38mXBR3G8CZXMNDkF37obJ.foTXC', NULL, NULL, 1, 0, '2025-01-18 10:31:47'),
+(9, 2, 3, 'dutch2@gmail.com', '01745123456', '$2b$10$WFW0H/c42BnSSd6AvUK8PepsJoQrjQZXQ31X.s2lguVegX4V9.au2', NULL, NULL, 1, 0, '2025-01-18 10:45:10');
 
 -- --------------------------------------------------------
 
@@ -864,7 +893,7 @@ ALTER TABLE `deautodb_categories`
 -- AUTO_INCREMENT for table `deautodb_companies`
 --
 ALTER TABLE `deautodb_companies`
-  MODIFY `id` int(15) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `deautodb_company_services`
@@ -888,7 +917,7 @@ ALTER TABLE `deautodb_company_subscribed_package_histories`
 -- AUTO_INCREMENT for table `deautodb_company_users`
 --
 ALTER TABLE `deautodb_company_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `deautodb_consumers`
@@ -918,7 +947,7 @@ ALTER TABLE `deautodb_login_attempts`
 -- AUTO_INCREMENT for table `deautodb_login_tracks`
 --
 ALTER TABLE `deautodb_login_tracks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `deautodb_modules`
@@ -984,7 +1013,7 @@ ALTER TABLE `deautodb_temp_users`
 -- AUTO_INCREMENT for table `deautodb_users`
 --
 ALTER TABLE `deautodb_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `deautodb_user_payment_package_histories`
