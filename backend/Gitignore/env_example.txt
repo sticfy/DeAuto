@@ -1,0 +1,39 @@
+
+DB_HOST_v1=localhost
+DB_USER_v1=root
+DB_PASS_v1=""
+DB_DATABASE_v1=de_auto 
+
+
+frontend_url="http://localhost:3000"
+backend_url="http://localhost:3001"
+
+admin_image_path_name = "/admin-image"
+admin_image_path = "public/upload/images/admin-images/"
+
+user_profile_image_path_name = "/user-profile-image"
+user_profile_image_path = "public/upload/images/profile/"
+
+banner_image_path_name = "/banner"
+banner_image_path = "public/upload/images/banner/"
+
+company_logo_path_name = "/company-logo"
+company_logo_path = "public/upload/images/company/logo/"
+
+company_user_image_path_name = "/company-user"
+company_user_image_path = "public/upload/images/company/user/"
+
+send_email_host="smtp.zoho.com"
+send_email_address="shovon56.study@zohomail.com"
+send_email_password="shovonMedinatec12"
+
+send_email_port=465
+
+# call scheduler at 12 am
+scheduleTime =0 0 * * * 
+
+#every minute
+# scheduleTime = */1 * * * *
+
+
+

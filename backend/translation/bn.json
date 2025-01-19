@@ -1,0 +1,10 @@
+{
+	"customer_type_list": "কাস্টমার টাইপ লিস্ট.",
+	"customer_type_list2": "Customer Type List.",
+	"NO_USER_FOUND": "ব্যবহারকারীকে সনাক্ত করা যায়নি",
+	"USER_DISABLE": "ব্যবহারকারী নিস্ক্রিয় আছে",
+	"UNKNOWN_USER": "You can't login as your account is disable now.",
+	"NAME_MISSING ": "Please provide name.",
+	"PHONE_NUMBER_MISSING ": "Phone number should not empty..",
+	"NAME PHONE_NUMBER_MISSING ": "NAME PHONE_NUMBER_MISSING"
+}

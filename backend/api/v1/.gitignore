@@ -1,0 +1,21 @@
+# These are some examples of commonly ignored file patterns.
+# You should customize this list as applicable to your project.
+# Learn more about .gitignore:
+#     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
+
+# Node artifact files
+node_modules/
+dist/
+.env
+
+.vscode/*
+.package-lock.json/
+package-lock.json
+
+!public/
+public/*
+!public/upload/
+public/upload/*
+!public/upload/images/
+public/upload/images/*
+file/*

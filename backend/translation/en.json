@@ -1,0 +1,11 @@
+{
+	"customer_type_list": "Customer Type List.",
+	"customer_type_list2": "Customer Type List.",
+	"NO_USER_FOUND": "No User Found",
+	"USER_DISABLE": "You can't login as your account is disable now.",
+	"UNKNOWN_USER": "You can't login as your account is disable now.",
+	"NAME_MISSING ": "Please provide name.",
+	"PHONE_NUMBER_MISSING ": "Phone number should not empty..",
+	"NAME PHONE_NUMBER_MISSING ": "NAME PHONE_NUMBER_MISSING",
+	"PHONE_NUMBER_MISSING": "PHONE_NUMBER_MISSING"
+}
