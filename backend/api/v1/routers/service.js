@@ -68,6 +68,9 @@ router.get('/activeList', [verifyToken], async (req, res) => {
         if (!isEmpty(language)) {
             element.title = titleDataObject[language];
             element.categoryDetails.title = element.categoryDetails.title[language];
+        } else {
+            element.title = titleDataObject;
+            element.categoryDetails.title = element.categoryDetails.title;
         }
     }
 
@@ -152,6 +155,9 @@ router.post('/list', [verifyToken], async (req, res) => {
         if (!isEmpty(language)) {
             element.title = titleDataObject[language];
             element.categoryDetails.title = element.categoryDetails.title[language];
+        } else {
+            element.title = titleDataObject;
+            element.categoryDetails.title = element.categoryDetails.title;
         }
     }
 
@@ -418,12 +424,12 @@ router.put('/update', [verifyToken], async (req, res) => {
     if (willWeUpdate == 1) {
 
         let data = {};
-        
+
         data.title = JSON.stringify(titleObject);
         data.updated_by = req.decoded.userInfo.id;
         data.updated_at = await commonObject.getGMT();
 
-        if(!isEmpty(updateData.category_id)){
+        if (!isEmpty(updateData.category_id)) {
             data.category_id = updateData.category_id;
         }
 

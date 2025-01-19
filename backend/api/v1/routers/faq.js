@@ -46,6 +46,9 @@ router.get('/activeList', [verifyToken], async (req, res) => {
         if (!isEmpty(language)) {
             element.question = questionDataObject[language];
             element.answer = answerDataObject[language];
+        } else {
+            element.question = questionDataObject;
+            element.answer = answerDataObject;
         }
     }
 
@@ -118,6 +121,9 @@ router.post('/list', [verifyToken], async (req, res) => {
         if (!isEmpty(language)) {
             element.question = questionDataObject[language];
             element.answer = answerDataObject[language];
+        } else {
+            element.question = questionDataObject;
+            element.answer = answerDataObject;
         }
     }
 

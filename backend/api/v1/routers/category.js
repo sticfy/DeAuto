@@ -42,6 +42,8 @@ router.get('/activeList', [verifyToken], async (req, res) => {
 
         if (!isEmpty(language)) {
             element.title = titleDataObject[language];
+        } else {
+            element.title = titleDataObject;
         }
     }
 
@@ -112,6 +114,8 @@ router.post('/list', [verifyToken], async (req, res) => {
 
         if (!isEmpty(language)) {
             element.title = titleDataObject[language];
+        } else {
+            element.title = titleDataObject;
         }
     }
 

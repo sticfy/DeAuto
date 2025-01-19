@@ -55,7 +55,8 @@ app.use(i18n.init);
 
 // pass into a header
 app.use(function (req, res, next) {
-    req.headers['language'] = isEmpty(req.headers['language']) ? "en" : req.headers['language'];
+    // req.headers['language'] = isEmpty(req.headers['language']) ? "en" : req.headers['language'];
+    req.headers['language'] = isEmpty(req.headers['language']) ? "" : req.headers['language'];
     i18n.setLocale(req, req.headers['language']);
     next();
 });
