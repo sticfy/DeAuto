@@ -13,6 +13,7 @@ import { ProfileSettingComponent } from './CustomAdmin/profile-setting/profile-s
 import { ProfileLayoutComponent } from './CustomAdmin/profile-layout/profile-layout.component';
 import { ProfileEditComponent } from './CustomAdmin/profile-edit/profile-edit.component';
 import { CompanyListComponent } from './SuperAdmin/company-list/company-list.component';
+import { NewShopComponent } from './SuperAdmin/new-shop/new-shop.component';
 
 export const routes: Routes = [
     {
@@ -30,6 +31,9 @@ export const routes: Routes = [
         },
         { path:'company',
             component:CompanyListComponent
+        },
+        { path:'shop',
+            component:NewShopComponent
         },
         ]
     },

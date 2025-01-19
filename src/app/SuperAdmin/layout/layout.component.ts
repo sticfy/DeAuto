@@ -25,7 +25,7 @@ export class LayoutComponent {
       name:'Company list'
     },
     {
-      link:'/new',
+      link:'shop',
       name:'New shops'
     },
     {
