@@ -33,7 +33,7 @@ export class LayoutComponent {
       name:'Inactive Shop'
     },
     {
-      link:'/new',
+      link:'promotion',
       name:'Promotional cover'
     },
     {

@@ -1,0 +1,30 @@
+.page-contain{
+    padding: 36px 40px 0px 24px;
+    width: 80%;
+    font-family: "Poppins", serif;
+    position: relative;
+    left: 20%;
+}
+.sidebar{
+    height: 100vh;
+    width: 20%;
+    background-color:#f2f2f2;
+    position: fixed;
+    
+}
+.hero{
+    width: 100%;
+    height: 100%;
+}
+.right{
+    position: absolute;
+    top:20%;
+    z-index: 10;
+    color:white;
+    
+    margin-left: 100px;
+}
+.title{
+    font-size: 46px;
+    font-weight: 600;
+}

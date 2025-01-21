@@ -14,6 +14,9 @@ import { ProfileLayoutComponent } from './CustomAdmin/profile-layout/profile-lay
 import { ProfileEditComponent } from './CustomAdmin/profile-edit/profile-edit.component';
 import { CompanyListComponent } from './SuperAdmin/company-list/company-list.component';
 import { NewShopComponent } from './SuperAdmin/new-shop/new-shop.component';
+import { PromotionComponent } from './SuperAdmin/promotion/promotion.component';
+import { PartnerLayoutComponent } from './Partner/partner-layout/partner-layout.component';
+import { HeroSectionComponent } from './Partner/hero-section/hero-section.component';
 
 export const routes: Routes = [
     {
@@ -34,6 +37,9 @@ export const routes: Routes = [
         },
         { path:'shop',
             component:NewShopComponent
+        },
+        { path:'promotion',
+            component:PromotionComponent
         },
         ]
     },
@@ -75,6 +81,15 @@ export const routes: Routes = [
                 component:ProfileEditComponent
             },
         ]
-    }
+    },
+    {
+        path:'partner',
+        component:PartnerLayoutComponent,
+        children:[
+            { path:'register',
+            component:HeroSectionComponent
+            }
+            ]
+    },
     
 ];
