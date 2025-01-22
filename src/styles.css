@@ -55,3 +55,10 @@ table {
     outline: 0;
     box-shadow: 0 0 0 1px #0066F9 !important;
   }
+  .clr_b{
+    background-color: #F74C07 !important;
+    color: white !important;
+  }
+  .clr_b:hover{
+    background-color: #d4430a !important;
+  }
