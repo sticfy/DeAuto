@@ -2,6 +2,7 @@ const { connectionDeAutoMYSQL } = require('../connections/connection');
 const queries = require('../queries/user');
 const companyModel = require('./company');
 const companyUserModel = require('./company-user');
+const consumerModel = require('./consumer');
 const commonObject = require('../common/common');
 const isEmpty = require('is-empty');
 
