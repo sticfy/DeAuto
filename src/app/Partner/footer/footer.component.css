@@ -1,0 +1,19 @@
+.footer{
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-top: 87px;
+    padding-bottom: 56px;
+    background-color: #E8E8E8;
+}
+.help{
+    font-size: 18px;
+}
+.navitem{
+    padding-bottom: 48px;
+    border-bottom: 1px solid #B9B9B9;
+}
+.year{
+    margin-top: auto;
+    font-size: 10px;
+    color: #676767;
+}

@@ -17,6 +17,8 @@ import { NewShopComponent } from './SuperAdmin/new-shop/new-shop.component';
 import { PromotionComponent } from './SuperAdmin/promotion/promotion.component';
 import { PartnerLayoutComponent } from './Partner/partner-layout/partner-layout.component';
 import { HeroSectionComponent } from './Partner/hero-section/hero-section.component';
+import { SubscriptionComponent } from './Partner/subscription/subscription.component';
+import { CategorisComponent } from './SuperAdmin/categoris/categoris.component';
 
 export const routes: Routes = [
     {
@@ -40,6 +42,9 @@ export const routes: Routes = [
         },
         { path:'promotion',
             component:PromotionComponent
+        },
+        { path:'categories',
+            component:CategorisComponent
         },
         ]
     },
@@ -88,8 +93,11 @@ export const routes: Routes = [
         children:[
             { path:'register',
             component:HeroSectionComponent
+            },
+            { path:'subscription',
+                component:SubscriptionComponent
             }
-            ]
+        ]
     },
     
 ];

@@ -1,0 +1,45 @@
+.choosePlan{
+    font-size: 46px;
+    font-weight: 600;
+    line-height: 55.2px;
+    width: 465px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 48px;
+    margin-bottom: 24px;
+}
+li{
+    list-style-type: none;
+}
+.box{
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid #676767;
+    margin: 24px;
+    min-height: 440px;
+}
+.box:hover{
+    border: 1px solid #F74C07;
+}
+.duration{
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.des{
+    font-size: 10px;
+    color: #676767;
+    width: 60%;
+}
+.amount{
+    font-size: 28px;
+    font-weight: 600;
+}
+.btn-colr{
+    margin-top: 32px;
+    margin-bottom: 24px;
+    background-color: #F74C07;
+    color: white;
+
+}

@@ -26,11 +26,15 @@ export class LayoutComponent {
     },
     {
       link:'shop',
-      name:'New shops'
+      name:'New Companies'
     },
     {
       link:'/custom/dashboard',
-      name:'Inactive Shop'
+      name:'Inactive Companies'
+    },
+    {
+      link:'categories',
+      name:'Categories'
     },
     {
       link:'promotion',

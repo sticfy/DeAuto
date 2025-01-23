@@ -8,5 +8,12 @@ import { Component } from '@angular/core';
   styleUrl: './hero-section.component.css'
 })
 export class HeroSectionComponent {
-
+  password:any=true
+  togglePassword(){
+    this.password=!this.password
+  }
+  password1:any=true
+  togglePassword1(){
+    this.password1=!this.password1
+  }
 }
