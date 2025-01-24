@@ -116,8 +116,24 @@ router.post("/login", async (req, res) => {
 
         } else if (userData[0].role_id == 2) {
             profileInfo = await companyUserModel.getDataByWhereCondition(
-                { id: userData[0].profile_id }, undefined, undefined, undefined, ["id", "owner_first_name", "email", "profile_image", "status"]
+                { id: userData[0].profile_id }, undefined, undefined, undefined, ["id", "company_id", "owner_first_name", "email", "profile_image", "status"]
             );
+
+            if (!isEmpty(profileInfo)) {
+                let companyDetails = await companyModel.getDataByWhereCondition(
+                    { id: profileInfo[0].company_id, status: 1 }, undefined, undefined, undefined, ["id", "company_name", "status"]
+                );
+
+                if (isEmpty(companyDetails)) {
+                    return res.status(404).send({
+                        success: false,
+                        status: 404,
+                        message: "Company is not active.",
+                    });
+                }
+            }
+
+
             imageFolderPath = `${process.env.backend_url}${process.env.company_user_image_path_name}`;
         } else if (userData[0].role_id == 3) {
             profileInfo = await consumerModel.getDataByWhereCondition(
@@ -944,7 +960,7 @@ router.post("/registration", [validatorUserRegistration], async (req, res) => {
     otpDataObject.unique_id = tempUserData.uuid;
     otpDataObject.otp = otp;
     otpDataObject.reason = "User Registration";
-    otpDataObject.other_info = JSON.stringify(JSON.stringify(reqData));
+    otpDataObject.other_info = JSON.stringify(reqData);
     otpDataObject.expired_time = await commonObject.addFiveMinuteToGMT();
     otpDataObject.created_at = await commonObject.getGMT();
     otpDataObject.updated_at = await commonObject.getGMT();
@@ -1096,6 +1112,7 @@ router.post("/resend-registration-otp", async (req, res) => {
         });
     }
 
+
     // generate otp
     let otp = await commonObject.generateOTP(4);
 
@@ -1105,7 +1122,7 @@ router.post("/resend-registration-otp", async (req, res) => {
     data.unique_id = token;
     data.otp = otp;
     data.reason = "User Registration Resend Otp";
-    data.other_info = JSON.stringify(existingPendingUser[0]);
+    data.other_info = existingPendingUser[0].details;
     data.expired_time = await commonObject.addFiveMinuteToGMT();
     data.created_at = await commonObject.getGMT();
     data.updated_at = await commonObject.getGMT();
@@ -1181,6 +1198,21 @@ router.post("/validate-registration-otp", async (req, res) => {
         }
     );
 
+    let tempUserDetails = await tempUserModel.getDataByWhereCondition(
+        {
+            uuid: reqData.unique_id,
+            status: 1
+        });
+
+    if (isEmpty(tempUserDetails)) {
+        return res.status(400).send({
+            success: true,
+            status: 400,
+            message: "Invalid Temp User.",
+        });
+    }
+    else tempUserId = tempUserDetails[0].id;
+
     if (isEmpty(existingOtp)) {
 
         if (!isEmpty(activeRequest)) {
@@ -1230,7 +1262,8 @@ router.post("/validate-registration-otp", async (req, res) => {
                 await otpModel.updateById(activeRequest[0].id, data);
 
                 // temp data details
-                let pendingUserData = JSON.parse(activeRequest[0].other_info);
+                // let pendingUserData = JSON.parse(activeRequest[0].other_info);
+                let pendingUserData = activeRequest[0].other_info;
 
                 let updateTempData = {};
                 updateTempData.status = 0;
@@ -1288,8 +1321,9 @@ router.post("/validate-registration-otp", async (req, res) => {
 
 
             // temp data details
-            let pendingUserData = JSON.parse(existingOtp[0].other_info);
-
+            // let pendingUserData = JSON.parse(activeRequest[0].other_info);
+            let pendingUserData = activeRequest[0].other_info;
+            console.log(tempUserId);
 
 
             // update the otp status with 0 and update the temp user otp_verified column
@@ -1322,6 +1356,18 @@ router.post("/validate-registration-otp", async (req, res) => {
             userData.updated_at = await commonObject.getGMT();
 
 
+            // console.log(existingOtp[0].id);
+            // console.log(updateOtpData);
+            // console.log(tempUserId);
+            // console.log(updateTempData);
+            // return res.status(500).send({
+            //     success: true,
+            //     status: 500,
+            //     userData: userData,
+            //     pendingUserData: profileData,
+            //     updateOtpData
+            // });
+
             // return res.status(500).send({
             //     success: true,
             //     status: 500,
@@ -1331,7 +1377,7 @@ router.post("/validate-registration-otp", async (req, res) => {
             //     updateTempData: updateTempData,
             // });
 
-            let result = await otpModel.updateWithMultipleInfo(existingOtp[0].id, updateOtpData, registrationDataDetails.id, updateTempData, profileData, userData);
+            let result = await otpModel.updateWithMultipleInfo(existingOtp[0].id, updateOtpData, tempUserId, updateTempData, profileData, userData);
 
             if (result.affectedRows == undefined || result.affectedRows < 1) {
                 return res.status(500).send({
