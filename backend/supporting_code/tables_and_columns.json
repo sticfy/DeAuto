@@ -1,0 +1,1361 @@
+[
+  {
+    "name": "deautodb_banners",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "banner_type",
+        "type": "int"
+      },
+      {
+        "name": "from_date",
+        "type": "date"
+      },
+      {
+        "name": "to_date",
+        "type": "date"
+      },
+      {
+        "name": "image",
+        "type": "varchar"
+      },
+      {
+        "name": "details",
+        "type": "text"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_billing_cards",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "company_id",
+        "type": "int"
+      },
+      {
+        "name": "card_type",
+        "type": "varchar"
+      },
+      {
+        "name": "card_holder_name",
+        "type": "text"
+      },
+      {
+        "name": "card_number",
+        "type": "text"
+      },
+      {
+        "name": "cvv",
+        "type": "text"
+      },
+      {
+        "name": "expired_month",
+        "type": "varchar"
+      },
+      {
+        "name": "expired_year",
+        "type": "varchar"
+      },
+      {
+        "name": "is_primary",
+        "type": "int"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_categories",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "title",
+        "type": "longtext"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_companies",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "current_package_id",
+        "type": "int"
+      },
+      {
+        "name": "kvk_no",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "owner_first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "owner_last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "phone",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "logo",
+        "type": "varchar"
+      },
+      {
+        "name": "cover_image",
+        "type": "varchar"
+      },
+      {
+        "name": "year_of_establishment",
+        "type": "int"
+      },
+      {
+        "name": "company_size",
+        "type": "varchar"
+      },
+      {
+        "name": "latitude",
+        "type": "varchar"
+      },
+      {
+        "name": "longitude",
+        "type": "varchar"
+      },
+      {
+        "name": "available_days",
+        "type": "text"
+      },
+      {
+        "name": "tagline",
+        "type": "text"
+      },
+      {
+        "name": "street",
+        "type": "varchar"
+      },
+      {
+        "name": "house_no",
+        "type": "varchar"
+      },
+      {
+        "name": "postal_code",
+        "type": "varchar"
+      },
+      {
+        "name": "province",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "website_url",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_company_images",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "company_id",
+        "type": "int"
+      },
+      {
+        "name": "image",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_company_services",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "company_id",
+        "type": "int"
+      },
+      {
+        "name": "category_id",
+        "type": "varchar"
+      },
+      {
+        "name": "service_id",
+        "type": "int"
+      },
+      {
+        "name": "service_name",
+        "type": "JSON"
+      },
+      {
+        "name": "price_start_from",
+        "type": "double"
+      },
+      {
+        "name": "service_start_date",
+        "type": "date"
+      },
+      {
+        "name": "service_end_date",
+        "type": "date"
+      },
+      {
+        "name": "details",
+        "type": "text"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_company_subscribed_package_histories",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "package_id",
+        "type": "int"
+      },
+      {
+        "name": "company_id",
+        "type": "int"
+      },
+      {
+        "name": "enroll_date",
+        "type": "date"
+      },
+      {
+        "name": "expired_date",
+        "type": "date"
+      },
+      {
+        "name": "price",
+        "type": "double"
+      },
+      {
+        "name": "details",
+        "type": "text"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_company_subscribed_packages",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "package_id",
+        "type": "int"
+      },
+      {
+        "name": "company_id",
+        "type": "int"
+      },
+      {
+        "name": "total_available_user",
+        "type": "int"
+      },
+      {
+        "name": "total_available_services",
+        "type": "int"
+      },
+      {
+        "name": "expired_date",
+        "type": "date"
+      },
+      {
+        "name": "details",
+        "type": "text"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_company_users",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "company_id",
+        "type": "int"
+      },
+      {
+        "name": "role_id",
+        "type": "int"
+      },
+      {
+        "name": "owner_first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "owner_last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "phone",
+        "type": "varchar"
+      },
+      {
+        "name": "profile_image",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_configurations",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "page_name",
+        "type": "varchar"
+      },
+      {
+        "name": "page_key",
+        "type": "varchar"
+      },
+      {
+        "name": "content",
+        "type": "text"
+      },
+      {
+        "name": "image",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_consumers",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "role_id",
+        "type": "int"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "phone",
+        "type": "varchar"
+      },
+      {
+        "name": "profile_image",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_employees",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "role_id",
+        "type": "int"
+      },
+      {
+        "name": "gender_id",
+        "type": "int"
+      },
+      {
+        "name": "employee_id",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "phone",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "date_of_birth",
+        "type": "date"
+      },
+      {
+        "name": "address",
+        "type": "text"
+      },
+      {
+        "name": "profile_image",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_faqs",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "question",
+        "type": "longtext"
+      },
+      {
+        "name": "answer",
+        "type": "longtext"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_login_attempts",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "user_id",
+        "type": "int"
+      },
+      {
+        "name": "release_time",
+        "type": "bigint"
+      },
+      {
+        "name": "used_password",
+        "type": "text"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_login_tracks",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "user_id",
+        "type": "int"
+      },
+      {
+        "name": "jwt_token",
+        "type": "text"
+      },
+      {
+        "name": "login_device_info",
+        "type": "text"
+      },
+      {
+        "name": "uuid",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_module_permissions",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "module_id",
+        "type": "int"
+      },
+      {
+        "name": "permission_id",
+        "type": "int"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_modules",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_otp",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "unique_id",
+        "type": "varchar"
+      },
+      {
+        "name": "sent_media",
+        "type": "int"
+      },
+      {
+        "name": "otp",
+        "type": "varchar"
+      },
+      {
+        "name": "counter",
+        "type": "int"
+      },
+      {
+        "name": "reason",
+        "type": "text"
+      },
+      {
+        "name": "other_info",
+        "type": "text"
+      },
+      {
+        "name": "expired_time",
+        "type": "datetime"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_payment_packages",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "country_code",
+        "type": "int"
+      },
+      {
+        "name": "title",
+        "type": "longtext"
+      },
+      {
+        "name": "details",
+        "type": "longtext"
+      },
+      {
+        "name": "duration",
+        "type": "int"
+      },
+      {
+        "name": "service_limit",
+        "type": "int"
+      },
+      {
+        "name": "appointment_limit",
+        "type": "int"
+      },
+      {
+        "name": "price",
+        "type": "double"
+      },
+      {
+        "name": "discount_amount",
+        "type": "double"
+      },
+      {
+        "name": "discount_percentage",
+        "type": "double"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_permissions",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "key_name",
+        "type": "varchar"
+      },
+      {
+        "name": "access_user",
+        "type": "int"
+      },
+      {
+        "name": "api_version",
+        "type": "varchar"
+      },
+      {
+        "name": "file_name",
+        "type": "varchar"
+      },
+      {
+        "name": "url",
+        "type": "text"
+      },
+      {
+        "name": "method",
+        "type": "varchar"
+      },
+      {
+        "name": "details",
+        "type": "text"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_role_permissions",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "role_id",
+        "type": "int"
+      },
+      {
+        "name": "permission_id",
+        "type": "int"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_roles",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_services",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "category_id",
+        "type": "int"
+      },
+      {
+        "name": "title",
+        "type": "longtext"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_super_admins",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "phone",
+        "type": "varchar"
+      },
+      {
+        "name": "address",
+        "type": "text"
+      },
+      {
+        "name": "profile_image",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_temp_users",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "role_id",
+        "type": "int"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "token",
+        "type": "text"
+      },
+      {
+        "name": "uuid",
+        "type": "varchar"
+      },
+      {
+        "name": "password",
+        "type": "text"
+      },
+      {
+        "name": "otp_verified",
+        "type": "int"
+      },
+      {
+        "name": "details",
+        "type": "text"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_user_payment_package_histories",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "user_id",
+        "type": "int"
+      },
+      {
+        "name": "payment_package_id",
+        "type": "int"
+      },
+      {
+        "name": "enroll_date",
+        "type": "date"
+      },
+      {
+        "name": "expired_date",
+        "type": "date"
+      },
+      {
+        "name": "details",
+        "type": "text"
+      },
+      {
+        "name": "price",
+        "type": "double"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_users",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "role_id",
+        "type": "int"
+      },
+      {
+        "name": "profile_id",
+        "type": "int"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "phone",
+        "type": "varchar"
+      },
+      {
+        "name": "password",
+        "type": "text"
+      },
+      {
+        "name": "social_provider_name",
+        "type": "varchar"
+      },
+      {
+        "name": "social_provider_id",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  }
+]

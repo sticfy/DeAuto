@@ -45,7 +45,7 @@ router.get('/activeList', [], async (req, res) => {
 });
 
 
-router.post('/list', [verifyToken], async (req, res) => {
+router.post('/list', [], async (req, res) => {
 
     let imageFolderPath = `${process.env.backend_url}${process.env.banner_image_path_name}`;
     let reqData = {

@@ -72,6 +72,22 @@ let getDataByWhereCondition = (data = {}, orderBy = {}, limit, offset, columnLis
 
         if (Array.isArray(data[keys[0]])) {
             query += ` where ${keys[0]} BETWEEN ? and ? `
+
+        } else if (["GR||&&"].includes(keys[0].toUpperCase()) && typeof data[keys[0]] === 'object') { // Group-OR(internal)-AND (out) like =>  where (field1 = ? or field2 = ?)
+
+            let grOrAndObjectKeys = Object.keys(data[keys[0]]);
+            let operator = (keys[index].toUpperCase()).startsWith("GRL") ? " Like " : " = ";
+            let internalJoiner = (keys[index].toUpperCase()).endsWith("&&") ? " or " : " and ";
+
+            query += ` where (`;
+
+            for (let grOrAndObjectKeysIndex = 0; grOrAndObjectKeysIndex < grOrAndObjectKeys.length; grOrAndObjectKeysIndex++) {
+                const grOrAndObjectKey = grOrAndObjectKeys[grOrAndObjectKeysIndex];
+                query += grOrAndObjectKeysIndex == 0 ? ` ${grOrAndObjectKey} ${operator} ? ` : ` ${internalJoiner} ${grOrAndObjectKey} ${operator} ? `;
+            }
+
+            query += ` )  `;
+
         } else if (typeof data[keys[0]] === 'object' && !Array.isArray(data[keys[0]]) && data[keys[0]] !== null) {
 
             let key2 = Object.keys(data[keys[0]]);
@@ -115,6 +131,23 @@ let getDataByWhereCondition = (data = {}, orderBy = {}, limit, offset, columnLis
 
             if (Array.isArray(data[keys[i]])) {
                 query += `and ` + keys[i] + `  BETWEEN  ? and ? `;
+
+            } else if (["GR||&&", "GR&&||", "GRL||&&", "GRL&&||"].includes(keys[i].toUpperCase()) && typeof data[keys[i]] === 'object') { // Group-OR(internal)-AND (out) like =>  where (field1 = ? or field2 = ?) .3
+
+                let grOrAndObjectKeys = Object.keys(data[keys[i]]);
+                let operator = (keys[i].toUpperCase()).startsWith("GRL") ? " Like " : " = ";
+                let internalJoiner = (keys[i].toUpperCase()).endsWith("&&") ? " or " : " and ";
+                let outlineJoiner = (keys[i].toUpperCase()).endsWith("&&") ? " and " : " or ";
+
+                query += ` ${outlineJoiner} (`;
+
+                for (let grOrAndObjectKeysIndex = 0; grOrAndObjectKeysIndex < grOrAndObjectKeys.length; grOrAndObjectKeysIndex++) {
+                    const grOrAndObjectKey = grOrAndObjectKeys[grOrAndObjectKeysIndex];
+                    query += grOrAndObjectKeysIndex == 0 ? ` ${grOrAndObjectKey} ${operator} ? ` : ` ${internalJoiner} ${grOrAndObjectKey} ${operator} ? `;
+                }
+
+                query += ` )  `;
+
             } else if (typeof data[keys[i]] === 'object' && !Array.isArray(data[keys[i]]) && data[keys[i]] !== null) {
 
                 let key2 = Object.keys(data[keys[i]]);
@@ -129,7 +162,7 @@ let getDataByWhereCondition = (data = {}, orderBy = {}, limit, offset, columnLis
                         query += ` ) `;
 
                     } else if (key2[indexKey].toUpperCase() === "OR") {
-                        query += `  ${key2[indexKey].toLowerCase()} ` + keys[i] + ` = ? `;
+                        query += ` or ${key2[indexKey].toLowerCase()} ` + keys[i] + ` = ? `;
                     } else if (key2[indexKey].toUpperCase() === "LIKE") {
                         query += ` and  ${keys[i]} like ? `;
                     } else if (["IN", "NOT IN"].includes(key2[indexKey].toUpperCase())) {

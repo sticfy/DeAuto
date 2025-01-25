@@ -10,7 +10,9 @@ const { default: ClientHints } = require("node-device-detector/client-hints");
 
 require("dotenv").config();
 
-let imagePathName = `${process.env.backend_url}${process.env.configuration_image_path_name}`;
+let imagePathName = `${process.env.backend_url}${process.env.flag_image_path_name}`;
+
+
 //configuration
 router.get("/list", async (req, res) => {
   let result = await configurationModel.getList();

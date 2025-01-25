@@ -25,7 +25,7 @@ global.config.language = [
     {"id": 1, "name": "English", "short_name": "en", "image": "en.png", "is_default": false},
     {"id": 2, "name": "Dutch", "short_name": "du", "image": null, "is_default": true}
 ];
-
+  
 
 // give publicly access for call public path
 app.use(express.static(__dirname + '/public'));
@@ -34,6 +34,9 @@ app.use(process.env.admin_image_path_name, express.static(process.env.admin_imag
 app.use(process.env.banner_image_path_name, express.static(process.env.banner_image_path));
 app.use(process.env.company_logo_path_name, express.static(process.env.company_logo_path));
 app.use(process.env.company_user_image_path_name, express.static(process.env.company_user_image_path));
+app.use(process.env.company_image_path_name, express.static(process.env.company_image_path));
+app.use(process.env.flag_image_path_name, express.static(process.env.flag_image_path));
+app.use(process.env.category_image_path_name, express.static(process.env.category_image_path));
 
 
 app.use(express.json());

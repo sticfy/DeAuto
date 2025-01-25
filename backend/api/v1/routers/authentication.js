@@ -1323,7 +1323,7 @@ router.post("/validate-registration-otp", async (req, res) => {
             // temp data details
             // let pendingUserData = JSON.parse(activeRequest[0].other_info);
             let pendingUserData = activeRequest[0].other_info;
-            console.log(tempUserId);
+            // console.log(tempUserId);
 
 
             // update the otp status with 0 and update the temp user otp_verified column

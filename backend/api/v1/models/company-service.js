@@ -1,10 +1,53 @@
 const { connectionDeAutoMYSQL } = require('../connections/connection');
-const queries = require('../queries/super-admin');
+const queries = require('../queries/company-service');
 const isEmpty = require("is-empty");
 
-let databaseColum = [{ "name": "id", "type": "int" }, { "name": "name", "type": "varchar" }, { "name": "email", "type": "varchar" }, { "name": "phone", "type": "varchar" }, { "name": "address", "type": "text" }, { "name": "profile_image", "type": "varchar" }, { "name": "status", "type": "int" }, { "name": "created_by", "type": "int" }, { "name": "updated_by", "type": "int" }, { "name": "created_at", "type": "datetime" }, { "name": "updated_at", "type": "datetime" }];
+let databaseColum = [{ "name": "id", "type": "int" }, { "name": "company_id", "type": "int" }, { "name": "category_id", "type": "varchar" }, { "name": "service_id", "type": "int" }, { "name": "service_name", "type": "JSON" }, { "name": "price_start_from", "type": "double" }, { "name": "service_start_date", "type": "date" }, { "name": "service_end_date", "type": "date" }, { "name": "details", "type": "text" }, { "name": "status", "type": "int" }, { "name": "created_by", "type": "int" }, { "name": "updated_by", "type": "int" }, { "name": "created_at", "type": "datetime" }, { "name": "updated_at", "type": "datetime" }];
+let jsonColum = ['service_name'];
 
-let jsonColum = [];
+// Promises Method
+
+let getList = async () => {
+    return new Promise((resolve, reject) => {
+        connectionDeAutoMYSQL.query(queries.getList(), (error, result, fields) => {
+            if (error) reject(error)
+            else resolve(result)
+        });
+    });
+}
+
+let getActiveList = async () => {
+    return new Promise((resolve, reject) => {
+        connectionDeAutoMYSQL.query(queries.getActiveList(), (error, result, fields) => {
+            if (error) reject(error)
+            else resolve(result)
+        });
+    });
+}
+
+let getByTitle = async (title = "") => {
+    return new Promise((resolve, reject) => {
+        connectionDeAutoMYSQL.query(queries.getByTitle(), [title], (error, result, fields) => {
+            if (error) reject(error)
+            else resolve(result)
+        });
+    });
+}
+
+let getByJSONTitle = async (data = {}) => {
+    const { en, dutch } = data; // Extract values from data object
+
+    return new Promise((resolve, reject) => {
+        connectionDeAutoMYSQL.query(
+            queries.getByJSONTitle(), // Query
+            [en, dutch],          // Bind values for placeholders
+            (error, result, fields) => {
+                if (error) reject(error);
+                else resolve(result);
+            }
+        );
+    });
+};
 
 
 let getById = async (id = 0) => {
@@ -16,13 +59,33 @@ let getById = async (id = 0) => {
     });
 }
 
-let updateEmailById = async (email, updatedAt, updatedBy, techId, conn) => {
-    let connection = connectionDeAutoMYSQL;
-    if (conn !== undefined) connection = conn;
+let addNew = async (info) => {
     return new Promise((resolve, reject) => {
-        connection.query(queries.updateEmailById(), [email, updatedAt, updatedBy, techId], (error, result, fields) => {
+        connectionDeAutoMYSQL.query(queries.addNew(), [info], (error, result, fields) => {
             if (error) reject(error)
             else resolve(result)
+        });
+    });
+}
+
+let updateById = async (id = 0, updateData = {}, conn = undefined) => {
+
+    let connection = connectionDeAutoMYSQL;
+    if (conn !== undefined) connection = conn;
+    // get object, generate an array and push data value here
+
+    // for update data
+    let keysOfUpdateData = Object.keys(updateData);
+    let dataParameterUpdateData = [];
+
+    for (let index = 0; index < keysOfUpdateData.length; index++) {
+        dataParameterUpdateData.push(updateData[keysOfUpdateData[index]]);
+    }
+
+    return new Promise((resolve, reject) => {
+        connection.query(queries.updateById(updateData), [...dataParameterUpdateData, id], (error, result, fields) => {
+            if (error) reject(error);
+            else resolve(result);
         });
     });
 }
@@ -211,10 +274,25 @@ let regenerateWhereField = (whereObject = {}, language = undefined) => {
 
     return finalWhere;
 }
+let getDetailsByIdAndWhereIn = async (expertTypeId = []) => {
+    return new Promise((resolve, reject) => {
+        connectionDeAutoMYSQL.query(queries.getDetailsByIdAndWhereIn(), [expertTypeId], (error, result, fields) => {
+            if (error) reject(error)
+            else resolve(result)
+        });
+    });
+}
+
 
 module.exports = {
+    getList,
+    getActiveList,
+    getByTitle,
+    getByJSONTitle,
     getById,
-    updateEmailById,
-    getDataByWhereCondition
+    addNew,
+    getDataByWhereCondition,
+    updateById,
+    getDetailsByIdAndWhereIn
 }
 

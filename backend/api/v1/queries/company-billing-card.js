@@ -1,14 +1,25 @@
 const isEmpty = require("is-empty");
-let table_name = "deautodb_configurations";
+let table_name = "deautodb_billing_cards";
 
 let getList = () => {
-    return `SELECT * FROM ${table_name}`;
+    return `SELECT * FROM ${table_name}  where status != 0`;
 }
 
 let getActiveList = () => {
     return `SELECT * FROM ${table_name}  where status = 1`;
 }
 
+let getByTitle = () => {
+    return `SELECT * FROM ${table_name} where  title = ? and status != 0`;
+}
+
+let getByJSONTitle = () => {
+    return `SELECT * FROM ${table_name} 
+            WHERE 
+            (JSON_UNQUOTE(JSON_EXTRACT(title, '$.en')) = ? 
+            OR JSON_UNQUOTE(JSON_EXTRACT(title, '$.dutch')) = ?)
+            AND status != 0`;
+}
 
 let getById = () => {
     return `SELECT * FROM ${table_name} where  id = ? and status != 0`;
@@ -183,12 +194,22 @@ let getDataByWhereCondition = (data = {}, orderBy = {}, limit, offset, columnLis
     return query;
 }
 
+let getDetailsByIdAndWhereIn = () => {
+    return `SELECT id,title,status FROM ${table_name} where  id IN (?) and status = 1`;
+}
+
+
+
 
 module.exports = {
     getList,
     getActiveList,
+    getByTitle,
+    getByJSONTitle,
     getById,
     addNew,
     updateById,
-    getDataByWhereCondition
+    getDataByWhereCondition,
+    getDetailsByIdAndWhereIn
+
 }

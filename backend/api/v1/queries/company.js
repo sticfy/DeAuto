@@ -29,6 +29,21 @@ let addNew = () => {
     return `INSERT INTO ${table_name} SET ?`;
 }
 
+
+let updateCompanyDataById = (data) => {
+    let keys = Object.keys(data);
+
+    let query = `update ${table_name} set ` + keys[0] + ` = ? `;
+
+    for (let i = 1; i < keys.length; i++) {
+        query += `, ` + keys[i] + ` = ? `;
+    }
+
+    query += ` where id = ? `;
+
+    return query;
+}
+
 let updateById = (data) => {
     let keys = Object.keys(data);
 
@@ -61,6 +76,22 @@ let getDataByWhereCondition = (data = {}, orderBy = {}, limit, offset, columnLis
 
         if (Array.isArray(data[keys[0]])) {
             query += ` where ${keys[0]} BETWEEN ? and ? `
+
+        } else if (["GR||&&"].includes(keys[0].toUpperCase()) && typeof data[keys[0]] === 'object') { // Group-OR(internal)-AND (out) like =>  where (field1 = ? or field2 = ?)
+
+            let grOrAndObjectKeys = Object.keys(data[keys[0]]);
+            let operator = (keys[index].toUpperCase()).startsWith("GRL") ? " Like " : " = ";
+            let internalJoiner = (keys[index].toUpperCase()).endsWith("&&") ? " or " : " and ";
+
+            query += ` where (`;
+
+            for (let grOrAndObjectKeysIndex = 0; grOrAndObjectKeysIndex < grOrAndObjectKeys.length; grOrAndObjectKeysIndex++) {
+                const grOrAndObjectKey = grOrAndObjectKeys[grOrAndObjectKeysIndex];
+                query += grOrAndObjectKeysIndex == 0 ? ` ${grOrAndObjectKey} ${operator} ? ` : ` ${internalJoiner} ${grOrAndObjectKey} ${operator} ? `;
+            }
+
+            query += ` )  `;
+
         } else if (typeof data[keys[0]] === 'object' && !Array.isArray(data[keys[0]]) && data[keys[0]] !== null) {
 
             let key2 = Object.keys(data[keys[0]]);
@@ -104,6 +135,23 @@ let getDataByWhereCondition = (data = {}, orderBy = {}, limit, offset, columnLis
 
             if (Array.isArray(data[keys[i]])) {
                 query += `and ` + keys[i] + `  BETWEEN  ? and ? `;
+
+            } else if (["GR||&&", "GR&&||", "GRL||&&", "GRL&&||"].includes(keys[i].toUpperCase()) && typeof data[keys[i]] === 'object') { // Group-OR(internal)-AND (out) like =>  where (field1 = ? or field2 = ?) .3
+
+                let grOrAndObjectKeys = Object.keys(data[keys[i]]);
+                let operator = (keys[i].toUpperCase()).startsWith("GRL") ? " Like " : " = ";
+                let internalJoiner = (keys[i].toUpperCase()).endsWith("&&") ? " or " : " and ";
+                let outlineJoiner = (keys[i].toUpperCase()).endsWith("&&") ? " and " : " or ";
+
+                query += ` ${outlineJoiner} (`;
+
+                for (let grOrAndObjectKeysIndex = 0; grOrAndObjectKeysIndex < grOrAndObjectKeys.length; grOrAndObjectKeysIndex++) {
+                    const grOrAndObjectKey = grOrAndObjectKeys[grOrAndObjectKeysIndex];
+                    query += grOrAndObjectKeysIndex == 0 ? ` ${grOrAndObjectKey} ${operator} ? ` : ` ${internalJoiner} ${grOrAndObjectKey} ${operator} ? `;
+                }
+
+                query += ` )  `;
+
             } else if (typeof data[keys[i]] === 'object' && !Array.isArray(data[keys[i]]) && data[keys[i]] !== null) {
 
                 let key2 = Object.keys(data[keys[i]]);
@@ -176,6 +224,7 @@ module.exports = {
     getById,
     addNew,
     updateById,
+    updateCompanyDataById,
     getDataByWhereCondition,
     getDetailsByIdAndWhereIn
 

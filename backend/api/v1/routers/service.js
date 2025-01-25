@@ -129,6 +129,10 @@ router.post('/list', [verifyToken], async (req, res) => {
         dataSearchConditionObject.status = req.body.status;
     }
 
+    if (req.body.category_id != undefined) {
+        dataSearchConditionObject.category_id = req.body.category_id;
+    }
+
 
     let result = await serviceModel.getDataByWhereCondition(dataSearchConditionObject, { "id": "ASC" },
         reqData.limit,

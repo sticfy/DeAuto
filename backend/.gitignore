@@ -16,6 +16,7 @@ package-lock.json
 public/*
 !public/upload/
 public/upload/*
+!public/flags/
 !public/upload/images/
 public/upload/images/*
 file/*

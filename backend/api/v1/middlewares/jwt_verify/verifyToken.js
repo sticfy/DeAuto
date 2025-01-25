@@ -79,6 +79,20 @@ router.use(async function (req, res, next) {
                     } else if (userData[0].role_id == 2) {
                         profileInfo = await companyUserModel.getById(userData[0].profile_id);
 
+                        if (!isEmpty(profileInfo)) {
+                            let companyDetails = await companyModel.getDataByWhereCondition(
+                                { id: profileInfo[0].company_id, status: 1 }, undefined, undefined, undefined, ["id", "company_name", "status"]
+                            );
+            
+                            if (isEmpty(companyDetails)) {
+                                return res.status(404).send({
+                                    success: false,
+                                    status: 404,
+                                    message: "Company is not active.",
+                                });
+                            }
+                        }
+
                     } else if (userData[0].role_id == 3) {
                         profileInfo = await consumerModel.getById(userData[0].profile_id);
 

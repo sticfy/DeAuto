@@ -2,9 +2,12 @@ const express = require("express");
 const isEmpty = require("is-empty");
 const router = express.Router();
 const commonObject = require('../common/common');
+const companyServiceModel = require('../models/company-service');
+const serviceModel = require('../models/service');
 const categoryModel = require('../models/category');
 const verifyToken = require('../middlewares/jwt_verify/verifyToken');
-const fileUploaderCommonObject = require("../common/fileUploader");
+
+const companyServiceValidation = require('../middlewares/requestData/company-service-data');
 
 const { routeAccessChecker } = require('../middlewares/routeAccess');
 require('dotenv').config();
@@ -13,53 +16,6 @@ const i18next = require('i18next');
 
 // routeAccessChecker("")
 
-let imageFolderPath = `${process.env.backend_url}${process.env.category_image_path_name}`;
-
-router.get('/list', [verifyToken], async (req, res) => {
-
-    let result = await categoryModel.getList();
-
-    for (let index = 0; index < result.length; index++) {
-        const element = result[index];
-        element.title = JSON.parse(element.title);
-    }
-
-    return res.status(200).send({
-        "success": true,
-        "status": 200,
-        "message": "Category List",
-        "imageFolderPath": imageFolderPath,
-        "count": result.length,
-        "data": result
-    });
-});
-
-router.get('/activeList', [verifyToken], async (req, res) => {
-
-    let language = req.headers['language']; // Default to English if language is not specified
-
-    let result = await categoryModel.getActiveList();
-
-    for (let index = 0; index < result.length; index++) {
-        const element = result[index];
-        let titleDataObject = JSON.parse(element.title);
-
-        if (!isEmpty(language)) {
-            element.title = titleDataObject[language];
-        } else {
-            element.title = titleDataObject;
-        }
-    }
-
-    return res.status(200).send({
-        "success": true,
-        "status": 200,
-        "message": "Category List",
-        "imageFolderPath": imageFolderPath,
-        "count": result.length,
-        "data": result
-    });
-});
 
 router.post('/list', [verifyToken], async (req, res) => {
 
@@ -80,13 +36,6 @@ router.post('/list', [verifyToken], async (req, res) => {
 
     let dataSearchConditionObject = {};
 
-    // title
-    if (!isEmpty(req.body.title) && !(req.body.title == undefined)) {
-        dataSearchConditionObject.title = {
-            "like": req.body.title
-        };
-    }
-
     if (req.body.status == 0) {
         return res.status(400).send({
             "success": false,
@@ -95,12 +44,12 @@ router.post('/list', [verifyToken], async (req, res) => {
 
         });
     } else if (isEmpty(req.body.status)) {
-        dataSearchConditionObject.status = [1, 2];
-    } else if (["1", "2", 1, 2].indexOf(req.body.status) == -1) {
+        dataSearchConditionObject.status = { "GT": 0 };
+    } else if (["1", "2", "3", 1, 2, 3].indexOf(req.body.status) == -1) {
         return res.status(400).send({
             "success": false,
             "status": 400,
-            "message": "Status should be 1 or 2"
+            "message": "Status should be 1 or 2 or 3"
 
         });
     } else {
@@ -108,24 +57,76 @@ router.post('/list', [verifyToken], async (req, res) => {
     }
 
 
-    let result = await categoryModel.getDataByWhereCondition(dataSearchConditionObject, { "id": "ASC" },
+    // company id search
+    if (req.decoded.userInfo.role_id == 1) {
+        if (req.body.company_id != undefined) {
+            dataSearchConditionObject.company_id = req.body.company_id;
+        }
+    } else if (req.decoded.userInfo.role_id == 2) {
+        dataSearchConditionObject.company_id = req.decoded.profileInfo.company_id;
+    }
+
+    let result = await companyServiceModel.getDataByWhereCondition(dataSearchConditionObject, { "id": "ASC" },
         reqData.limit,
         reqData.offset
     );
 
     for (let index = 0; index < result.length; index++) {
         const element = result[index];
-        let titleDataObject = JSON.parse(element.title);
+
+        let companyServiceDataObject = JSON.parse(element.service_name);
 
         if (!isEmpty(language)) {
-            element.title = titleDataObject[language];
+            element.service_name = companyServiceDataObject[language];
         } else {
-            element.title = titleDataObject;
+            element.service_name = companyServiceDataObject;
         }
+
+        // service details
+        if (element.service_id != 0) {
+            let serviceDetails = await serviceModel.getDataByWhereCondition({ "status": [1, 2], "id": element.service_id }, { "id": "DESC" }, undefined, undefined,
+                ["id", "title", "status"]);
+
+            if (isEmpty(serviceDetails)) {
+                element.serviceDetails = {};
+            } else {
+
+                let serviceTitleDataObject = JSON.parse(serviceDetails[0].title);
+
+                if (!isEmpty(language)) {
+                    serviceDetails[0].title = serviceTitleDataObject[language];
+                } else {
+                    serviceDetails[0].title = serviceTitleDataObject;
+                }
+
+                element.serviceDetails = serviceDetails[0];
+            }
+        } else {
+            element.serviceDetails = {};
+        }
+
+        // category Details
+        let categoryDetails = await categoryModel.getDataByWhereCondition({ "status": [1, 2], "id": element.category_id }, { "id": "DESC" }, undefined, undefined,
+            ["id", "title", "status"]);
+
+        if (isEmpty(categoryDetails)) {
+            element.categoryDetails = {};
+        } else {
+            let titleDataObject = JSON.parse(categoryDetails[0].title);
+
+            if (!isEmpty(language)) {
+                categoryDetails[0].title = titleDataObject[language];
+            } else {
+                categoryDetails[0].title = titleDataObject;
+            }
+
+            element.categoryDetails = categoryDetails[0];
+        }
+
     }
 
 
-    let totalData = await categoryModel.getDataByWhereCondition(
+    let totalData = await companyServiceModel.getDataByWhereCondition(
         dataSearchConditionObject,
         { "id": "ASC" },
         undefined,
@@ -135,8 +136,7 @@ router.post('/list', [verifyToken], async (req, res) => {
     return res.status(200).send({
         "success": true,
         "status": 200,
-        "message": "Category List",
-        "imageFolderPath": imageFolderPath,
+        "message": "Company Service List",
         "totalCount": totalData[0].count,
         "count": result.length,
         "data": result
@@ -145,105 +145,21 @@ router.post('/list', [verifyToken], async (req, res) => {
 
 
 
-router.post('/add', [verifyToken], async (req, res) => {
+router.post('/add', [verifyToken, companyServiceValidation], async (req, res) => {
 
-    let reqData = {
+    let requestData = req.requestData;
 
-        "title_en": req.body.title_en,
-        "title_dutch": req.body.title_dutch
+    let companyServiceObject = {};
 
-    }
+    companyServiceObject = { ...requestData };
 
-    // reqData.created_by = req.decoded.userInfo.id;
-    // reqData.updated_by = req.decoded.userInfo.id;
-
-    // reqData.created_at = await commonObject.getGMT();
-    // reqData.updated_at = await commonObject.getGMT();
+    companyServiceObject.created_by = req.decoded.userInfo.id;
+    companyServiceObject.updated_by = req.decoded.userInfo.id;
+    companyServiceObject.created_at = await commonObject.getGMT();
+    companyServiceObject.updated_at = await commonObject.getGMT();
 
 
-    let validateTitleEn = await commonObject.characterLimitCheck(reqData.title_en, "Category");
-
-    if (validateTitleEn.success == false) {
-        return res.status(400).send({
-            "success": false,
-            "status": 400,
-            "message": validateTitleEn.message,
-
-        });
-    }
-
-    reqData.title_en = validateTitleEn.data;
-
-    let validateTitleDutch = await commonObject.characterLimitCheck(reqData.title_dutch, "Category");
-
-    if (validateTitleDutch.success == false) {
-        return res.status(400).send({
-            "success": false,
-            "status": 400,
-            "message": validateTitleDutch.message,
-
-        });
-    }
-
-    reqData.title_dutch = validateTitleDutch.data;
-
-    let titleObject = {
-        "en": reqData.title_en,
-        "dutch": reqData.title_dutch,
-    }
-
-    let existingData = await categoryModel.getByJSONTitle(titleObject);
-
-    if (!isEmpty(existingData)) {
-        return res.status(409).send({
-            "success": false,
-            "status": 409,
-            "message": existingData[0].status == "1" ? "Any of This Category Title Already Exists." : "Any of This Category Title Already Exists but Deactivate, You can activate it."
-        });
-    }
-
-    let data = {};
-    data.title = JSON.stringify(titleObject);
-    data.created_by = req.decoded.userInfo.id;
-    data.updated_by = req.decoded.userInfo.id;
-    data.created_at = await commonObject.getGMT();
-    data.updated_at = await commonObject.getGMT();
-
-    //  file codes
-    if (req.files && Object.keys(req.files).length > 0) {
-
-        let imageUploadCode = {};
-
-        //image code
-        if (req.files.image) {
-
-            imageUploadCode = await fileUploaderCommonObject.uploadFile(
-                req,
-                "categoryImage",
-                "image"
-            );
-
-            if (imageUploadCode.success == false) {
-                return res.status(400).send({
-                    success: false,
-                    status: 400,
-                    message: imageUploadCode.message,
-                });
-            }
-
-
-            data.image = imageUploadCode.fileName;
-        }
-    } else {
-        return res.status(400).send({
-            "success": false,
-            "status": 400,
-            "message": "Please Upload an Image",
-
-        });
-    }
-
-    let result = await categoryModel.addNew(data);
+    let result = await companyServiceModel.addNew(companyServiceObject);
 
     if (result.affectedRows == undefined || result.affectedRows < 1) {
         return res.status(500).send({
@@ -256,7 +172,7 @@ router.post('/add', [verifyToken], async (req, res) => {
     return res.status(201).send({
         "success": true,
         "status": 201,
-        "message": "Category Added Successfully."
+        "message": "Company Service Added Successfully."
     });
 
 });
@@ -287,7 +203,7 @@ router.put('/update', [verifyToken], async (req, res) => {
 
     }
 
-    let existingDataById = await categoryModel.getById(reqData.id);
+    let existingDataById = await companyServiceModel.getById(reqData.id);
     if (isEmpty(existingDataById)) {
 
         return res.status(404).send({
@@ -300,8 +216,6 @@ router.put('/update', [verifyToken], async (req, res) => {
         existingDataById[0].title = JSON.parse(existingDataById[0].title);
     }
 
-    let previousFile = existingDataById[0].image;
-
     let updateData = {};
 
     let errorMessage = "";
@@ -309,7 +223,7 @@ router.put('/update', [verifyToken], async (req, res) => {
     let willWeUpdate = 0; // 1 = yes , 0 = no;
 
     // title en
-    let validateTitleEn = await commonObject.characterLimitCheck(reqData.title_en, "Category");
+    let validateTitleEn = await commonObject.characterLimitCheck(reqData.title_en, "Company Service");
 
     if (validateTitleEn.success == false) {
         return res.status(400).send({
@@ -324,7 +238,7 @@ router.put('/update', [verifyToken], async (req, res) => {
     }
 
     // title dutch
-    let validateTitleDutch = await commonObject.characterLimitCheck(reqData.title_dutch, "Category");
+    let validateTitleDutch = await commonObject.characterLimitCheck(reqData.title_dutch, "Company Service");
 
     if (validateTitleDutch.success == false) {
         return res.status(400).send({
@@ -343,12 +257,12 @@ router.put('/update', [verifyToken], async (req, res) => {
         "dutch": isEmpty(updateData.title_dutch) ? existingDataById[0].title.dutch : updateData.title_dutch,
     }
 
-    let existingDataByTitle = await categoryModel.getByJSONTitle(titleObject);
+    let existingDataByTitle = await companyServiceModel.getByJSONTitle(titleObject);
 
     if (!isEmpty(existingDataByTitle) && existingDataByTitle[0].id != reqData.id) {
 
         isError = 1;
-        errorMessage += existingDataByTitle[0].status == "1" ? "Any of This Category Title Already Exist." : "Any of This Category Title Already Exist but Deactivate, You can activate it."
+        errorMessage += existingDataByTitle[0].status == "1" ? "Any of This Company Service Title Already Exist." : "Any of This Company Service Title Already Exist but Deactivate, You can activate it."
     }
 
 
@@ -367,33 +281,7 @@ router.put('/update', [verifyToken], async (req, res) => {
         data.updated_by = req.decoded.userInfo.id;
         data.updated_at = await commonObject.getGMT();
 
-        //  file codes
-        if (req.files && Object.keys(req.files).length > 0) {
-
-            let imageUploadCode = {};
-
-            //image code
-            if (req.files.image) {
-
-                imageUploadCode = await fileUploaderCommonObject.uploadFile(
-                    req,
-                    "categoryImage",
-                    "image"
-                );
-
-                if (imageUploadCode.success == false) {
-                    return res.status(200).send({
-                        success: false,
-                        status: 400,
-                        message: imageUploadCode.message,
-                    });
-                }
-
-                data.image = imageUploadCode.fileName;
-            }
-        }
-
-        let result = await categoryModel.updateById(reqData.id, data);
+        let result = await companyServiceModel.updateById(reqData.id, data);
 
         if (result.affectedRows == undefined || result.affectedRows < 1) {
             return res.status(500).send({
@@ -403,31 +291,11 @@ router.put('/update', [verifyToken], async (req, res) => {
             });
         }
 
-        // existing file delete
-        if (req.files && Object.keys(req.files).length > 0) {
-
-            // image delete
-            if (req.files.image) {
-
-                if (previousFile != data.image) {
-                    if (previousFile != "default_image.png") {
-                        let fileDelete = {};
-
-                        fileDelete = await fileUploaderCommonObject.fileRemove(
-                            previousFile,
-                            "categoryImage"
-                        );
-                    }
-                }
-            }
-
-        }
-
 
         return res.status(200).send({
             "success": true,
             "status": 200,
-            "message": "Category successfully updated."
+            "message": "Company Service successfully updated."
         });
 
 
@@ -445,6 +313,15 @@ router.put('/update', [verifyToken], async (req, res) => {
 
 router.delete('/delete', [verifyToken], async (req, res) => {
 
+    if (req.decoded.userInfo.role_id == 3) {
+        return res.status(403).send({
+            success: false,
+            status: 403,
+            message: "Can't access this route.",
+        });
+    }
+
+
     let reqData = {
         "id": req.body.id
     }
@@ -468,7 +345,15 @@ router.delete('/delete', [verifyToken], async (req, res) => {
 
     }
 
-    let existingDataById = await categoryModel.getById(reqData.id);
+    let company_id;
+    if (req.decoded.userInfo.role_id == 1) {
+        company_id = req.body.company_id;
+    } else {
+        company_id = req.decoded.profileInfo.company_id;
+    }
+
+    let existingDataById = await companyServiceModel.getDataByWhereCondition({ "id": reqData.id, "status": { "not eq": 0 }, "company_id": company_id });
+
     if (isEmpty(existingDataById)) {
 
         return res.status(404).send({
@@ -485,20 +370,8 @@ router.delete('/delete', [verifyToken], async (req, res) => {
         updated_at: await commonObject.getGMT()
     }
 
-    let result = await categoryModel.updateById(reqData.id, data);
-    let previousFile = existingDataById[0].image;
+    let result = await companyServiceModel.updateById(reqData.id, data);
 
-    // existing file delete
-    if (previousFile != null) {
-        if (previousFile != "default_image.png") {
-            let fileDelete = {};
-
-            fileDelete = await fileUploaderCommonObject.fileRemove(
-                previousFile,
-                "categoryImage"
-            );
-        }
-    }
 
     if (result.affectedRows == undefined || result.affectedRows < 1) {
         return res.status(500).send({
@@ -512,12 +385,12 @@ router.delete('/delete', [verifyToken], async (req, res) => {
     return res.status(200).send({
         "success": true,
         "status": 200,
-        "message": "Category successfully deleted."
+        "message": "Company Service successfully deleted."
     });
 
 });
 
-router.put('/changeStatus', [verifyToken], async (req, res) => {
+router.put('/change-status', [verifyToken], async (req, res) => {
 
     let reqData = {
         "id": req.body.id
@@ -542,7 +415,15 @@ router.put('/changeStatus', [verifyToken], async (req, res) => {
 
     }
 
-    let existingDataById = await categoryModel.getById(reqData.id);
+    let company_id;
+    if (req.decoded.userInfo.role_id == 1) {
+        company_id = req.body.company_id;
+    } else {
+        company_id = req.decoded.profileInfo.company_id;
+    }
+
+    let existingDataById = await companyServiceModel.getDataByWhereCondition({ "id": reqData.id, "status": [1, 2], "company_id": company_id });
+
     if (isEmpty(existingDataById)) {
 
         return res.status(404).send({
@@ -559,7 +440,7 @@ router.put('/changeStatus', [verifyToken], async (req, res) => {
         updated_at: await commonObject.getGMT()
     }
 
-    let result = await categoryModel.updateById(reqData.id, data);
+    let result = await companyServiceModel.updateById(reqData.id, data);
 
 
     if (result.affectedRows == undefined || result.affectedRows < 1) {
@@ -574,7 +455,7 @@ router.put('/changeStatus', [verifyToken], async (req, res) => {
     return res.status(200).send({
         "success": true,
         "status": 200,
-        "message": "Category status has successfully changed."
+        "message": "Company Service status has successfully changed."
     });
 
 });
@@ -597,7 +478,7 @@ router.get("/details/:id", [verifyToken], async (req, res) => {
         id = validateId.data;
     }
 
-    let result = await categoryModel.getById(id);
+    let result = await companyServiceModel.getById(id);
 
     if (isEmpty(result)) {
 
@@ -615,8 +496,7 @@ router.get("/details/:id", [verifyToken], async (req, res) => {
         return res.status(200).send({
             success: true,
             status: 200,
-            message: "Category Details.",
-            "imageFolderPath": imageFolderPath,
+            message: "Company Service Details.",
             data: result[0],
         });
 

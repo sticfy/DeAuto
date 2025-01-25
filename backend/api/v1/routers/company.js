@@ -8,6 +8,8 @@ const { v4: uuidv4 } = require("uuid");
 const commonObject = require('../common/common');
 const companyModel = require('../models/company');
 const companyUserModel = require('../models/company-user');
+const companyImageModel = require('../models/company-image');
+
 const tempUserModel = require('../models/temp-user');
 const userModel = require("../models/user");
 const roleModel = require("../models/role");
@@ -21,7 +23,7 @@ const verifyToken = require('../middlewares/jwt_verify/verifyToken');
 const verifyRegistrationUUID = require('../middlewares/jwt_verify/verifyRegistrationUUID');
 const verifyRegistrationToken = require('../middlewares/jwt_verify/verifyRegistrationToken');
 const verifyRegistrationTokenForAddingUser = require('../middlewares/jwt_verify/verifyRegistrationTokenForAddingUser');
-// const companyProfileUpdateValidation = require('../middlewares/requestData/companyProfileUpdate');
+const companyProfileUpdateValidation = require('../middlewares/requestData/company-data-update');
 const companyProfileDataValidation = require('../middlewares/requestData/company-user-registration');
 const { routeAccessChecker } = require('../middlewares/routeAccess');
 
@@ -32,8 +34,9 @@ const moment = require("moment");
 
 require('dotenv').config();
 
-let imageFolderPath = `${process.env.backend_url}${process.env.company_logo_path_name}`;
+let companyLogoFolderPath = `${process.env.backend_url}${process.env.company_logo_path_name}`;
 let companyUserImageFolderPath = `${process.env.backend_url}${process.env.company_user_image_path_name}`;
+let companyImageFolderPath = `${process.env.backend_url}${process.env.company_image_path_name}`;
 
 // routeAccessChecker("expertTypeList")
 
@@ -137,6 +140,8 @@ router.post('/list', [verifyToken], async (req, res) => {
         reqData.offset = 0;
     }
 
+    let dataSearchConditionObject = {};
+
     if (req.body.status == 0) {
         return res.status(400).send({
             "success": false,
@@ -157,9 +162,16 @@ router.post('/list', [verifyToken], async (req, res) => {
         dataSearchConditionObject.status = req.body.status;
     }
 
+    // company_name
+    if (!isEmpty(req.body.company_name) && !(req.body.company_name == undefined)) {
+        dataSearchConditionObject.company_name = {
+            "like": req.body.company_name
+        };
+    }
+
 
     let result = await companyModel.getDataByWhereCondition(
-        { "status": 1 },
+        dataSearchConditionObject,
         { "id": "ASC" },
         reqData.limit,
         reqData.offset
@@ -176,7 +188,7 @@ router.post('/list', [verifyToken], async (req, res) => {
         "success": true,
         "status": 200,
         "message": "Company List.",
-        "imageFolderPath": imageFolderPath,
+        "companyLogoFolderPath": companyLogoFolderPath,
         "totalCount": totalData[0].count,
         "count": result.length,
         "data": result
@@ -185,191 +197,249 @@ router.post('/list', [verifyToken], async (req, res) => {
 
 
 
-router.put('/update', [verifyToken], async (req, res) => {
+router.put('/update', [verifyToken, companyProfileUpdateValidation], async (req, res) => {
 
     let requestData = req.data;
 
-    let existingData = await companyModel.getDataByWhereCondition(
-        { id: requestData.id, status: 1 }
-    );
+    requestData.id = req.decoded.profileInfo.company_id;
+
+    let existingData = await companyModel.getById(requestData.id);
+    if (isEmpty(existingData)) {
+
+        return res.status(404).send({
+            "success": false,
+            "status": 404,
+            "message": "No company data found",
+
+        });
+    }
+
 
     let updateData = {};
     let willWeUpdate = 0; // 1 = yes , 0 = no;
 
-    // name
-    if (existingData[0].name !== requestData.name) {
-        willWeUpdate = 1;
-        updateData.name = requestData.name;
+    // kvk_no
+    if (existingData[0].kvk_no !== requestData.kvk_no) {
+
+        updateData.kvk_no = requestData.kvk_no;
     }
 
-    // url
-    if (existingData[0].website_url !== requestData.website_url) {
-        willWeUpdate = 1;
-        updateData.website_url = requestData.website_url;
+    // company_name
+    if (existingData[0].company_name !== requestData.company_name) {
+
+        updateData.company_name = requestData.company_name;
     }
 
     // email
     if (existingData[0].email !== requestData.email) {
-        willWeUpdate = 1;
+
         updateData.email = requestData.email;
     }
 
     // phone
     if (existingData[0].phone !== requestData.phone) {
-        willWeUpdate = 1;
+
         updateData.phone = requestData.phone;
     }
 
-    if (willWeUpdate == 1) {
 
-        updateData.updated_by = req.decoded.userInfo.id;
-        updateData.updated_at = await commonObject.getGMT();
+    // street
+    if (existingData[0].street !== requestData.street) {
 
-        let result = await companyModel.updateById(requestData.id, updateData);
-
-        if (result.affectedRows == undefined || result.affectedRows < 1) {
-            return res.status(500).send({
-                "success": true,
-                "status": 500,
-                "message": "Something Wrong in system database."
-            });
-        }
-
-        return res.status(200).send({
-            "success": true,
-            "status": 200,
-            "message": "Company data successfully updated."
-        });
-
-
-    } else {
-        return res.status(200).send({
-            "success": true,
-            "status": 200,
-            "message": "Nothing to update."
-        });
+        updateData.street = requestData.street;
     }
 
-});
+    // house_no
+    if (existingData[0].house_no !== requestData.house_no) {
 
-router.put('/update-logo', [verifyToken], async (req, res) => {
-
-    if (req.decoded.role.id != 2) {
-
-        return res.status(400).send({
-            "success": false,
-            "status": 400,
-            "message": "You cant update company profile."
-
-        });
+        updateData.house_no = requestData.house_no;
     }
 
-    let companyDetails = await companyModel.getDataByWhereCondition(
-        { "id": req.decoded.profileInfo.company_id }
-    );
+    // postal_code
+    if (existingData[0].postal_code !== requestData.postal_code) {
 
-    if (isEmpty(companyDetails)) {
-        return res.status(400).send({
-            "success": false,
-            "status": 400,
-            "message": "Invalid Company.."
-
-        });
+        updateData.postal_code = requestData.postal_code;
     }
 
-    let previousLogo = companyDetails[0].logo;
+    // province
+    if (existingData[0].province !== requestData.province) {
 
-    let updateData = {};
-    let updateUserData = {};
+        updateData.province = requestData.province;
+    }
 
-    let errorMessage = "";
-    let isError = 0; // 1 = yes, 0 = no
-    let willWeUpdate = 0; // 1 = yes , 0 = no;
-    let reqData = {};
-    //  image code
+    // city
+    if (existingData[0].city !== requestData.city) {
+
+        updateData.city = requestData.city;
+    }
+
+
+    //  file codes
+    let imageArray = [];
     if (req.files && Object.keys(req.files).length > 0) {
-        let fileUploadCode = {};
 
-        if (req.files.logo) {
+        // Ensure `req.files.image` is always an array
+        req.files.image = Array.isArray(req.files.image) ? req.files.image : [req.files.image];
 
-            fileUploadCode = await fileUploaderCommonObject.uploadFile(
-                req,
-                "companyLogo",
-                "logo"
+        let imageObject = {};
+        for (let i = 0; i < req.files.image.length; i++) {
+
+            let imageElement = req.files.image[i];
+
+            // Call the uploader with the specific file
+            let imageUploadCode = await fileUploaderCommonObject.uploadFile(
+                { files: { image: imageElement } }, // Create a temporary request object
+                "companyImage",
+                "image"
             );
 
-            if (fileUploadCode.success == false) {
+            if (imageUploadCode.success === false) {
                 return res.status(400).send({
                     success: false,
                     status: 400,
-                    message: fileUploadCode.message,
+                    message: imageUploadCode.message,
                 });
             }
 
-            willWeUpdate = 1;
-            updateData.logo = fileUploadCode.fileName;
-        }
+            imageObject.company_id = requestData.id;
+            imageObject.image = imageUploadCode.fileName;
+            imageObject.created_by = req.decoded.userInfo.id;
+            imageObject.updated_by = req.decoded.userInfo.id;
+            imageObject.created_at = await commonObject.getGMT();
+            imageObject.updated_at = await commonObject.getGMT();
 
-    } else {
-        isError = 1;
-        errorMessage += "Please Provide an Image";
+            imageArray.push(imageObject);
+        }
     }
 
-    if (isError == 1) {
-        return res.status(400).send({
-            "success": false,
-            "status": 400,
-            "message": errorMessage
-        });
-    }
+    updateData.updated_by = req.decoded.userInfo.id;
+    updateData.updated_at = await commonObject.getGMT();
 
-    if (willWeUpdate == 1) {
+    let result = await companyModel.updateCompanyAndImageById(requestData.id, updateData, imageArray);
 
-        updateData.updated_by = req.decoded.userInfo.id;
-        updateData.updated_at = await commonObject.getGMT();
-
-        let result = await companyModel.updateById(companyDetails[0].id, updateData)
-
-        if (result.affectedRows == undefined || result.affectedRows < 1) {
-            return res.status(500).send({
-                success: true,
-                status: 500,
-                message: "Something Wrong in system database.",
-            });
-        }
-
-        //existing image delete
-        if (req.files && Object.keys(req.files).length > 0) {
-            // profile image delete
-
-            if (req.files.logo) {
-                if (previousLogo != updateData.profile_image) {
-                    if (previousLogo != "default_profile_image.png") {
-                        let fileDelete = {};
-
-                        fileDelete = await fileUploaderCommonObject.fileRemove(
-                            previousLogo,
-                            "companyLogo"
-                        );
-
-                    }
-                }
-            }
-
-        }
-
-
-        return res.status(200).send({
+    if (result.affectedRows == undefined || result.affectedRows < 1) {
+        return res.status(500).send({
             "success": true,
-            "status": 200,
-            "message": "Company Logo successfully updated."
+            "status": 500,
+            "message": "Something Wrong in system database."
         });
-
-
     }
+
+    return res.status(200).send({
+        "success": true,
+        "status": 200,
+        "message": "Company data successfully updated."
+    });
+
+
+
+
 });
 
 
+router.put('/update-location', [verifyToken], async (req, res) => {
+
+
+    if (req.decoded.role.id != 2) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "You cant access this."
+        });
+    }
+
+    let reqData = {
+        "company_id": req.body.company_id,
+        "latitude": req.body.latitude,
+        "longitude": req.body.longitude
+    }
+
+    reqData.updated_by = req.decoded.userInfo.id;
+
+    let validateId = await commonObject.checkItsNumber(reqData.company_id);
+
+
+    if (validateId.success == false) {
+
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Value should be integer."
+
+        });
+    } else {
+        req.body.company_id = validateId.data;
+        reqData.company_id = validateId.data;
+
+    }
+
+    let existingDataById = await companyModel.getById(reqData.company_id);
+    if (isEmpty(existingDataById)) {
+
+        return res.status(404).send({
+            "success": false,
+            "status": 404,
+            "message": "No data found",
+
+        });
+    }
+
+    if (existingDataById[0].id != req.decoded.profileInfo.company_id) {
+        return res.status(404).send({
+            "success": false,
+            "status": 404,
+            "message": "This is not your company",
+
+        });
+    }
+
+    if (isEmpty(reqData.latitude) || isEmpty(reqData.longitude)) {
+        return res.status(404).send({
+            "success": false,
+            "status": 404,
+            "message": "Location should not be empty",
+
+        });
+    }
+
+    // check latitude and longitude
+    let locationValue = await commonObject.validateLatitudeLongitude(reqData.latitude, reqData.longitude);
+
+    if (locationValue.success == false) {
+        return res.status(404).send({
+            "success": false,
+            "status": 404,
+            "message": "Invalid Location",
+
+        });
+    }
+
+    let data = {
+        latitude: reqData.latitude,
+        longitude: reqData.longitude,
+        updated_by: reqData.updated_by,
+        updated_at: await commonObject.getGMT()
+    }
+
+    let result = await companyModel.updateCompanyDataById(existingDataById[0].id, data);
+
+
+    if (result.affectedRows == undefined || result.affectedRows < 1) {
+        return res.status(500).send({
+            "success": true,
+            "status": 500,
+            "message": "Something Wrong in system database."
+        });
+    }
+
+
+    return res.status(200).send({
+        "success": true,
+        "status": 200,
+        "message": "Location status has successfully changed."
+    });
+
+});
 
 router.delete('/delete', [verifyToken], async (req, res) => {
 
@@ -421,7 +491,7 @@ router.delete('/delete', [verifyToken], async (req, res) => {
         updated_at: await commonObject.getGMT()
     }
 
-    let result = await companyModel.updateById(reqData.id, data);
+    let result = await companyModel.updateCompanyDataById(reqData.id, data);
 
 
     if (result.affectedRows == undefined || result.affectedRows < 1) {
@@ -491,7 +561,7 @@ router.put('/change-status', [verifyToken], async (req, res) => {
         updated_at: await commonObject.getGMT()
     }
 
-    let result = await companyModel.updateById(reqData.id, data);
+    let result = await companyModel.updateCompanyDataById(reqData.id, data);
 
 
     if (result.affectedRows == undefined || result.affectedRows < 1) {
@@ -511,13 +581,155 @@ router.put('/change-status', [verifyToken], async (req, res) => {
 
 });
 
+router.put('/update-availability', [verifyToken], async (req, res) => {
+
+
+    let reqData = {
+        "company_id": req.body.company_id,
+        "available_days": req.body.available_days,
+    }
+
+    reqData.updated_by = req.decoded.userInfo.id;
+
+    let validateId = await commonObject.checkItsNumber(reqData.company_id);
+
+
+    if (validateId.success == false) {
+
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Value should be integer."
+
+        });
+    } else {
+        req.body.company_id = validateId.data;
+        reqData.company_id = validateId.data;
+
+    }
+
+    let existingDataById = await companyModel.getById(reqData.company_id);
+    if (isEmpty(existingDataById)) {
+
+        return res.status(404).send({
+            "success": false,
+            "status": 404,
+            "message": "No data found",
+
+        });
+    }
+
+    if (req.decoded.profileInfo.company_id != existingDataById[0].id) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "This is not your company user"
+        });
+    }
+
+
+    if (!isEmpty(reqData.available_days)) {
+
+        let keys = Object.keys(reqData.available_days);
+
+        let values = Object.values(reqData.available_days);
+
+        // Check if all values are 1 or 2
+        const isValid = values.every(value => value == 0 || value == 1);
+
+        if (!isValid) {
+            return res.status(404).send({
+                "success": false,
+                "status": 404,
+                "message": "Invalid Values",
+
+            });
+        } else {
+            reqData.available_days = JSON.stringify(reqData.available_days);
+        }
+
+    } else {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Available days should not be empty."
+        });
+    }
+
+    let data = {
+        available_days: reqData.available_days,
+        updated_by: reqData.updated_by,
+        updated_at: await commonObject.getGMT()
+    }
+
+    let result = await companyModel.updateCompanyDataById(reqData.company_id, data);
+
+    if (result.affectedRows == undefined || result.affectedRows < 1) {
+        return res.status(500).send({
+            "success": true,
+            "status": 500,
+            "message": "Something Wrong in system database."
+        });
+    }
+
+
+    return res.status(200).send({
+        "success": true,
+        "status": 200,
+        "message": "Company Available days has successfully changed."
+    });
+
+});
+
+router.get("/my-company-details", [verifyToken], async (req, res) => {
+
+    let companyDetailsById = await companyModel.getById(req.decoded.profileInfo.company_id);
+
+    if (isEmpty(companyDetailsById)) {
+
+        return res.status(404).send({
+            "success": false,
+            "status": 404,
+            "message": "No data found",
+
+        });
+    }
+
+    if (!isEmpty(companyDetailsById[0].available_days)) {
+        companyDetailsById[0].available_days = JSON.parse(companyDetailsById[0].available_days);
+    }
+
+    let companyImages = await companyImageModel.getDataByWhereCondition(
+        { company_id: req.decoded.profileInfo.company_id, status: 1 }, undefined, undefined, undefined, ["id", "image", "status"]
+    );
+
+    if (isEmpty(companyImages)) {
+        companyDetailsById[0].companyImages = [];
+    } else {
+        companyDetailsById[0].companyImages = companyImages;
+    }
+
+
+    return res.status(200).send({
+        success: true,
+        status: 200,
+        message: "Company Details.",
+        companyLogoFolderPath: companyLogoFolderPath,
+        companyImageFolderPath: companyImageFolderPath,
+        data: companyDetailsById[0],
+    });
+
+}
+
+
+);
+
 router.get("/details/:id", [verifyToken], async (req, res) => {
 
 
     let id = req.params.id;
 
     let validateId = await commonObject.checkItsNumber(id);
-
 
     if (validateId.success == false) {
         return res.status(400).send({
@@ -539,29 +751,128 @@ router.get("/details/:id", [verifyToken], async (req, res) => {
         }
     }
 
-    let result = await companyModel.getById(id);
+    let companyDetailsById = await companyModel.getById(id);
 
-    if (isEmpty(result)) {
+    if (isEmpty(companyDetailsById)) {
 
         return res.status(404).send({
-            success: false,
-            status: 404,
-            message: "No data found",
-        });
+            "success": false,
+            "status": 404,
+            "message": "No data found",
 
-    } else {
-        return res.status(200).send({
-            success: true,
-            status: 200,
-            message: "Company Details.",
-            imageFolderPath: imageFolderPath,
-            data: result[0],
         });
+    }
+
+    if (!isEmpty(companyDetailsById[0].available_days)) {
+        companyDetailsById[0].available_days = JSON.parse(companyDetailsById[0].available_days);
+    }
+
+    let companyImages = await companyImageModel.getDataByWhereCondition(
+        { company_id: id, status: 1 }, undefined, undefined, undefined, ["id", "image", "status"]
+    );
+
+    if (isEmpty(companyImages)) {
+        companyDetailsById[0].companyImages = [];
+    } else {
+        companyDetailsById[0].companyImages = companyImages;
+    }
+
+
+    return res.status(200).send({
+        success: true,
+        status: 200,
+        message: "Company Details.",
+        companyLogoFolderPath: companyLogoFolderPath,
+        companyImageFolderPath: companyImageFolderPath,
+        data: companyDetailsById[0],
+    });
+}
+);
+
+
+
+// delete company images
+router.delete('/delete-company-image', [verifyToken], async (req, res) => {
+
+    let reqData = {
+        "id": req.body.id
+    }
+
+    reqData.updated_by = req.decoded.userInfo.id;
+
+    let validateId = await commonObject.checkItsNumber(reqData.id);
+
+    if (validateId.success == false) {
+
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Value should be integer."
+
+        });
+    } else {
+        req.body.id = validateId.data;
+        reqData.id = validateId.data;
 
     }
 
-}
-);
+    let existingDataById = await companyImageModel.getById(reqData.id);
+    if (isEmpty(existingDataById)) {
+
+        return res.status(404).send({
+            "success": false,
+            "status": 404,
+            "message": "No data found",
+
+        });
+    }
+
+    let previousFile = existingDataById[0].image;
+
+    if (req.decoded.profileInfo.company_id != existingDataById[0].company_id) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "This is not your company user"
+        });
+    }
+
+    let data = {
+        status: 0,
+        updated_by: reqData.updated_by,
+        updated_at: await commonObject.getGMT()
+    }
+
+    let result = await companyImageModel.updateById(reqData.id, data);
+
+    // existing file delete
+    if (previousFile != null) {
+        if (previousFile != "default_image.png") {
+            let fileDelete = {};
+
+            fileDelete = await fileUploaderCommonObject.fileRemove(
+                previousFile,
+                "companyImage"
+            );
+        }
+    }
+
+    if (result.affectedRows == undefined || result.affectedRows < 1) {
+        return res.status(500).send({
+            "success": true,
+            "status": 500,
+            "message": "Something Wrong in system database."
+        });
+    }
+
+
+    return res.status(200).send({
+        "success": true,
+        "status": 200,
+        "message": "Company Image successfully deleted."
+    });
+
+});
 
 
 // company users add
@@ -957,443 +1268,6 @@ router.delete("/delete-company-user", [verifyToken], async (req, res) => {
         status: 201,
         message: "User successfully deleted",
     });
-});
-
-
-// pending users
-router.get("/pending-user", [verifyToken], async (req, res) => {
-
-    if (req.decoded.role.id != 2) {
-        return res.status(400).send({
-            "success": false,
-            "status": 400,
-            "message": "You cant access this."
-        });
-    }
-
-    let result = await tempUserModel.getDataByWhereCondition(
-        { company_id: req.decoded.profileInfo.company_id, status: 1 }
-    );
-
-    let finalData = [];
-    for (let index = 0; index < result.length; index++) {
-
-        let data = {};
-        const element = result[index];
-
-        let details = JSON.parse(element.details);
-
-        data.id = element.id;
-        data.name = details.name;
-        data.email = details.email;
-
-        finalData.push(data);
-
-    }
-
-    return res.status(200).send({
-        "success": true,
-        "status": 200,
-        "count": finalData.length,
-        "message": finalData
-    });
-}
-);
-
-
-router.post('/revoke-invite', [verifyToken], async (req, res) => {
-
-    if (req.decoded.role.id != 2) {
-        return res.status(400).send({
-            "success": false,
-            "status": 400,
-            "message": "You cant access this."
-        });
-    }
-
-    let reqData = {
-        "id": req.body.id
-    }
-
-
-    let validateId = await commonObject.checkItsNumber(reqData.id);
-    if (validateId.success == false) {
-
-        return res.status(400).send({
-            "success": false,
-            "status": 400,
-            "message": "Value should be integer."
-        });
-
-    } else {
-        req.body.id = validateId.data;
-        reqData.id = validateId.data;
-    }
-
-    let existingDataById = await tempUserModel.getDataByWhereCondition(
-        { company_id: req.decoded.profileInfo.company_id, id: reqData.id, status: 1 }
-    );
-
-    if (isEmpty(existingDataById)) {
-
-        return res.status(404).send({
-            "success": false,
-            "status": 404,
-            "message": "No data found",
-
-        });
-    }
-
-    let data = {
-        status: 0
-    }
-
-    let result = await tempUserModel.updateById(reqData.id, data);
-
-    if (result.affectedRows == undefined || result.affectedRows < 1) {
-        return res.status(500).send({
-            "success": true,
-            "status": 500,
-            "message": "Something Wrong in system database."
-        });
-    } else {
-
-        try {
-
-            let creatorName = req.decoded.profileInfo.name;
-            let messageForPushNotification = `Invitation revoked successfully!`;
-            let messageForGeneralNotification = `${creatorName} revoke invitation.`;
-
-            let userIdList = [];
-
-            if ([3, 4, "3", "4", 2, "2"].includes(req.decoded.role.id)) {
-                let superAdminList = await userModel.getDataByWhereCondition(
-                    { "status": 1, "role_id": 1 }
-                );
-                superAdminList.forEach(e => { userIdList.push(e.id) })
-            } else {
-                let companyAdminList = await userModel.getDataByWhereCondition(
-                    { "status": 1, "profile_id": { "IN QUERY": `Select id from asteric_company_users where company_id = ${req.decoded.profileInfo.company_id}` }, "role_id": 2 }
-                );
-                companyAdminList.forEach(e => { userIdList.push(e.id) })
-            }
-
-
-            for (let index = 0; index < userIdList.length; index++) {
-
-                if (userIdList[index] != req.decoded.userInfo.id) {
-                    notificationObject.notificationByUserID(userIdList[index], {
-                        "sender_id": req.decoded.userInfo.id,
-                        "title": messageForPushNotification,
-                        "type": "user_invitation",
-                        "type_related_id": reqData.id,
-                        "url": ``,
-                        "message": messageForGeneralNotification,
-                        "created_by": req.decoded.userInfo.id,
-                        "updated_by": req.decoded.userInfo.id,
-                        "sentPushNotification": true
-                    });
-                }
-            }
-
-        } catch (error) { }
-    }
-
-
-    return res.status(200).send({
-        "success": true,
-        "status": 200,
-        "message": "Invitation Revoked successfully."
-    });
-
-});
-
-router.post('/resend-invite', [verifyToken], async (req, res) => {
-
-    if (req.decoded.role.id != 2) {
-        return res.status(400).send({
-            "success": false,
-            "status": 400,
-            "message": "You cant access this."
-        });
-    }
-
-    let reqData = {
-        "id": req.body.id
-    }
-
-
-    let validateId = await commonObject.checkItsNumber(reqData.id);
-    if (validateId.success == false) {
-
-        return res.status(400).send({
-            "success": false,
-            "status": 400,
-            "message": "Value should be integer."
-
-        });
-    } else {
-        req.body.id = validateId.data;
-        reqData.id = validateId.data;
-
-    }
-
-    let existingDataById = await tempUserModel.getDataByWhereCondition(
-        { company_id: req.decoded.profileInfo.company_id, id: reqData.id, status: 1 }
-    );
-
-    if (isEmpty(existingDataById)) {
-
-        return res.status(404).send({
-            "success": false,
-            "status": 404,
-            "message": "No data found",
-
-        });
-    }
-
-    // Email already in use check
-    let existingUserByEmail = await userModel.getDataByWhereCondition(
-        { "email": existingDataById[0].email, "status": [1, 2] }
-    );
-
-    if (!isEmpty(existingUserByEmail)) {
-
-        let deleteData = {};
-        deleteData.status = 0;
-        let tempUser = await tempUserModel.updateById(reqData.id, deleteData);
-
-        if (tempUser.affectedRows == undefined || tempUser.affectedRows < 1) {
-            return res.status(500).send({
-                "success": true,
-                "status": 500,
-                "message": "Something Wrong in system database."
-            });
-        }
-
-        return res.status(409).send({
-            success: false,
-            status: 409,
-            message: "This Email already in use."
-        });
-    }
-
-    // create new token and send email again
-    let detailsData = JSON.parse(existingDataById[0].details);
-    let password = detailsData.main_password;
-
-    let payloadData = {};
-    payloadData.email = existingDataById[0].email;
-    payloadData.phone = detailsData.phone;
-    payloadData.name = detailsData.name;
-    payloadData.company_id = detailsData.company_id;
-    payloadData.timePeriod = await commonObject.addTwentyFourHourToGMT();
-
-    //  "Generate Token"
-    let token = jwt.sign(payloadData, global.config.secretKey, {
-        algorithm: global.config.algorithm,
-        expiresIn: '1440m', // 1 day
-    });
-
-    let data = {
-        token: token,
-        created_at: await commonObject.getGMT(),
-    }
-
-    let result = await tempUserModel.updateById(reqData.id, data);
-
-    if (result.affectedRows == undefined || result.affectedRows < 1) {
-        return res.status(500).send({
-            "success": true,
-            "status": 500,
-            "message": "Something Wrong in system database."
-        });
-    } else {
-
-        try {
-            let creatorName = req.decoded.profileInfo.name;
-            let messageForPushNotification = `Invitation sent!`;
-            let messageForGeneralNotification = `${creatorName} sent invitation.`;
-
-            let userIdList = [];
-
-            if ([3, 4, "3", "4", 2, "2"].includes(req.decoded.role.id)) {
-                let superAdminList = await userModel.getDataByWhereCondition(
-                    { "status": 1, "role_id": 1 }
-                );
-                superAdminList.forEach(e => { userIdList.push(e.id) })
-            } else {
-                let companyAdminList = await userModel.getDataByWhereCondition(
-                    { "status": 1, "profile_id": { "IN QUERY": `Select id from asteric_company_users where company_id = ${req.decoded.profileInfo.company_id}` }, "role_id": 2 }
-                );
-                companyAdminList.forEach(e => { userIdList.push(e.id) })
-            }
-
-
-            for (let index = 0; index < userIdList.length; index++) {
-
-                if (userIdList[index] != req.decoded.userInfo.id) {
-                    notificationObject.notificationByUserID(userIdList[index], {
-                        "sender_id": req.decoded.userInfo.id,
-                        "title": messageForPushNotification,
-                        "type": "user_invitation",
-                        "type_related_id": reqData.id,
-                        "url": ``,
-                        "message": messageForGeneralNotification,
-                        "created_by": req.decoded.userInfo.id,
-                        "updated_by": req.decoded.userInfo.id,
-                        "sentPushNotification": true
-                    });
-                }
-            }
-
-        } catch (error) { }
-    }
-
-    // mail sending
-    let receiverMail = existingDataById[0].email;
-
-    let sendEmail = await emailCommonObject.sentEmailByHtmlFormate(
-        receiverMail,
-        "Invitation to join Asteric CRM",
-        `You have got a joining request.Your email is ${receiverMail}
-        and password is ${password}.Request is valid for 24 hours`,
-        "Go to Asteric CRM",
-        `${process.env.frontend_url}/auth/login/${token}`
-    );
-
-
-    return res.status(200).send({
-        "success": true,
-        "status": 200,
-        "message": "Invitation Resend successfully."
-    });
-
-});
-
-router.post("/accept-invite", [verifyRegistrationTokenForAddingUser], async (req, res) => {
-
-    let reqUserData = req.decoded;
-
-    let userInfo = {};
-    let companyUserInfo = {};
-    let dateTimeNowGMT = await commonObject.getGMT();
-
-
-    if (reqUserData.email !== undefined) {
-        // Email already in use check
-        let existingUserByEmail = await userModel.getDataByWhereCondition(
-            { "email": reqUserData.email, "status": [1, 2] }
-        );
-
-        if (!isEmpty(existingUserByEmail)) {
-            return res.status(409).send({
-                success: false,
-                status: 409,
-                message: "Email already in use."
-            });
-        }
-
-    }
-
-    let tempUserData = await tempUserModel.getDataByWhereCondition(
-        { "token": req.token, "status": 1 }
-    );
-
-    if (isEmpty(tempUserData)) {
-        return res.status(400).send({
-            "success": false,
-            "status": 400,
-            "message": "Invalid token."
-        });
-    }
-
-    let detailsData = JSON.parse(tempUserData[0].details);
-
-    let permissions = detailsData.permissions;
-
-    // validate permission data
-    for (let i = 0; i < permissions.length; i++) {
-        let permissionDetails = await permissionModel.getDataByWhereCondition(
-            { "status": 1, "id": permissions[i] }
-        );
-
-        if (isEmpty(permissionDetails)) {
-            return res.status(404).send({
-                "success": false,
-                "status": 404,
-                "message": `No Permission id  found on ${permissions[i]}`,
-
-            });
-        }
-    }
-
-
-    // company user data
-    companyUserInfo.company_id = tempUserData[0].company_id;
-    companyUserInfo.role_id = detailsData.role_id;
-    companyUserInfo.name = detailsData.name;
-    companyUserInfo.email = tempUserData[0].email;
-    companyUserInfo.phone = detailsData.phone;
-    companyUserInfo.created_at = dateTimeNowGMT;
-    companyUserInfo.updated_at = dateTimeNowGMT;
-    companyUserInfo.created_by = detailsData.created_by;
-    companyUserInfo.updated_by = detailsData.updated_by;
-
-
-    // user data
-    userInfo.email = tempUserData[0].email;
-    userInfo.phone = detailsData.phone;
-    userInfo.role_id = detailsData.role_id;;
-    userInfo.updated_at = dateTimeNowGMT;
-    userInfo.password = detailsData.password;
-
-
-    // package code
-    let enrollPackageDetails = await companySubscribedPackageModel.getDataByWhereCondition(
-        { "status": 1, "company_id": tempUserData[0].company_id }
-    );
-
-    if (isEmpty(enrollPackageDetails)) {
-        return res.status(400).send({
-            "success": false,
-            "status": 400,
-            "message": "Something is wrong. So you can't accept this invite."
-        });
-    } else if (enrollPackageDetails[0].total_available_user < 1) {
-        return res.status(400).send({
-            "success": false,
-            "status": 400,
-            "message": "User limit over. So you can't accept this invite."
-        });
-    }
-
-    let companySubscribedPackageData = {
-        "id": enrollPackageDetails[0].id,
-        "data": {
-            "total_available_user": enrollPackageDetails[0].total_available_user - 1,
-            "updated_at": dateTimeNowGMT
-        }
-    }
-
-
-    let result = await userModel.addNewCompanyUser(userInfo, companyUserInfo, tempUserData[0], permissions, companySubscribedPackageData);
-
-    if (result.affectedRows == undefined || result.affectedRows < 1) {
-        return res.status(500).send({
-            success: true,
-            status: 500,
-            result: result,
-            message: "Something Wrong in system database.",
-        });
-    }
-
-    return res.status(201).send({
-        success: true,
-        status: 201,
-        message: "Company User has Registered Successfully ."
-    });
-
 });
 
 

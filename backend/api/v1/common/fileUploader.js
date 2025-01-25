@@ -49,12 +49,28 @@ let uploadFileFormate = [{
 },
 
 {
-    fileType: "bannerImage",
+    fileType: "companyImage",
+    maxSize: 15 * 1024, //  MB TO KB
+    mimetype: ["jpg", "jpeg", "png"],
+    fileSavePath: process.env.company_image_path,
+    willEncrypt: false
+},
+
+{
+    fileType: "companyUserImage",
     maxSize: 15 * 1024, //  MB TO KB
     mimetype: ["jpg", "jpeg", "png"],
     fileSavePath: process.env.company_user_image_path,
     willEncrypt: false
 },
+{
+    fileType: "categoryImage",
+    maxSize: 15 * 1024, //  MB TO KB
+    mimetype: ["jpg", "jpeg", "png"],
+    fileSavePath: process.env.category_image_path,
+    willEncrypt: false
+},
+
 
 {
     fileType: "dealerBulkUpload",

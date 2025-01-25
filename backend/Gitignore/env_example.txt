@@ -23,6 +23,15 @@ company_logo_path = "public/upload/images/company/logo/"
 company_user_image_path_name = "/company-user"
 company_user_image_path = "public/upload/images/company/user/"
 
+company_image_path_name = "/company-image"
+company_image_path = "public/upload/images/company/image/"
+
+flag_image_path_name = "/flag-image"
+flag_image_path = "public/default/images/flags/"
+
+category_image_path_name = "/category"
+category_image_path = "public/upload/images/category/"
+
 send_email_host="smtp.zoho.com"
 send_email_address="shovon56.study@zohomail.com"
 send_email_password="shovonMedinatec12"

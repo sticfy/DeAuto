@@ -111,7 +111,7 @@ let characterLimitCheck = async (value = "", modelField = "", willAllowExtraSpac
 
     {
         modelField: "Category",
-        maxLength: 255,
+        maxLength: 60,
         minLength: 2,
         isAllowStartWithNumeric: false,
         isAllowStartWithSpecialCharacter: false,
@@ -141,7 +141,7 @@ let characterLimitCheck = async (value = "", modelField = "", willAllowExtraSpac
 
     {
         modelField: "Package",
-        maxLength: 255,
+        maxLength: 60,
         minLength: 2,
         isAllowStartWithNumeric: true,
         isAllowStartWithSpecialCharacter: false,
@@ -184,7 +184,7 @@ let characterLimitCheck = async (value = "", modelField = "", willAllowExtraSpac
         minimumNumberCharacter: 0
     },
 
-    
+
     {
         modelField: "Content Format Type",
         maxLength: 50,
@@ -260,7 +260,7 @@ let characterLimitCheck = async (value = "", modelField = "", willAllowExtraSpac
         minimumNumberCharacter: 0
     },
 
-    
+
     {
         modelField: "Designation",
         maxLength: 100,
@@ -465,27 +465,27 @@ let getGMT = async (dateTime = undefined) => { // now gmt is set for dhaka , che
 
 let addFiveMinuteToGMT = async (dateTime = undefined) => {
     let fiveMinuteToGMT = "";
-  
+
     if (dateTime === undefined) {
         let currentTZ = momentTZ().tz("Europe/Amsterdam").format();
         fiveMinuteToGMT = moment(currentTZ, "YYYY-MM-DD HH:mm:ss").add(5, 'minutes').format("YYYY-MM-DD HH:mm:ss");
     } else {
         fiveMinuteToGMT = moment(dateTime, "YYYY-MM-DD HH:mm:ss").add(5, 'minutes').format("YYYY-MM-DD HH:mm:ss");
     }
-  
+
     return fiveMinuteToGMT;
 };
 
 let addSixtyMinuteToGMT = async (dateTime = undefined) => {
     let fiveMinuteToGMT = "";
-  
+
     if (dateTime === undefined) {
         let currentTZ = momentTZ().tz("Europe/Amsterdam").format();
         fiveMinuteToGMT = moment(currentTZ, "YYYY-MM-DD HH:mm:ss").add(60, 'minutes').format("YYYY-MM-DD HH:mm:ss");
     } else {
         fiveMinuteToGMT = moment(dateTime, "YYYY-MM-DD HH:mm:ss").add(60, 'minutes').format("YYYY-MM-DD HH:mm:ss");
     }
-  
+
     return fiveMinuteToGMT;
 };
 
@@ -659,6 +659,22 @@ let checkItsNumber = async (value) => {
 
     //console.log(result);
     return result;
+};
+
+let validateLatitudeLongitude = async (latitude, longitude) => {
+
+
+    // Validate latitude (must be between -90 and 90)
+    if (latitude < -90 || latitude > 90) {
+        return { success: false, message: 'Invalid latitude. It should be between -90 and 90.' };
+    }
+
+    // Validate longitude (must be between -180 and 180)
+    if (longitude < -180 || longitude > 180) {
+        return { success: false, message: 'Invalid longitude. It should be between -180 and 180.' };
+    }
+
+    return { success: true, message: 'Valid latitude and longitude.' };
 };
 
 // image file validate
@@ -1056,7 +1072,7 @@ let convertToEnglishDigits = async (number = 0) => {
         if (digits.hasOwnProperty(number[i])) {
             output.push(digits[number[i]]);
         } else {
-            return { "success": false, "message": "Invalid Digit"};
+            return { "success": false, "message": "Invalid Digit" };
         }
     }
 
@@ -1151,5 +1167,6 @@ module.exports = {
     getWeekDay,
     getTestListByClientId,
     convertToEnglishDigits,
-    addSixtyMinuteToGMT
+    addSixtyMinuteToGMT,
+    validateLatitudeLongitude
 };

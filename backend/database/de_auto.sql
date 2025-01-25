@@ -483,8 +483,8 @@ INSERT INTO `deautodb_otp` (`id`, `unique_id`, `sent_media`, `otp`, `counter`, `
 CREATE TABLE `deautodb_payment_packages` (
   `id` int(15) NOT NULL,
   `country_code` int(10) NOT NULL DEFAULT 1,
-  `title` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`title`)),
-  `details` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`details`)),
+  `title` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT 'Unknown' CHECK (json_valid(`title`)),
+  `details` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '\' \'' CHECK (json_valid(`details`)),
   `duration` int(11) NOT NULL DEFAULT 1,
   `service_limit` int(10) NOT NULL DEFAULT 0,
   `appointment_limit` int(10) NOT NULL DEFAULT 0,

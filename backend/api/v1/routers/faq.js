@@ -61,7 +61,7 @@ router.get('/activeList', [verifyToken], async (req, res) => {
     });
 });
 
-router.post('/list', [verifyToken], async (req, res) => {
+router.post('/list', [], async (req, res) => {
 
     let language = req.headers['language']; // Default to English if language is not specified
 
