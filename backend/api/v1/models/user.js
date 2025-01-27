@@ -752,13 +752,23 @@ let regenerateWhereField = (whereObject = {}, language = undefined) => {
                 if (['JSON', "LONGTEXT"].includes(databaseColum[index].type.toUpperCase())) {
 
                     let tempWhereObject = {};
+                    let isItLikeOperation = false;
+                    let newOperator = "GR||&&";
+
+                    if (typeof whereObject[keyName] === 'object' && (Object.keys(whereObject[keyName])[0]).toUpperCase() === "LIKE") {
+                        newOperator = "GRL||&&";
+                        isItLikeOperation = true;
+                    }
 
                     for (let languageIndex = 0; languageIndex < languageList.length; languageIndex++) {
                         const language = languageList[languageIndex];
-                        tempWhereObject[`${dbColumName}->>'$.${language.short_name}'`] = whereObject[keyName];
+                        tempWhereObject[`LOWER(${dbColumName}->>'$.${language.short_name}')`] = isItLikeOperation ? whereObject[keyName].like : whereObject[keyName];
+                        try {
+                            tempWhereObject[`LOWER(${dbColumName}->>'$.${language.short_name}')`] = tempWhereObject[`LOWER(${dbColumName}->>'$.${language.short_name}')`].toLowerCase();
+                        } catch (error) { }
                     }
 
-                    finalWhere["GR||&&"] = tempWhereObject;
+                    finalWhere[newOperator] = tempWhereObject;
 
                 } else finalWhere[`${dbColumName}`] = whereObject[keyName];
 

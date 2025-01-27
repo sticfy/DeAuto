@@ -22,10 +22,12 @@ process.env.TZ = 'UTC/GMT-6';
 
 
 global.config.language = [
-    {"id": 1, "name": "English", "short_name": "en", "image": "en.png", "is_default": false},
-    {"id": 2, "name": "Dutch", "short_name": "du", "image": null, "is_default": true}
+    { "id": 1, "name": "English", "short_name": "en", "image": "en.png", "is_default": false },
+    { "id": 2, "name": "Dutch", "short_name": "du", "image": "du.png", "is_default": true }
 ];
-  
+
+global.config.default_language = "du";
+
 
 // give publicly access for call public path
 app.use(express.static(__dirname + '/public'));

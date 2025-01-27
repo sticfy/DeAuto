@@ -4,7 +4,7 @@ let table_name = "deautodb_admins";
 let user_table_name = "deautodb_users";
 
 let getAllList = () => {
-  return `SELECT ${table_name}.id , ${table_name}.name ,${table_name}.code ,  ${table_name}.email ,
+    return `SELECT ${table_name}.id , ${table_name}.name ,${table_name}.code ,  ${table_name}.email ,
     ${table_name}.phone , ${table_name}.profile_image , ${table_name}.address , ${table_name}.status ,
     ${user_table_name}.id as user_id FROM ${table_name} 
     JOIN ${user_table_name} on (${table_name}.id = ${user_table_name}.profile_id) 
@@ -13,45 +13,45 @@ let getAllList = () => {
 };
 
 let getById = () => {
-  return `SELECT id, name,code, email, phone, profile_image, address, status FROM ${table_name} where  id = ?  and status = 1 `;
+    return `SELECT id, name,code, email, phone, profile_image, address, status FROM ${table_name} where  id = ?  and status = 1 `;
 };
 
 let getDetailsById = () => {
-  return `SELECT * FROM ${table_name} where  id = ?   `;
+    return `SELECT * FROM ${table_name} where  id = ?   `;
 };
 
 let addNew = () => {
-  return `INSERT INTO ${table_name} SET ?`;
+    return `INSERT INTO ${table_name} SET ?`;
 };
 
 let disableById = () => {
-  return `UPDATE ${table_name} set status = 2 , updated_by= ? , updated_at = ? where id = ?  `;
+    return `UPDATE ${table_name} set status = 2 , updated_by= ? , updated_at = ? where id = ?  `;
 };
 
 let enableById = () => {
-  return `UPDATE ${table_name} set status = 1 , updated_by= ? , updated_at = ? where id = ?  `;
+    return `UPDATE ${table_name} set status = 1 , updated_by= ? , updated_at = ? where id = ?  `;
 };
 
 let deleteById = () => {
     return `UPDATE ${table_name} set status = 0 , updated_by= ? , updated_at = ? where id = ?  `;
-  };
+};
 
 let updateById = (data) => {
-  let keys = Object.keys(data);
+    let keys = Object.keys(data);
 
-  let query = `update ${table_name} set ` + keys[0] + ` = ? `;
+    let query = `update ${table_name} set ` + keys[0] + ` = ? `;
 
-  for (let i = 1; i < keys.length; i++) {
-    query += `, ` + keys[i] + ` = ? `;
-  }
+    for (let i = 1; i < keys.length; i++) {
+        query += `, ` + keys[i] + ` = ? `;
+    }
 
-  query += ` where id = ? `;
+    query += ` where id = ? `;
 
-  return query;
+    return query;
 };
 
 let updateEmailById = () => {
-  return `UPDATE ${table_name} set email = ? , updated_at = ?, updated_by= ?   where id = ?  `;
+    return `UPDATE ${table_name} set email = ? , updated_at = ?, updated_by= ?   where id = ?  `;
 }
 
 
@@ -74,11 +74,11 @@ let getDataByWhereCondition = (data = {}, orderBy = {}, limit, offset, columnLis
         if (Array.isArray(data[keys[0]])) {
             query += ` where ${keys[0]} BETWEEN ? and ? `
 
-        } else if (["GR||&&"].includes(keys[0].toUpperCase()) && typeof data[keys[0]] === 'object') { // Group-OR(internal)-AND (out) like =>  where (field1 = ? or field2 = ?)
+        } else if (["GR||&&", "GR&&||", "GRL||&&", "GRL&&||"].includes(keys[0].toUpperCase()) && typeof data[keys[0]] === 'object') { // Group-OR(internal)-AND (out) like =>  where (field1 = ? or field2 = ?)
 
             let grOrAndObjectKeys = Object.keys(data[keys[0]]);
-            let operator = (keys[index].toUpperCase()).startsWith("GRL") ? " Like " : " = ";
-            let internalJoiner = (keys[index].toUpperCase()).endsWith("&&") ? " or " : " and ";
+            let operator = (keys[0].toUpperCase()).startsWith("GRL") ? " Like " : " = ";
+            let internalJoiner = (keys[0].toUpperCase()).endsWith("&&") ? " or " : " and ";
 
             query += ` where (`;
 
@@ -207,14 +207,14 @@ let getDataByWhereCondition = (data = {}, orderBy = {}, limit, offset, columnLis
 }
 
 module.exports = {
-  getAllList,
-  getById,
-  addNew,
-  disableById,
-  enableById,
-  deleteById,
-  getDetailsById,
-  updateById,
-  updateEmailById,
-  getDataByWhereCondition
+    getAllList,
+    getById,
+    addNew,
+    disableById,
+    enableById,
+    deleteById,
+    getDetailsById,
+    updateById,
+    updateEmailById,
+    getDataByWhereCondition
 };

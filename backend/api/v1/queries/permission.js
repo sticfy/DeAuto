@@ -96,11 +96,11 @@ let getDataByWhereCondition = (data = {}, orderBy = {}, limit, offset, columnLis
         if (Array.isArray(data[keys[0]])) {
             query += ` where ${keys[0]} BETWEEN ? and ? `
 
-        } else if (["GR||&&"].includes(keys[0].toUpperCase()) && typeof data[keys[0]] === 'object') { // Group-OR(internal)-AND (out) like =>  where (field1 = ? or field2 = ?)
+         } else if (["GR||&&", "GR&&||", "GRL||&&", "GRL&&||"].includes(keys[0].toUpperCase()) && typeof data[keys[0]] === 'object') { // Group-OR(internal)-AND (out) like =>  where (field1 = ? or field2 = ?)
 
             let grOrAndObjectKeys = Object.keys(data[keys[0]]);
-            let operator = (keys[index].toUpperCase()).startsWith("GRL") ? " Like " : " = ";
-            let internalJoiner = (keys[index].toUpperCase()).endsWith("&&") ? " or " : " and ";
+            let operator = (keys[0].toUpperCase()).startsWith("GRL") ? " Like " : " = ";
+            let internalJoiner = (keys[0].toUpperCase()).endsWith("&&") ? " or " : " and ";
 
             query += ` where (`;
 

@@ -178,7 +178,7 @@ router.post('/add', [verifyToken], async (req, res) => {
 
     let questionObject = {
         "en": reqData.question_en,
-        "dutch": reqData.question_dutch,
+        "du": reqData.question_dutch,
     }
 
     let existingData = await faqModel.getByJSONTitle(questionObject);
@@ -193,7 +193,7 @@ router.post('/add', [verifyToken], async (req, res) => {
 
     let answerObject = {
         "en": reqData.answer_en,
-        "dutch": reqData.answer_dutch,
+        "du": reqData.answer_dutch,
     }
 
     if (req.body.status == undefined) {
@@ -288,7 +288,7 @@ router.put('/update', [verifyToken], async (req, res) => {
 
     let questionObject = {
         "en": isEmpty(reqData.question_en) ? existingDataById[0].question.en : reqData.question_en,
-        "dutch": isEmpty(reqData.question_dutch) ? existingDataById[0].question.dutch : reqData.question_dutch,
+        "du": isEmpty(reqData.question_dutch) ? existingDataById[0].question.dutch : reqData.question_dutch,
     }
 
     let existingDataByTitle = await faqModel.getByJSONTitle(questionObject);
@@ -301,7 +301,7 @@ router.put('/update', [verifyToken], async (req, res) => {
 
     let answerObject = {
         "en": isEmpty(reqData.answer_en) ? existingDataById[0].answer.en : reqData.answer_en,
-        "dutch": isEmpty(reqData.answer_dutch) ? existingDataById[0].answer.dutch : reqData.answer_dutch,
+        "du": isEmpty(reqData.answer_dutch) ? existingDataById[0].answer.dutch : reqData.answer_dutch,
     }
 
     if (req.body.status == undefined) {

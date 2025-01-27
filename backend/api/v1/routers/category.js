@@ -189,7 +189,7 @@ router.post('/add', [verifyToken], async (req, res) => {
 
     let titleObject = {
         "en": reqData.title_en,
-        "dutch": reqData.title_dutch,
+        "du": reqData.title_dutch,
     }
 
     let existingData = await categoryModel.getByJSONTitle(titleObject);
@@ -354,7 +354,7 @@ router.put('/update', [verifyToken], async (req, res) => {
 
     let titleObject = {
         "en": isEmpty(updateData.title_en) ? existingDataById[0].title.en : updateData.title_en,
-        "dutch": isEmpty(updateData.title_dutch) ? existingDataById[0].title.dutch : updateData.title_dutch,
+        "du": isEmpty(updateData.title_dutch) ? existingDataById[0].title.dutch : updateData.title_dutch,
     }
 
     let existingDataByTitle = await categoryModel.getByJSONTitle(titleObject);

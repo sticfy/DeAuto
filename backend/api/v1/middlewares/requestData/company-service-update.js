@@ -21,6 +21,7 @@ router.use(async function (req, res, next) {
     }
 
     let reqUserData = {
+        "id": req.body.id,
         "category_id": req.body.category_id,
         "service_id": req.body.service_id,
         "service_name_en": req.body.service_name_en,
@@ -33,6 +34,41 @@ router.use(async function (req, res, next) {
     }
 
     reqUserData.company_id = req.decoded.profileInfo.company_id;
+
+    let validateId = await commonObject.checkItsNumber(reqUserData.id);
+    if (validateId.success == false) {
+
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Value should be integer.",
+            "id": reqUserData.id
+
+        });
+    } else {
+        req.body.id = validateId.data;
+        reqUserData.id = validateId.data;
+
+    }
+
+    let existingDataById = await companyServiceModel.getById(reqUserData.id);
+    if (isEmpty(existingDataById)) {
+
+        return res.status(404).send({
+            "success": false,
+            "status": 404,
+            "message": "No data found",
+
+        });
+    }
+
+    if ((req.decoded.userInfo.role_id == 2) && (req.decoded.profileInfo.company_id != existingDataById[0].company_id)) {
+        return res.status(404).send({
+            success: false,
+            status: 404,
+            message: "This is not your company data.",
+        });
+    }
 
     let errorMessage = "";
     let isError = 0;
@@ -75,7 +111,7 @@ router.use(async function (req, res, next) {
             );
 
 
-            if (!isEmpty(companyAlreadyHavingThisService)) {
+            if (!isEmpty(companyAlreadyHavingThisService) && (companyAlreadyHavingThisService[0].id != reqUserData.id)) {
                 return res.status(400).send({
                     success: false,
                     status: 400,

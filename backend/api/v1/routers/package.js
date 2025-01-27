@@ -146,7 +146,7 @@ router.post('/add', [verifyToken], async (req, res) => {  // routeAccessChecker(
 
     let titleObject = {
         "en": reqData.title_en,
-        "dutch": reqData.title_dutch,
+        "du": reqData.title_dutch,
     }
 
     let existingData = await packageModel.getByJSONTitle(titleObject);
@@ -167,7 +167,7 @@ router.post('/add', [verifyToken], async (req, res) => {  // routeAccessChecker(
     } else {
         detailsObject = {
             "en": reqData.details_en,
-            "dutch": reqData.details_dutch,
+            "du": reqData.details_dutch,
         }
     }
 
@@ -586,7 +586,7 @@ router.put('/update', [verifyToken], async (req, res) => {  // routeAccessChecke
 
     let titleObject = {
         "en": isEmpty(reqData.title_en) ? existingDataById[0].title.en : reqData.title_en,
-        "dutch": isEmpty(reqData.title_dutch) ? existingDataById[0].title.dutch : reqData.title_dutch,
+        "du": isEmpty(reqData.title_dutch) ? existingDataById[0].title.dutch : reqData.title_dutch,
     }
 
     let existingDataByTitle = await packageModel.getByJSONTitle(titleObject);
@@ -605,7 +605,7 @@ router.put('/update', [verifyToken], async (req, res) => {  // routeAccessChecke
     } else {
         detailsObject = {
             "en": reqData.details_en,
-            "dutch": reqData.details_dutch,
+            "du": reqData.details_dutch,
         }
     }
 

@@ -155,7 +155,7 @@ router.use(async function (req, res, next) {
                     };
 
                     req.decoded = decoded;
-                    req.decoded.language = (!isEmpty(req.headers['language']) && ['en', 'bn'].includes(req.headers['language'])) ? req.headers['language'] : 'en';
+                    // req.decoded.language = (!isEmpty(req.headers['language']) && ['en', 'bn'].includes(req.headers['language'])) ? req.headers['language'] : 'en';
 
 
                     next();

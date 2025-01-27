@@ -1,9 +1,10 @@
 const { connectionDeAutoMYSQL } = require('../connections/connection');
 const queries = require('../queries/company-service');
+const serviceModel = require('./service');
 const isEmpty = require("is-empty");
 
 let databaseColum = [{ "name": "id", "type": "int" }, { "name": "company_id", "type": "int" }, { "name": "category_id", "type": "varchar" }, { "name": "service_id", "type": "int" }, { "name": "service_name", "type": "json" }, { "name": "price_start_from", "type": "double" }, { "name": "service_start_date", "type": "date" }, { "name": "service_end_date", "type": "date" }, { "name": "details", "type": "json" }, { "name": "status", "type": "int" }, { "name": "created_by", "type": "int" }, { "name": "updated_by", "type": "int" }, { "name": "created_at", "type": "datetime" }, { "name": "updated_at", "type": "datetime" }];
-let jsonColum = ['service_name','details'];
+let jsonColum = ['service_name', 'details'];
 
 // Promises Method
 
@@ -265,13 +266,23 @@ let regenerateWhereField = (whereObject = {}, language = undefined) => {
                 if (['JSON', "LONGTEXT"].includes(databaseColum[index].type.toUpperCase())) {
 
                     let tempWhereObject = {};
+                    let isItLikeOperation = false;
+                    let newOperator = "GR||&&";
+
+                    if (typeof whereObject[keyName] === 'object' && (Object.keys(whereObject[keyName])[0]).toUpperCase() === "LIKE") {
+                        newOperator = "GRL||&&";
+                        isItLikeOperation = true;
+                    }
 
                     for (let languageIndex = 0; languageIndex < languageList.length; languageIndex++) {
                         const language = languageList[languageIndex];
-                        tempWhereObject[`${dbColumName}->>'$.${language.short_name}'`] = whereObject[keyName];
+                        tempWhereObject[`LOWER(${dbColumName}->>'$.${language.short_name}')`] = isItLikeOperation ? whereObject[keyName].like : whereObject[keyName];
+                        try {
+                            tempWhereObject[`LOWER(${dbColumName}->>'$.${language.short_name}')`] = tempWhereObject[`LOWER(${dbColumName}->>'$.${language.short_name}')`].toLowerCase();
+                        } catch (error) { }
                     }
 
-                    finalWhere["GR||&&"] = tempWhereObject;
+                    finalWhere[newOperator] = tempWhereObject;
 
                 } else finalWhere[`${dbColumName}`] = whereObject[keyName];
 
@@ -290,6 +301,65 @@ let getDetailsByIdAndWhereIn = async (expertTypeId = []) => {
     });
 }
 
+let updateWithMultipleInfo = async (companyServiceId = 0, companyServiceUpdateData = {}, serviceData = {}) => {
+    return new Promise((resolve, reject) => {
+
+
+        connectionDeAutoMYSQL.getConnection(function (err, conn) {
+
+            conn.beginTransaction(async function (error) {
+                if (error) {
+                    return conn.rollback(function () {
+                        conn.release();
+                        resolve([]);
+                    });
+                }
+
+
+
+                // service data insert
+                let serviceDataInsertResult = await serviceModel.addNew(serviceData, conn);
+
+                if (serviceDataInsertResult.affectedRows == undefined || serviceDataInsertResult.affectedRows < 1) {
+                    return conn.rollback(function () {
+                        conn.release();
+                        resolve(serviceDataInsertResult);
+                    });
+                }
+
+                let serviceId = serviceDataInsertResult.insertId;
+
+                companyServiceUpdateData.service_id = serviceId;
+
+                let result = await updateById(companyServiceId, companyServiceUpdateData, conn);
+
+                if (result.affectedRows == undefined || result.affectedRows < 1) {
+                    return conn.rollback(function () {
+                        conn.release();
+                        resolve(result);
+                    });
+                }
+
+                // response = result; //  for otp request
+
+                conn.commit(function (err) {
+                    if (err) {
+                        return conn.rollback(function () {
+                            conn.release();
+                            resolve([]);
+                        });
+                    }
+                    conn.release();
+                    return resolve(result);
+
+                });
+
+            });
+        });
+
+    });
+}
+
 
 module.exports = {
     getList,
@@ -300,6 +370,7 @@ module.exports = {
     addNew,
     getDataByWhereCondition,
     updateById,
-    getDetailsByIdAndWhereIn
+    getDetailsByIdAndWhereIn,
+    updateWithMultipleInfo
 }
 

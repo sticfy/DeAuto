@@ -46,6 +46,26 @@ router.get('/app_configuration_data', async (req, res) => {
 router.get('/app_language', async (req, res) => {
 
   let languageList = global.config.language;
+  let defaultLanguage = global.config.default_language;
+  let selectLanguageDataSet = await configurationModel.getDataByWhereCondition({ "page_key": "select_language" });
+
+
+  for (let index = 0; index < languageList.length; index++) {
+    const element = languageList[index];
+
+    if (!isEmpty(selectLanguageDataSet)) {
+      selectLanguageDataSet.content = JSON.parse(selectLanguageDataSet[0].content);
+      element.content = {};
+
+      try {
+        for (let contentIndex = 0; contentIndex < selectLanguageDataSet.content.length; contentIndex++) {
+          const contentElement = selectLanguageDataSet.content[contentIndex];
+          element.content[contentElement.content_key] = isEmpty(contentElement.data[element.short_name]) ? contentElement.data[defaultLanguage] : contentElement.data[element.short_name];
+        }
+      } catch (error) { }
+    }
+
+  }
 
   return res.status(200).send({
     "success": true,
@@ -94,7 +114,7 @@ router.get('/configuration-data', async (req, res) => {
     if (req.headers['language'] == language.short_name) userLanguage = language.short_name;
 
   }
- 
+
 
   return res.status(200).send({
     "success": true,
