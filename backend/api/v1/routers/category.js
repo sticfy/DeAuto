@@ -36,7 +36,7 @@ router.get('/list', [verifyToken], async (req, res) => {
 
 router.get('/activeList', [verifyToken], async (req, res) => {
 
-    let language = req.headers['language']; // Default to English if language is not specified
+    let language = req.headers['language'];  
 
     let result = await categoryModel.getActiveList();
 
@@ -115,7 +115,7 @@ router.post('/list', [verifyToken], async (req, res) => {
 
     for (let index = 0; index < result.length; index++) {
         const element = result[index];
-        let titleDataObject = JSON.parse(element.title);
+        let titleDataObject = element.title;
 
         if (!isEmpty(language)) {
             element.title = titleDataObject[language];
@@ -129,7 +129,7 @@ router.post('/list', [verifyToken], async (req, res) => {
         dataSearchConditionObject,
         { "id": "ASC" },
         undefined,
-        undefined, ["count(id) as count"]
+        undefined, [ ]
     );
 
     return res.status(200).send({
@@ -137,7 +137,7 @@ router.post('/list', [verifyToken], async (req, res) => {
         "status": 200,
         "message": "Category List",
         "imageFolderPath": imageFolderPath,
-        "totalCount": totalData[0].count,
+        "totalCount":  totalData.length,
         "count": result.length,
         "data": result
     });
@@ -202,12 +202,26 @@ router.post('/add', [verifyToken], async (req, res) => {
         });
     }
 
+    if (req.body.status == undefined) {
+        reqData.status = 2;
+    } else if (["1", "2", 1, 2].indexOf(req.body.status) == -1) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Status should be 1 or 2"
+
+        });
+    } else {
+        reqData.status = req.body.status;
+    }
+
     let data = {};
     data.title = JSON.stringify(titleObject);
     data.created_by = req.decoded.userInfo.id;
     data.updated_by = req.decoded.userInfo.id;
     data.created_at = await commonObject.getGMT();
     data.updated_at = await commonObject.getGMT();
+    data.status = reqData.status;
 
     //  file codes
     if (req.files && Object.keys(req.files).length > 0) {
@@ -351,6 +365,21 @@ router.put('/update', [verifyToken], async (req, res) => {
         errorMessage += existingDataByTitle[0].status == "1" ? "Any of This Category Title Already Exist." : "Any of This Category Title Already Exist but Deactivate, You can activate it."
     }
 
+    if (req.body.status == undefined) {
+        willWeUpdate = 1;
+        updateData.status = existingDataById[0].status;
+    } else if (["1", "2", 1, 2].indexOf(req.body.status) == -1) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Status should be 1 or 2"
+
+        });
+    } else {
+        willWeUpdate = 1;
+        updateData.status = req.body.status;
+    }
+
 
     if (isError == 1) {
         return res.status(400).send({
@@ -364,6 +393,7 @@ router.put('/update', [verifyToken], async (req, res) => {
 
         let data = {};
         data.title = JSON.stringify(titleObject);
+        data.status = updateData.status;
         data.updated_by = req.decoded.userInfo.id;
         data.updated_at = await commonObject.getGMT();
 

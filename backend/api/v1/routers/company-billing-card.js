@@ -140,18 +140,18 @@ router.post('/list', [verifyToken], async (req, res) => {  // routeAccessChecker
     }
 
     let totalData = await billingCardModel.getDataByWhereCondition(
-            dataSearchConditionObject,
-            { "id": "ASC" },
-            undefined,
-            undefined, ["count(id) as count"]
-        );
+        dataSearchConditionObject,
+        { "id": "ASC" },
+        undefined,
+        undefined, [ ]
+    );
 
     return res.status(200).send({
         "success": true,
         "status": 200,
         "message": "Billing Card list.",
         "count": result.length,
-        "totalCount": totalData[0].count,
+        "totalCount":  totalData.length,
         "data": result
     });
 });
@@ -193,10 +193,8 @@ router.put('/update', [verifyToken], async (req, res) => {  // routeAccessChecke
         }
 
         let existingDataById = await billingCardModel.getDataByWhereCondition(
-            { "id": reqData.id, "company_id": req.decoded.profileInfo.company_id, "status": 1 }
+            { "id": reqData.id, "company_id": req.decoded.profileInfo.company_id, "status": [1, 2] }
         );
-
-        console.log(existingDataById);
 
         if (isEmpty(existingDataById)) {
             return res.status(404).send({
@@ -206,6 +204,18 @@ router.put('/update', [verifyToken], async (req, res) => {  // routeAccessChecke
             });
         } else {
             updateRequest = true;
+        }
+    } else {
+        let existingDataById = await billingCardModel.getDataByWhereCondition(
+            { "company_id": req.decoded.profileInfo.company_id, "status": [1, 2] }
+        );
+
+        if (!isEmpty(existingDataById)) {
+            return res.status(404).send({
+                "success": false,
+                "status": 404,
+                "message": "You already have a card",
+            });
         }
     }
 
@@ -284,6 +294,17 @@ router.put('/update', [verifyToken], async (req, res) => {  // routeAccessChecke
         });
     } else {
         data.expired_year = validateExpiredYear.data;
+    }
+
+    if (["1", "2", 1, 2].indexOf(req.body.status) == -1) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Status should be 1 or 2"
+
+        });
+    } else {
+        data.status = req.body.status;
     }
 
 

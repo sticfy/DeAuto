@@ -74,7 +74,7 @@ router.post('/list', [verifyToken], async (req, res) => {
     for (let index = 0; index < result.length; index++) {
         const element = result[index];
 
-        let companyServiceDataObject = JSON.parse(element.service_name);
+        let companyServiceDataObject = element.service_name;
 
         if (!isEmpty(language)) {
             element.service_name = companyServiceDataObject[language];
@@ -91,7 +91,7 @@ router.post('/list', [verifyToken], async (req, res) => {
                 element.serviceDetails = {};
             } else {
 
-                let serviceTitleDataObject = JSON.parse(serviceDetails[0].title);
+                let serviceTitleDataObject = serviceDetails[0].title;
 
                 if (!isEmpty(language)) {
                     serviceDetails[0].title = serviceTitleDataObject[language];
@@ -112,7 +112,7 @@ router.post('/list', [verifyToken], async (req, res) => {
         if (isEmpty(categoryDetails)) {
             element.categoryDetails = {};
         } else {
-            let titleDataObject = JSON.parse(categoryDetails[0].title);
+            let titleDataObject = categoryDetails[0].title;
 
             if (!isEmpty(language)) {
                 categoryDetails[0].title = titleDataObject[language];
@@ -130,14 +130,14 @@ router.post('/list', [verifyToken], async (req, res) => {
         dataSearchConditionObject,
         { "id": "ASC" },
         undefined,
-        undefined, ["count(id) as count"]
+        undefined, [ ]
     );
 
     return res.status(200).send({
         "success": true,
         "status": 200,
         "message": "Company Service List",
-        "totalCount": totalData[0].count,
+        "totalCount":  totalData.length,
         "count": result.length,
         "data": result
     });
@@ -148,7 +148,7 @@ router.post('/list', [verifyToken], async (req, res) => {
 router.post('/add', [verifyToken, companyServiceValidation], async (req, res) => {
 
     let requestData = req.requestData;
-
+    
     let companyServiceObject = {};
 
     companyServiceObject = { ...requestData };

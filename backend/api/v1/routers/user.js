@@ -1022,14 +1022,14 @@ router.post('/list', [verifyToken, routeAccessChecker("userList")], async (req, 
         dataSearchConditionObject,
         { "id": "ASC" },
         undefined,
-        undefined, ["count(id) as count"]
+        undefined, [ ]
     );
 
     return res.status(200).send({
         "success": true,
         "status": 200,
         "message": "User List",
-        "totalCount": totalData[0].count,
+        "totalCount":  totalData.length,
         "count": userProfileDetails.length,
         "data": userProfileDetails
     });

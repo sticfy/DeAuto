@@ -21,7 +21,7 @@ router.use(async function (req, res, next) {
 
     let errorMessage = "";
     let isError = 0;
-    let language = req.headers['language'] || 'en'; // Default to English if language is not specified
+    let language = req.headers['language'] || 'en';  
 
     // first name valid
     if (isEmpty(reqUserData.first_name)) {

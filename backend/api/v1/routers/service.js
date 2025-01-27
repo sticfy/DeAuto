@@ -30,7 +30,6 @@ router.get('/list', [verifyToken], async (req, res) => {
             element.categoryDetails = {};
         } else {
             element.categoryDetails = categoryDetails[0];
-            element.categoryDetails.title = JSON.parse(element.categoryDetails.title);
         }
     }
 
@@ -45,7 +44,7 @@ router.get('/list', [verifyToken], async (req, res) => {
 
 router.get('/activeList', [verifyToken], async (req, res) => {
 
-    let language = req.headers['language']; // Default to English if language is not specified
+    let language = req.headers['language'];  
 
     let result = await serviceModel.getActiveList();
 
@@ -62,7 +61,6 @@ router.get('/activeList', [verifyToken], async (req, res) => {
             element.categoryDetails = {};
         } else {
             element.categoryDetails = categoryDetails[0];
-            element.categoryDetails.title = JSON.parse(element.categoryDetails.title);
         }
 
         if (!isEmpty(language)) {
@@ -141,7 +139,7 @@ router.post('/list', [verifyToken], async (req, res) => {
 
     for (let index = 0; index < result.length; index++) {
         const element = result[index];
-        let titleDataObject = JSON.parse(element.title);
+        let titleDataObject = element.title;
 
 
         // category details
@@ -153,7 +151,6 @@ router.post('/list', [verifyToken], async (req, res) => {
             element.categoryDetails = {};
         } else {
             element.categoryDetails = categoryDetails[0];
-            element.categoryDetails.title = JSON.parse(element.categoryDetails.title);
         }
 
         if (!isEmpty(language)) {
@@ -170,14 +167,14 @@ router.post('/list', [verifyToken], async (req, res) => {
         dataSearchConditionObject,
         { "id": "ASC" },
         undefined,
-        undefined, ["count(id) as count"]
+        undefined, [ ]
     );
 
     return res.status(200).send({
         "success": true,
         "status": 200,
         "message": "Service List",
-        "totalCount": totalData[0].count,
+        "totalCount":  totalData.length,
         "count": result.length,
         "data": result
     });
@@ -256,7 +253,7 @@ router.post('/add', [verifyToken], async (req, res) => {
 
     let titleObject = {
         "en": reqData.title_en,
-        "dutch": reqData.title_dutch,
+        "dutch": reqData.title_dutch
     }
 
     let existingData = await serviceModel.getByJSONTitle(titleObject);
@@ -269,8 +266,22 @@ router.post('/add', [verifyToken], async (req, res) => {
         });
     }
 
+    if (req.body.status == undefined) {
+        reqData.status = 2;
+    } else if (["1", "2", 1, 2].indexOf(req.body.status) == -1) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Status should be 1 or 2"
+
+        });
+    } else {
+        reqData.status = req.body.status;
+    }
+
     let data = {};
     data.category_id = reqData.category_id;
+    data.status = reqData.status;
     data.title = JSON.stringify(titleObject);
     data.created_by = req.decoded.userInfo.id;
     data.updated_by = req.decoded.userInfo.id;
@@ -416,6 +427,21 @@ router.put('/update', [verifyToken], async (req, res) => {
         errorMessage += existingDataByTitle[0].status == "1" ? "Any of This Service Title Already Exist." : "Any of This Service Title Already Exist but Deactivate, You can activate it."
     }
 
+    if (req.body.status == undefined) {
+        willWeUpdate = 1;
+        updateData.status = existingDataById[0].status;
+    } else if (["1", "2", 1, 2].indexOf(req.body.status) == -1) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Status should be 1 or 2"
+
+        });
+    } else {
+        willWeUpdate = 1;
+        updateData.status = req.body.status;
+    }
+
 
     if (isError == 1) {
         return res.status(400).send({
@@ -430,6 +456,7 @@ router.put('/update', [verifyToken], async (req, res) => {
         let data = {};
 
         data.title = JSON.stringify(titleObject);
+        data.status = updateData.status;
         data.updated_by = req.decoded.userInfo.id;
         data.updated_at = await commonObject.getGMT();
 
@@ -633,7 +660,6 @@ router.get("/details/:id", [verifyToken], async (req, res) => {
             element.categoryDetails = {};
         } else {
             element.categoryDetails = categoryDetails[0];
-            element.categoryDetails.title = JSON.parse(element.categoryDetails.title);
         }
 
         return res.status(200).send({

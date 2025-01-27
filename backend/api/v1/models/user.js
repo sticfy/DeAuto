@@ -581,8 +581,8 @@ let getDataByWhereCondition = async (where = {}, orderBy = {}, limit = 2000, off
 
 
     let connection = connectionDeAutoMYSQL;
-    try { columnList = regenerateSelectField(columnList, language); } catch (error) { }
     try { where = regenerateWhereField(where, language); } catch (error) { }
+    try { columnList = regenerateSelectField(columnList, language); } catch (error) { }
 
 
     // get object, generate an array and push data value here
@@ -680,6 +680,7 @@ let regenerateSelectField = (reqColumn = [], language = undefined) => {
             for (let reqColumnIndex = 0; reqColumnIndex < reqColumn.length; reqColumnIndex++) {
                 let reqColumnName = reqColumn[reqColumnIndex];
                 let asName = "";
+                let tempAsName = "";
 
 
                 if (reqColumnName.toUpperCase().includes(" AS ")) { // remove as field , because developer can call {"title as my_title"}
@@ -694,14 +695,20 @@ let regenerateSelectField = (reqColumn = [], language = undefined) => {
 
                     reqColumnName = reqColumnName.split(asIndexIf); //  remove as from the string
                     asName = `${asIndexIf} ${reqColumnName[1]} `; //  generate as + extra as name
+                    tempAsName = `${reqColumnName[1]} `; //  generate as + extra as name
                     reqColumnName = reqColumnName[0];
                     reqColumnName = reqColumnName.trim();
                 }
 
                 if (dbColumName.toUpperCase() == reqColumnName.toUpperCase()) {
-                    if (databaseColum[index].type == 'JSON' && !isEmpty(language))
-                        finalColum.push(`${dbColumName}->>'$.${language}' ${asName} `);
-                    else
+                    if (['JSON', "LONGTEXT"].includes(databaseColum[index].type.toUpperCase()) && !isEmpty(language)) {
+                        if (isEmpty(asName)) {
+                            finalColum.push(`${dbColumName}->>'$.${language}' as ${dbColumName} `);
+                        } else {
+                            finalColum.push(`${dbColumName}->>'$.${language}' ${asName} `);
+                            databaseColum[index].name = tempAsName;
+                        }
+                    } else
                         finalColum.push(`${dbColumName} ${asName}`);
                 }
 
@@ -711,7 +718,7 @@ let regenerateSelectField = (reqColumn = [], language = undefined) => {
 
     if (isEmpty(reqColumn) || (!isEmpty(reqColumn) && isEmpty(finalColum))) { // if user not select column or select wrong column
         for (let index = 0; index < databaseColum.length; index++) {
-            if (databaseColum[index].type == 'JSON' && !isEmpty(language))
+            if (['JSON', "LONGTEXT"].includes(databaseColum[index].type.toUpperCase()) && !isEmpty(language))
                 finalColum.push(`${databaseColum[index].name}->>'$.${language}' as ${databaseColum[index].name}`);
             else finalColum.push(`${databaseColum[index].name} `);
         }
@@ -742,7 +749,7 @@ let regenerateWhereField = (whereObject = {}, language = undefined) => {
 
             if (dbColumName.toUpperCase() == keyName.toUpperCase()) {
 
-                if (databaseColum[index].type == 'JSON') {
+                if (['JSON', "LONGTEXT"].includes(databaseColum[index].type.toUpperCase())) {
 
                     let tempWhereObject = {};
 

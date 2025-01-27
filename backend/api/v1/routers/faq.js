@@ -34,7 +34,7 @@ router.get('/list', [verifyToken], async (req, res) => {
 
 router.get('/activeList', [verifyToken], async (req, res) => {
 
-    let language = req.headers['language']; // Default to English if language is not specified
+    let language = req.headers['language'];  
 
     let result = await faqModel.getActiveList();
 
@@ -63,7 +63,7 @@ router.get('/activeList', [verifyToken], async (req, res) => {
 
 router.post('/list', [], async (req, res) => {
 
-    let language = req.headers['language']; // Default to English if language is not specified
+    let language = req.headers['language'];  
 
     let reqData = {
         "limit": req.body.limit,
@@ -115,8 +115,8 @@ router.post('/list', [], async (req, res) => {
 
     for (let index = 0; index < result.length; index++) {
         const element = result[index];
-        let questionDataObject = JSON.parse(element.question);
-        let answerDataObject = JSON.parse(element.answer);
+        let questionDataObject = element.question;
+        let answerDataObject = element.answer;
 
         if (!isEmpty(language)) {
             element.question = questionDataObject[language];
@@ -132,14 +132,14 @@ router.post('/list', [], async (req, res) => {
         dataSearchConditionObject,
         { "id": "ASC" },
         undefined,
-        undefined, ["count(id) as count"]
+        undefined, []
     );
 
     return res.status(200).send({
         "success": true,
         "status": 200,
         "message": "Faq List",
-        "totalCount": totalData[0].count,
+        "totalCount": totalData.length,
         "count": result.length,
         "data": result
     });
@@ -196,9 +196,23 @@ router.post('/add', [verifyToken], async (req, res) => {
         "dutch": reqData.answer_dutch,
     }
 
+    if (req.body.status == undefined) {
+        reqData.status = 2;
+    } else if (["1", "2", 1, 2].indexOf(req.body.status) == -1) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Status should be 1 or 2"
+
+        });
+    } else {
+        reqData.status = req.body.status;
+    }
+
     let data = {};
     data.question = JSON.stringify(questionObject);
     data.answer = JSON.stringify(answerObject);
+    data.status = reqData.status;
     data.created_by = req.decoded.userInfo.id;
     data.updated_by = req.decoded.userInfo.id;
     data.created_at = await commonObject.getGMT();
@@ -251,6 +265,7 @@ router.put('/update', [verifyToken], async (req, res) => {
     }
 
     let existingDataById = await faqModel.getById(reqData.id);
+    console.log((existingDataById[0]));
     if (isEmpty(existingDataById)) {
 
         return res.status(404).send({
@@ -289,6 +304,19 @@ router.put('/update', [verifyToken], async (req, res) => {
         "dutch": isEmpty(reqData.answer_dutch) ? existingDataById[0].answer.dutch : reqData.answer_dutch,
     }
 
+    if (req.body.status == undefined) {
+        updateData.status = existingDataById[0].status;
+    } else if (["1", "2", 1, 2].indexOf(req.body.status) == -1) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Status should be 1 or 2"
+
+        });
+    } else {
+        updateData.status = req.body.status;
+    }
+
     if (isError == 1) {
         return res.status(400).send({
             "success": false,
@@ -300,6 +328,7 @@ router.put('/update', [verifyToken], async (req, res) => {
     let data = {};
     data.question = JSON.stringify(questionObject);
     data.answer = JSON.stringify(answerObject);
+    data.status = updateData.status;
     data.updated_by = req.decoded.userInfo.id;
     data.updated_at = await commonObject.getGMT();
 

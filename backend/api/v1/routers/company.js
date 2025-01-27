@@ -181,7 +181,7 @@ router.post('/list', [verifyToken], async (req, res) => {
         dataSearchConditionObject,
         { "id": "ASC" },
         undefined,
-        undefined, ["count(id) as count"]
+        undefined, [ ]
     );
 
     return res.status(200).send({
@@ -189,7 +189,7 @@ router.post('/list', [verifyToken], async (req, res) => {
         "status": 200,
         "message": "Company List.",
         "companyLogoFolderPath": companyLogoFolderPath,
-        "totalCount": totalData[0].count,
+        "totalCount":  totalData.length,
         "count": result.length,
         "data": result
     });

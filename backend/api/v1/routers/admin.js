@@ -690,14 +690,14 @@ router.post('/admin-search-data', [verifyToken, routeAccessChecker("adminSearchL
         dataSearchConditionObject,
         { "id": "ASC" },
         undefined,
-        undefined, ["count(id) as count"]
+        undefined, [ ]
     );
 
     return res.status(200).send({
         "success": true,
         "status": 200,
         "message": "Admin List.",
-        "totalCount": totalData[0].count,
+        "totalCount":  totalData.length,
         "count": result.length,
         "data": result
     });

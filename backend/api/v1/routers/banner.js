@@ -61,7 +61,7 @@ router.post('/list', [], async (req, res) => {
         reqData.offset = 0;
     }
     let result = await bannerModel.getDataByWhereCondition(
-        { "status": 1 },
+        { "status": [1, 2] },
         { "id": "DESC" },
         reqData.limit,
         reqData.offset
@@ -150,6 +150,19 @@ router.post('/add', [verifyToken], async (req, res) => {
     //     isError = 1;
     //     errorMessage += "Please give valid  start  date and end date. ";
     // }
+
+    if (req.body.status == undefined) {
+        reqData.status = 2;
+    } else if (["1", "2", 1, 2].indexOf(req.body.status) == -1) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Status should be 1 or 2"
+
+        });
+    } else {
+        reqData.status = req.body.status;
+    }
 
     if (isError == 1) {
         return res.status(400).send({
@@ -260,7 +273,7 @@ router.put('/update', [verifyToken], async (req, res) => {
     let isError = 0; // 1 = yes, 0 = no
     let willWeUpdate = 0; // 1 = yes , 0 = no;
 
-    
+
 
     // date validation
     let today = new Date();
@@ -323,6 +336,21 @@ router.put('/update', [verifyToken], async (req, res) => {
     //     });
     // }
 
+
+    if (req.body.status == undefined) {
+        willWeUpdate = 1;
+        updateData.status = existingDataById[0].status;
+    } else if (["1", "2", 1, 2].indexOf(req.body.status) == -1) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Status should be 1 or 2"
+
+        });
+    } else {
+        willWeUpdate = 1;
+        updateData.status = req.body.status;
+    }
 
     //  file codes
     if (req.files && Object.keys(req.files).length > 0) {

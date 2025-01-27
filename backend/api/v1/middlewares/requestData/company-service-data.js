@@ -12,7 +12,7 @@ let moment = require('moment');
 router.use(async function (req, res, next) {
 
 
-    if (req.decoded.userInfo.role_id == 2) {
+    if (req.decoded.userInfo.role_id == 3) {
         return res.status(403).send({
             success: false,
             status: 403,
@@ -23,11 +23,13 @@ router.use(async function (req, res, next) {
     let reqUserData = {
         "category_id": req.body.category_id,
         "service_id": req.body.service_id,
-        "service_name": req.body.service_name,
+        "service_name_en": req.body.service_name_en,
+        "service_name_dutch": req.body.service_name_dutch,
         "price_start_from": req.body.price_start_from,
         "service_start_date": req.body.service_start_date,
         "service_end_date": req.body.service_end_date,
-        "details": req.body.details
+        "details_en": req.body.details_en,
+        "details_dutch": req.body.details_dutch,
     }
 
     reqUserData.company_id = req.decoded.profileInfo.company_id;
@@ -37,7 +39,7 @@ router.use(async function (req, res, next) {
 
 
     let needApproval = false;
-    let existingServiceDetails
+    let existingServiceDetails;
 
     if (reqUserData.service_id != 0) {
         let validateId = await commonObject.checkItsNumber(reqUserData.service_id);
@@ -56,7 +58,7 @@ router.use(async function (req, res, next) {
 
             // validate the service
             existingServiceDetails = await serviceModel.getDataByWhereCondition(
-                { id: reqUserData.service_id, category_id: reqUserData.category_id, status: 1 }
+                { id: reqUserData.service_id, category_id: reqUserData.category_id, status: [1, 2] }
             );
 
             if (isEmpty(existingServiceDetails)) {
@@ -69,8 +71,9 @@ router.use(async function (req, res, next) {
 
             // check this company already have this service
             let companyAlreadyHavingThisService = await companyServiceModel.getDataByWhereCondition(
-                { id: reqUserData.service_id, category_id: reqUserData.category_id, company_id: req.decoded.profileInfo.company_id, status: 1 }
+                { service_id: reqUserData.service_id, category_id: reqUserData.category_id, company_id: req.decoded.profileInfo.company_id, status: [1, 2] }
             );
+
 
             if (!isEmpty(companyAlreadyHavingThisService)) {
                 return res.status(400).send({
@@ -81,11 +84,11 @@ router.use(async function (req, res, next) {
             }
 
             // service name
-            reqUserData.service_name = existingServiceDetails[0].title;
+            reqUserData.service_name = JSON.stringify(existingServiceDetails[0].title);
         }
     } else {
         // let valid service name
-        let validateTitleEn = await commonObject.characterLimitCheck(reqUserData.service_name, "Service");
+        let validateTitleEn = await commonObject.characterLimitCheck(reqUserData.service_name_en, "Service");
 
         if (validateTitleEn.success == false) {
             return res.status(400).send({
@@ -96,11 +99,24 @@ router.use(async function (req, res, next) {
             });
         }
 
-        reqUserData.service_name = validateTitleEn.data;
+        reqUserData.service_name_en = validateTitleEn.data;
+
+        let validateTitleDutch = await commonObject.characterLimitCheck(reqUserData.service_name_dutch, "Service");
+
+        if (validateTitleDutch.success == false) {
+            return res.status(400).send({
+                "success": false,
+                "status": 400,
+                "message": validateTitleDutch.message,
+
+            });
+        }
+
+        reqUserData.service_name_dutch = validateTitleDutch.data;
 
         let serviceNameObject = {
-            "en": reqUserData.service_name,
-            "dutch": reqUserData.service_name,
+            "en": reqUserData.service_name_en,
+            "dutch": reqUserData.service_name_dutch,
         }
 
         reqUserData.service_name = JSON.stringify(serviceNameObject);
@@ -110,11 +126,24 @@ router.use(async function (req, res, next) {
 
 
     // details valid
-    if (isEmpty(reqUserData.details)) {
+    if (isEmpty(reqUserData.details_en)) {
 
         isError = 1;
-        errorMessage += "Please provide service details.";
+        errorMessage += "Please provide service details (English).";
     }
+
+    if (isEmpty(reqUserData.details_dutch)) {
+
+        isError = 1;
+        errorMessage += "Please provide service details (Dutch).";
+    }
+
+    let detailsObject = {
+        "en": reqUserData.details_en,
+        "dutch": reqUserData.details_dutch,
+    }
+
+    reqUserData.details = JSON.stringify(detailsObject);
 
     // cost validation 
     let validatePrice = await commonObject.checkItsNumber(reqUserData.price_start_from);
@@ -174,6 +203,19 @@ router.use(async function (req, res, next) {
         }
     }
 
+    if (req.body.status == undefined) {
+        reqUserData.status = 2;
+    } else if (["1", "2", 1, 2].indexOf(req.body.status) == -1) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Status should be 1 or 2"
+
+        });
+    } else {
+        reqUserData.status = req.body.status;
+    }
+
     if (isError == 1) {
         return res.status(400).send({
             "success": false,
@@ -181,6 +223,11 @@ router.use(async function (req, res, next) {
             "message": errorMessage
         });
     }
+
+    delete reqUserData.service_name_en;
+    delete reqUserData.service_name_dutch;
+    delete reqUserData.details_en;
+    delete reqUserData.details_dutch;
 
 
     req.requestData = reqUserData;

@@ -79,8 +79,8 @@ router.post('/list', [verifyToken], async (req, res) => {  // routeAccessChecker
 
     for (let index = 0; index < result.length; index++) {
         const element = result[index];
-        element.title = JSON.parse(element.title);
-        element.details = JSON.parse(element.details);
+        element.title = element.title;
+        element.details = element.details;
     }
 
     return res.status(200).send({
@@ -256,6 +256,19 @@ router.post('/add', [verifyToken], async (req, res) => {  // routeAccessChecker(
         reqData.appointment_limit = validateAppointmentLimit.data;
     }
 
+    if (req.body.status == undefined) {
+        reqData.status = 2;
+    } else if (["1", "2", 1, 2].indexOf(req.body.status) == -1) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Status should be 1 or 2"
+
+        });
+    } else {
+        reqData.status = req.body.status;
+    }
+
 
     if (isError == 1) {
         return res.status(400).send({
@@ -271,6 +284,7 @@ router.post('/add', [verifyToken], async (req, res) => {  // routeAccessChecker(
     data.duration = reqData.duration;
     data.service_limit = reqData.service_limit;
     data.appointment_limit = reqData.appointment_limit;
+    data.status = reqData.status;
     data.price = reqData.price;
     data.discount_amount = reqData.discount_amount;
     data.discount_percentage = (isEmpty(reqData.price) || isEmpty(reqData.discount_amount)) ? 0 : Math.round((reqData.discount_amount / reqData.price) * 100);
@@ -528,8 +542,8 @@ router.put('/update', [verifyToken], async (req, res) => {  // routeAccessChecke
             "message": "No data found",
         });
     } else {
-        existingDataById[0].title = JSON.parse(existingDataById[0].title);
-        existingDataById[0].details = JSON.parse(existingDataById[0].details);
+        existingDataById[0].title = existingDataById[0].title;
+        existingDataById[0].details = existingDataById[0].details;
     }
 
 
@@ -728,6 +742,19 @@ router.put('/update', [verifyToken], async (req, res) => {  // routeAccessChecke
         data.appointment_limit = validateAppointmentLimit.data;
     }
 
+    if (req.body.status == undefined) {
+        data.status = existingDataById[0].status;
+    } else if (["1", "2", 1, 2].indexOf(req.body.status) == -1) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Status should be 1 or 2"
+
+        });
+    } else {
+        data.status = req.body.status;
+    }
+
 
     if (isError == 1) {
         return res.status(400).send({
@@ -738,10 +765,10 @@ router.put('/update', [verifyToken], async (req, res) => {  // routeAccessChecke
     }
 
 
-    
+
     data.title = JSON.stringify(titleObject);
     data.details = JSON.stringify(detailsObject);
-    
+
 
     data.updated_by = req.decoded.userInfo.id;
     data.updated_at = await commonObject.getGMT();

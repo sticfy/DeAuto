@@ -121,6 +121,10 @@
         "type": "longtext"
       },
       {
+        "name": "image",
+        "type": "varchar"
+      },
+      {
         "name": "status",
         "type": "int"
       },
@@ -329,7 +333,7 @@
       },
       {
         "name": "details",
-        "type": "text"
+        "type": "JSON"
       },
       {
         "name": "status",
@@ -942,11 +946,11 @@
       },
       {
         "name": "title",
-        "type": "longtext"
+        "type": "JSON"
       },
       {
         "name": "details",
-        "type": "longtext"
+        "type": "JSON"
       },
       {
         "name": "duration",
@@ -1138,7 +1142,7 @@
       },
       {
         "name": "title",
-        "type": "longtext"
+        "type": "JSON"
       },
       {
         "name": "status",
