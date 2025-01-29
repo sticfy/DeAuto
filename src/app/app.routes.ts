@@ -13,12 +13,20 @@ import { ProfileSettingComponent } from './CustomAdmin/profile-setting/profile-s
 import { ProfileLayoutComponent } from './CustomAdmin/profile-layout/profile-layout.component';
 import { ProfileEditComponent } from './CustomAdmin/profile-edit/profile-edit.component';
 import { CompanyListComponent } from './SuperAdmin/company-list/company-list.component';
-import { NewShopComponent } from './SuperAdmin/new-shop/new-shop.component';
 import { PromotionComponent } from './SuperAdmin/promotion/promotion.component';
 import { PartnerLayoutComponent } from './Partner/partner-layout/partner-layout.component';
 import { HeroSectionComponent } from './Partner/hero-section/hero-section.component';
 import { SubscriptionComponent } from './Partner/subscription/subscription.component';
 import { CategorisComponent } from './SuperAdmin/categoris/categoris.component';
+import { NewShopComponent } from './SuperAdmin/new-shop/new-shop.component';
+import { SubcriptionComponent } from './SuperAdmin/subcription/subcription.component';
+import { FaqComponent } from './SuperAdmin/faq/faq.component';
+import { ServicesComponent } from './SuperAdmin/services/services.component';
+import { ServicesRequestComponent } from './SuperAdmin/services-request/services-request.component';
+import { FaqDetailsComponent } from './SuperAdmin/faq-details/faq-details.component';
+import { ServicesRequestDetailsComponent } from './SuperAdmin/services-request-details/services-request-details.component';
+import { UserComponent } from './SuperAdmin/user/user.component';
+import { UserDetailsComponent } from './SuperAdmin/user-details/user-details.component';
 
 export const routes: Routes = [
     {
@@ -46,6 +54,30 @@ export const routes: Routes = [
         { path:'categories',
             component:CategorisComponent
         },
+        { path:'subscription',
+            component:SubcriptionComponent
+        },
+        { path:'faqs',
+            component:FaqComponent
+        },
+        { path:'faqs-datails',
+            component:FaqDetailsComponent
+        },
+        { path:'services',
+            component:ServicesComponent
+        },
+        { path:'service-request',
+            component:ServicesRequestComponent
+        },
+        { path:'services-request-details',
+            component:ServicesRequestDetailsComponent
+        },
+        { path:'user',
+            component:UserComponent
+        },
+        { path:'user-details',
+            component:UserDetailsComponent
+        }
         ]
     },
     {

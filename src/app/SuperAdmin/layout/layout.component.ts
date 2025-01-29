@@ -25,11 +25,11 @@ export class LayoutComponent {
       name:'Company list'
     },
     {
-      link:'shop',
+      link:'shops',
       name:'New Companies'
     },
     {
-      link:'/custom/dashboard',
+      link:'new',
       name:'Inactive Companies'
     },
     {
@@ -41,12 +41,24 @@ export class LayoutComponent {
       name:'Promotional cover'
     },
     {
-      link:'/new',
+      link:'subscription',
       name:'Manage subscription'
     },
     {
-      link:'/new',
+      link:'faqs',
       name:'Manage FAQ’s'
+    },
+    {
+      link:'services',
+      name:'Services'
+    },
+    {
+      link:'service-request',
+      name:'Service request'
+    },
+    {
+      link:'user',
+      name:'User'
     },
   ]
 }

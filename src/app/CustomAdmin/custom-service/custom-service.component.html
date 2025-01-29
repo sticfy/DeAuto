@@ -138,7 +138,7 @@
     </div>
   </div>
   <div class="modal fade" id="create" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-confirm modal-dialog-centered">
+    <div class="modal-dialog modal-confirm modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Create service</h5>
@@ -146,11 +146,27 @@
         <div class="modal-body">
           <form >
             <div class="mb-3">
-              <label for="exampleFormControlInput1" class="form-label">Service name</label>
+              <label for="exampleFormControlInput10" class="form-label">Select a category</label>
+              <select name="" id="exampleFormControlInput10" class="form-select">
+                <option value="" class="d-none">Category</option>
+                <option value="">Car</option>
+                <option value="">Bus</option>
+              </select> 
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label">Service name (English)</label>
               <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
             </div>
             <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">Description</label>
+              <label for="exampleFormControlTextarea1" class="form-label">Description (English)</label>
+              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label">Service name (Dutch)</label>
+              <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlTextarea1" class="form-label">Description (Dutch)</label>
               <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
             </div>
             <div class="mb-3">
@@ -185,7 +201,7 @@
     </div>
   </div>
   <div class="modal fade" id="edit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-confirm modal-dialog-centered">
+    <div class="modal-dialog modal-confirm modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Edit</h5>
@@ -193,11 +209,27 @@
         <div class="modal-body">
           <form >
             <div class="mb-3">
-              <label for="exampleFormControlInput1" class="form-label">Service name</label>
+              <label for="exampleFormControlInput10" class="form-label">Select a category</label>
+              <select name="" id="exampleFormControlInput10" class="form-select">
+                <option value="" class="d-none">Category</option>
+                <option value="">Car</option>
+                <option value="">Bus</option>
+              </select> 
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label">Service name (English)</label>
               <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
             </div>
             <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">Description</label>
+              <label for="exampleFormControlTextarea1" class="form-label">Description (English)</label>
+              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label">Service name (Dutch)</label>
+              <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlTextarea1" class="form-label">Description (Dutch)</label>
               <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
             </div>
             <div class="mb-3">

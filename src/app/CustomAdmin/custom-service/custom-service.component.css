@@ -56,7 +56,7 @@ th{
 .modal-footer{
     border-top: unset !important;
     padding-top: unset !important;
-    justify-content:space-evenly;
+    /* justify-content:space-evenly; */
 }
 /* switch */
 .switch {

@@ -43,7 +43,7 @@
     font-weight: 500;
 }
 .image{
-    margin-top: 408px;
+    margin-top: 500px;
 }
 .avai{
     margin-top: 100px;
@@ -79,4 +79,29 @@
 }
 .display{
     display: none;
+}
+.set_label{
+    margin-top: 2px;
+    margin-left: 10px;
+}
+.setIn input{
+    width: 20px;
+    height: 20px;
+    border-radius: 4px; 
+}
+.setIn .form-check-input:checked{
+    background-color: #F74C07;
+    border: 1px solid #F74C07 ;
+}
+.modal-body{
+    padding-left: 24px !important;
+}
+.modal-footer{
+    padding-top: unset;
+    border-top: unset;
+}
+.modal-header{
+    padding-bottom: 8px;
+    border-bottom: unset;
+
 }

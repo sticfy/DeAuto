@@ -81,3 +81,7 @@ th{
 input{
     text-indent: 25px;
 }
+a{
+    color: unset;
+    text-decoration: none;
+}

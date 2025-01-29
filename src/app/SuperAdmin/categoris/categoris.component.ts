@@ -9,4 +9,6 @@ import { Component } from '@angular/core';
 })
 export class CategorisComponent {
 status:any=true
+filesave=false
+imageName='assets/images/demo.webp'
 }
