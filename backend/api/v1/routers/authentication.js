@@ -141,6 +141,8 @@ router.post("/login", async (req, res) => {
             );
             imageFolderPath = `${process.env.backend_url}${process.env.user_profile_image_path_name}`;
 
+            
+
         } else {
             return res.status(404).send({
                 success: false,
@@ -218,10 +220,19 @@ router.post("/login", async (req, res) => {
 
         loginTrackModel.addNewLoggingTracker(loginTrackerData);
 
+        let startPoint;
+        let user_id;
+        if(userData[0].role_id == 3){
+            startPoint =  "home";
+            user_id =  userData[0].id;
+        }
+
         return res.status(200).send({
             success: true,
             message: "Welcome to the system.",
             data: profileData,
+            startPoint,
+            user_id
         });
     } else {
         return res.status(401).send({
@@ -586,6 +597,7 @@ router.post("/social-registration", async (req, res) => {
         "created_by": 0,
         "updated_by": 0,
         "status": 1
+
     };
 
     // return res.status(500).send({
@@ -604,6 +616,7 @@ router.post("/social-registration", async (req, res) => {
         });
     }
 
+    
     delete userInfo.password;
     userInfo.id = result.insertId;
 
@@ -619,6 +632,24 @@ router.post("/social-registration", async (req, res) => {
 
     let roleData = await roleModel.getById(userInfo.role_id);
 
+    let userDetails = await userModel.getDataByWhereCondition(
+        { id: userInfo.id, status: [1, 2] },
+        { id: "DESC" }
+    );
+
+    let profileDetails = await consumerModel.getDataByWhereCondition(
+        { id: userDetails[0].profile_id, status: [1, 2] },
+        { id: "DESC" }
+    );
+
+    
+    if(!isEmpty(profileDetails)){
+        delete profileData.id;
+        delete profileData.role_id;
+    }
+
+    userInfo.phone = null;
+
     // profileData.user_name = userInfo.user_name;
     profileData.email = loginData.email;
     profileData.phone = userInfo.phone;
@@ -626,7 +657,8 @@ router.post("/social-registration", async (req, res) => {
         role_id: roleData[0].id,
         title: roleData[0].title,
     };
-    profileData.profile = profileInfo;
+    // profileData.profile = profileInfo;
+    profileData.profile = profileDetails[0];
     profileData.time_period = Date.now() + 3600000;
     profileData.identity_id = uuid;
 
@@ -877,6 +909,8 @@ router.post("/social-login", async (req, res) => {
         success: true,
         message: "Welcome to the system.",
         data: profileData,
+        "startPoint": "home",
+        "user_id": userData[0].id
     });
 
 });
