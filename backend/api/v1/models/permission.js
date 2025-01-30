@@ -297,6 +297,7 @@ let regenerateWhereField = (whereObject = {}, language = undefined) => {
 
     for (let reqColumnIndex = 0; reqColumnIndex < keys.length; reqColumnIndex++) {
         let keyName = keys[reqColumnIndex];
+        let flagMatchName = false;
 
         if (["GR||&&", "GR&&||", "GRL||&&", "GRL&&||"].includes(keyName.toUpperCase())) {
             finalWhere[keyName] = whereObject[keyName];
@@ -309,6 +310,8 @@ let regenerateWhereField = (whereObject = {}, language = undefined) => {
 
 
             if (dbColumName.toUpperCase() == keyName.toUpperCase()) {
+
+                flagMatchName = true;
 
                 if (['JSON', "LONGTEXT"].includes(databaseColum[index].type.toUpperCase())) {
 
@@ -335,6 +338,9 @@ let regenerateWhereField = (whereObject = {}, language = undefined) => {
 
             }
         }
+
+
+        if (!flagMatchName) finalWhere[keyName] = whereObject[keyName];
     }
 
     return finalWhere;

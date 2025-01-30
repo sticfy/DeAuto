@@ -170,6 +170,18 @@ router.post('/list', [verifyToken], async (req, res) => {
     }
 
 
+    // new company list, last 30 days
+    if (req.body.new_company_list == 1) {
+        let dateTimeToday = await commonObject.getGMT();
+
+        let endDate = await commonObject.getCustomDate(dateTimeToday, 0, 0, 0);
+
+        let startDate = await commonObject.getCustomDate(dateTimeToday, 0, -1, 0);
+
+        dataSearchConditionObject["date(created_at)"] = [startDate, endDate]
+
+    }
+
     let result = await companyModel.getDataByWhereCondition(
         dataSearchConditionObject,
         { "id": "ASC" },
@@ -181,7 +193,7 @@ router.post('/list', [verifyToken], async (req, res) => {
         dataSearchConditionObject,
         { "id": "ASC" },
         undefined,
-        undefined, [ ]
+        undefined, []
     );
 
     return res.status(200).send({
@@ -189,7 +201,7 @@ router.post('/list', [verifyToken], async (req, res) => {
         "status": 200,
         "message": "Company List.",
         "companyLogoFolderPath": companyLogoFolderPath,
-        "totalCount":  totalData.length,
+        "totalCount": totalData.length,
         "count": result.length,
         "data": result
     });
