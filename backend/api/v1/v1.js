@@ -25,6 +25,8 @@ const packageRouter = require('./routers/package');
 const companyRouter = require('./routers/company');
 const billingCardRouter = require('./routers/company-billing-card');
 const companyServiceRouter = require('./routers/company-service');
+const favouriteRouter = require('./routers/favourite');
+const companyReviewRouter = require('./routers/company-review');
 
 
 router.use('/role', roleRouter);
@@ -44,6 +46,8 @@ router.use('/package', packageRouter);
 router.use('/company', companyRouter);
 router.use('/billing-card', billingCardRouter);
 router.use('/company-service', companyServiceRouter);
+router.use('/favourite', favouriteRouter);
+router.use('/company-review', companyReviewRouter);
 
 
 router.get('/connection_check', (req, res) => {

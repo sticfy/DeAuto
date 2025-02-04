@@ -11,6 +11,12 @@ const userModel = require("../models/user");
 const superAdminModel = require("../models/super-admin");
 const adminModel = require("../models/admin");
 const consumerModel = require("../models/consumer");
+const companyModel = require("../models/company");
+const companyUserModel = require("../models/company-user");
+const companyServiceModel = require("../models/company-service");
+const companyReviewModel = require("../models/company-review");
+const categoryModel = require("../models/category");
+const favouriteModel = require("../models/favourite");
 const cacheDataObject = require('../common/cache-data');
 
 const jwksClient = require('jwks-rsa');
@@ -920,11 +926,13 @@ let getUserInfoByUserId = async (userId = 0) => {
         profileInfo[0].role = "Super Admin";
         profileInfo[0].role_id = 1;
     } else if (userDetails[0].role_id === 2) {
-        profileInfo = await consumerModel.getById(userDetails[0].profile_id);
-        profileInfo[0].role = "General User";
+        profileInfo = await companyUserModel.getById(userDetails[0].profile_id);
+        profileInfo[0].role = "Company Admin";
         profileInfo[0].role_id = 2;
     } else if (userDetails[0].role_id === 3) {
-
+        profileInfo = await consumerModel.getById(userDetails[0].profile_id);
+        profileInfo[0].role = "General User";
+        profileInfo[0].role_id = 3;
     }
 
     if (isEmpty(profileInfo)) {
@@ -1079,54 +1087,78 @@ let convertToEnglishDigits = async (number = 0) => {
     return { "success": true, "message": "English Digit", "data": output.join('') };
 }
 
-let getTestListByClientId = async (clientId = 0) => {
-    let cacheTestListResult = await cacheDataObject.getTestData();
-    let testList = [];
 
-    let exceptionPriceList = await exceptionPriceModel.getDataByWhereCondition(
-        { "status": 1, "client_id": clientId }
-    );
+// company category list, price start from, average review,total review count, check is favorite
+let companyOtherInformationById = async (companyId = 0, userId = 0) => {
 
-    let clientDetailsList = await clientModel.getDataByWhereCondition(
-        { "id": clientId }
-    );
+    let finalData = {};
 
+    if (userId > 0) {
+        let checkInFavouriteList = await favouriteModel.getDataByWhereCondition({ item_id: companyId, status: 1, user_id: userId, type: "company" }, { "id": "ASC" },
+            undefined,
+            undefined
+        );
 
-    if (!isEmpty(clientDetailsList)) {
-
-        testList = cacheTestListResult.success ? cacheTestListResult.data : [];
-
-        for (let indexTest = 0; indexTest < testList.length; indexTest++) {
-            let test = testList[indexTest];
-            let flag = false;
-
-            for (let indexTestPrice = 0; indexTestPrice < test.price.length; indexTestPrice++) {
-                const testPrice = test.price[indexTestPrice];
-
-                if (testPrice.client_type == clientDetailsList[0].client_type_id) {
-                    test.price = testPrice.price;
-                    flag = true;
-                    break;
-                }
-            }
-
-
-            if (!flag) test.price = 0;
-
-            for (let indexExceptionPrice = 0; indexExceptionPrice < exceptionPriceList.length; indexExceptionPrice++) {
-                const exceptionPrice = exceptionPriceList[indexExceptionPrice];
-
-                if (test.id == exceptionPrice.test_id) {
-                    test.price = test.price == 0 ? exceptionPrice.price : (exceptionPrice.price < test.price ? exceptionPrice.price : test.price);
-                }
-            }
+        if (!isEmpty(checkInFavouriteList)) {
+            finalData.is_favourite = 1;
+        } else {
+            finalData.is_favourite = 0;
         }
     }
 
+    let companyServiceList = await companyServiceModel.getDataByWhereCondition({ company_id: companyId, status: 1 }, { "price_start_from": "ASC" },
+        undefined,
+        undefined
+    );
 
-    return testList;
+    if (!isEmpty(companyServiceList)) {
 
-}
+        // pricing
+        finalData.pricingStart = companyServiceList[0].price_start_from;
+
+        // categories
+        let categoryIds = [];
+
+        for (let i = 0; i < companyServiceList.length; i++) {
+
+            let categoryId = companyServiceList[i].category_id;
+
+            // Check if categoryId is already in categoryIds array
+            if (!categoryIds.includes(categoryId)) {
+                categoryIds.push(categoryId);
+            }
+        }
+
+        if (isEmpty(categoryIds)) {
+            categoryIds = [0];
+        }
+
+        let categoryList = await categoryModel.getDataByWhereCondition({ id: { "IN": categoryIds }, status: 1 }, { "id": "ASC" },
+            undefined,
+            undefined, ["id", "title", "status"]
+        );
+
+        if (isEmpty(categoryList)) {
+            finalData.categoryList = [];
+        } else {
+            finalData.categoryList = categoryList;
+        }
+
+
+        // average review check
+        let averageReview = await companyReviewModel.companyAverageReviewById(companyId);
+
+        if (averageReview[0].rating == null) {
+            finalData.averageReview = "";
+        } else {
+            finalData.averageReview = averageReview[0].rating.toFixed(1);
+        }
+
+    }
+
+    return finalData;
+
+};
 
 
 
@@ -1165,7 +1197,7 @@ module.exports = {
     randomStringGenerate,
     weekDayDataVerify,
     getWeekDay,
-    getTestListByClientId,
+    companyOtherInformationById,
     convertToEnglishDigits,
     addSixtyMinuteToGMT,
     validateLatitudeLongitude

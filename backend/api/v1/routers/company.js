@@ -789,7 +789,6 @@ router.get("/details/:id", [verifyToken], async (req, res) => {
         companyDetailsById[0].companyImages = companyImages;
     }
 
-
     return res.status(200).send({
         success: true,
         status: 200,

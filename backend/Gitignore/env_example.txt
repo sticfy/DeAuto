@@ -44,5 +44,32 @@ scheduleTime =0 0 * * *
 #every minute
 # scheduleTime = */1 * * * *
 
+##################### MAP RELATED ####################
+
+#Google Map API Key
+
+#Maps JavaScript API
+# AIzaSyACtMl0u5b8sU_6M5JqMlKRLNgdn_hvKQc
+
+# Places API (Same maps javascript api)
+# AIzaSyACtMl0u5b8sU_6M5JqMlKRLNgdn_hvKQc
+GOOGLE_MAPS_API_KEY = "AIzaSyACtMl0u5b8sU_6M5JqMlKRLNgdn_hvKQc"
+
+
+# Geocoding API
+# Client ID
+# 400872967029-o9v9gtkbeq4e397oimg338ovqi134b4u.apps.googleusercontent.com
+# iOS URL scheme
+# com.googleusercontent.apps.400872967029-o9v9gtkbeq4e397oimg338ovqi134b4u
+
+
+# Google Console API key created, It will not be needed as map api key has found.
+# it also gives 27 functionality access like places API,Maps JavaScript API,Geocoding API
+
+# Use this key in your application by passing it with the key=API_KEY parameter.
+# AIzaSyC5igoZiVWBZQqE_1Rb_GXgccBhWgptfLw
+
+##################### MAP RELATED ####################
+
 
 
