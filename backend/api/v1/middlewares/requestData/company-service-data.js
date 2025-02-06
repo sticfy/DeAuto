@@ -198,7 +198,7 @@ router.use(async function (req, res, next) {
 
     // service_end_date validation
     if (isEmpty(reqUserData.service_end_date)) {
-        reqUserData.service_end_date = null;
+        reqUserData.service_end_date = await commonObject.getCustomDate(dateTimeToday, 0, 0, 100);;
     } else {
         let date = moment(reqUserData.service_end_date, 'YYYY-MM-DD', true)
 

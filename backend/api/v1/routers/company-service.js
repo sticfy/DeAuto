@@ -61,6 +61,7 @@ router.post('/list', [verifyToken], async (req, res) => {
     }
 
 
+
     // company id search
     if (req.decoded.userInfo.role_id == 1) {
         if (req.body.company_id != undefined) {
@@ -69,6 +70,17 @@ router.post('/list', [verifyToken], async (req, res) => {
     } else if (req.decoded.userInfo.role_id == 2) {
         dataSearchConditionObject.company_id = req.decoded.profileInfo.company_id;
     }
+
+    // app user
+    if (req.decoded.userInfo.role_id == 3) {
+        // find with service start date and end date
+        let dateTimeToday = await commonObject.getGMT();
+        let dateToday = await commonObject.getCustomDate(dateTimeToday, 0, 0, 0);
+        dataSearchConditionObject["date(service_end_date)"] = { "GTE": dateToday }
+    }
+
+
+
 
     let result = await companyServiceModel.getDataByWhereCondition(dataSearchConditionObject, { "id": "ASC" },
         reqData.limit,
@@ -82,6 +94,8 @@ router.post('/list', [verifyToken], async (req, res) => {
 
         if (!isEmpty(language)) {
             element.service_name = companyServiceDataObject[language];
+            element.details = element.details[language];
+
         } else {
             element.service_name = companyServiceDataObject;
         }
@@ -283,7 +297,7 @@ router.put('/update', [verifyToken, companyServiceUpdateValidation], async (req,
     companyServiceUpdateObject.updated_by = req.decoded.userInfo.id;
     companyServiceUpdateObject.updated_at = await commonObject.getGMT();
 
-  
+
     let result = await companyServiceModel.updateById(reqData.id, companyServiceUpdateObject);
 
     if (result.affectedRows == undefined || result.affectedRows < 1) {

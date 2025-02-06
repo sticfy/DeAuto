@@ -12,6 +12,7 @@ const verifyToken = require('../middlewares/jwt_verify/verifyToken');
 const { routeAccessChecker } = require('../middlewares/routeAccess');
 require('dotenv').config();
 
+let companyLogoFolderPath = `${process.env.backend_url}${process.env.company_logo_path_name}`;
 
 router.post('/make-favourite', [verifyToken], async (req, res) => {
 
@@ -142,6 +143,7 @@ router.post('/make-favourite', [verifyToken], async (req, res) => {
 
 router.post('/my-favourite-list', [verifyToken], async (req, res) => {
 
+    let language = req.headers['language'];
 
     let reqData = {
         "limit": req.body.limit,
@@ -206,8 +208,15 @@ router.post('/my-favourite-list', [verifyToken], async (req, res) => {
         let companyBasedInformation = await commonObject.companyOtherInformationById(element.id, req.decoded.userInfo.id);
         element.companyOtherInfo = companyBasedInformation;
 
-
+        if (!isEmpty(language) && !isEmpty(element.companyOtherInfo.categoryList)) {
+            for (let index = 0; index < element.companyOtherInfo.categoryList.length; index++) {
+                const category = element.companyOtherInfo.categoryList[index];
+                category.title = category.title[language];
+            }
+        }
     }
+
+
 
     let totalData = await companyModel.getDataByWhereCondition(
         dataSearchConditionObject,
@@ -222,6 +231,7 @@ router.post('/my-favourite-list', [verifyToken], async (req, res) => {
         "success": true,
         "status": 200,
         "message": "Favourite List.",
+        "companyLogoFolderPath": companyLogoFolderPath,
         "totalCount": totalData.length,
         "count": result.length,
         "data": result
