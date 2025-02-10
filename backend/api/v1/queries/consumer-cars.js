@@ -1,13 +1,14 @@
 const isEmpty = require("is-empty");
-let table_name = "deautodb_otp";
+let table_name = "deautodb_consumer_save_cars";
 
 let getList = () => {
-    return `SELECT * FROM ${table_name}  where status != 0`;
+    return `SELECT * FROM ${table_name}  where status != 0 order by id DESC`;
 }
 
 let getActiveList = () => {
-    return `SELECT * FROM ${table_name}  where status = 1`;
+    return `SELECT * FROM ${table_name}  where status = 1  order by id DESC`;
 }
+
 
 let getByTitle = () => {
     return `SELECT * FROM ${table_name} where  title = ? and status != 0`;
@@ -15,10 +16,6 @@ let getByTitle = () => {
 
 let getById = () => {
     return `SELECT * FROM ${table_name} where  id = ? and status != 0`;
-}
-
-let updateCounter = () => {
-    return `UPDATE ${table_name} set counter = ? where id = ?  `;
 }
 
 let addNew = () => {
@@ -195,8 +192,6 @@ let getDataByWhereCondition = (data = {}, orderBy = {}, limit, offset, columnLis
 
 
 
-
-
 module.exports = {
     getList,
     getActiveList,
@@ -204,6 +199,5 @@ module.exports = {
     getById,
     addNew,
     updateById,
-    getDataByWhereCondition,
-    updateCounter
+    getDataByWhereCondition
 }

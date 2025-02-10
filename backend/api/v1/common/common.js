@@ -297,6 +297,63 @@ let characterLimitCheck = async (value = "", modelField = "", willAllowExtraSpac
         minimumNumberCharacter: 0
     },
 
+    {
+        modelField: "License plate number",
+        maxLength: 150,
+        minLength: 3,
+        isAllowStartWithNumeric: true,
+        isAllowStartWithSpecialCharacter: true,
+        willItUpperCase: true,
+        isAllowSpace: true,
+        isMustUserSpecialCharacter: false,
+        isMustUserUpperCharacter: false,
+        isMustUserLowerCharacter: false,
+        isMustUserNumberCharacter: false,
+        minimumNumberCharacter: 0
+    },
+    {
+        modelField: "car registration year",
+        maxLength: 10,
+        minLength: 4,
+        isAllowStartWithNumeric: true,
+        isAllowStartWithSpecialCharacter: true,
+        willItUpperCase: true,
+        isAllowSpace: true,
+        isMustUserSpecialCharacter: false,
+        isMustUserUpperCharacter: false,
+        isMustUserLowerCharacter: false,
+        isMustUserNumberCharacter: false,
+        minimumNumberCharacter: 0
+    },
+    {
+        modelField: "car model",
+        maxLength: 150,
+        minLength: 2,
+        isAllowStartWithNumeric: true,
+        isAllowStartWithSpecialCharacter: true,
+        willItUpperCase: true,
+        isAllowSpace: true,
+        isMustUserSpecialCharacter: false,
+        isMustUserUpperCharacter: false,
+        isMustUserLowerCharacter: false,
+        isMustUserNumberCharacter: false,
+        minimumNumberCharacter: 0
+    },
+    {
+        modelField: "car brand name",
+        maxLength: 150,
+        minLength: 2,
+        isAllowStartWithNumeric: true,
+        isAllowStartWithSpecialCharacter: true,
+        willItUpperCase: true,
+        isAllowSpace: true,
+        isMustUserSpecialCharacter: false,
+        isMustUserUpperCharacter: false,
+        isMustUserLowerCharacter: false,
+        isMustUserNumberCharacter: false,
+        minimumNumberCharacter: 0
+    },
+
     ];
 
     let index = await data.find(
@@ -1089,7 +1146,7 @@ let convertToEnglishDigits = async (number = 0) => {
 
 
 // company category list, price start from, average review,total review count, check is favorite
-let companyOtherInformationById = async (companyId = 0, userId = 0) => {
+let companyOtherInformationById = async (companyId = 0, userId = 0, language = '') => {
 
     let finalData = {};
 
@@ -1135,7 +1192,7 @@ let companyOtherInformationById = async (companyId = 0, userId = 0) => {
 
         let categoryList = await categoryModel.getDataByWhereCondition({ id: { "IN": categoryIds }, status: 1 }, { "id": "ASC" },
             undefined,
-            undefined, ["id", "title", "status"]
+            undefined, ["id", "title", "status"], language
         );
 
         if (isEmpty(categoryList)) {
@@ -1149,10 +1206,17 @@ let companyOtherInformationById = async (companyId = 0, userId = 0) => {
         let averageReview = await companyReviewModel.companyAverageReviewById(companyId);
 
         if (averageReview[0].rating == null) {
-            finalData.averageReview = "";
+            finalData.averageReview = 5;
         } else {
             finalData.averageReview = averageReview[0].rating.toFixed(1);
         }
+
+        let allReviewList = await companyReviewModel.getDataByWhereCondition({ company_id: companyId, status: 1 }, { "id": "ASC" },
+            "skip",
+            undefined,["id"]
+        );
+
+        finalData.totalReview = allReviewList.length;
 
     }
 

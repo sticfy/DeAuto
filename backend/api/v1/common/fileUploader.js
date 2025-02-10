@@ -79,7 +79,16 @@ let uploadFileFormate = [{
     fileSavePath: process.env.disease_detection_bulk_file_path,
     willEncrypt: false,
     changeMimeType: [{ "old": "vnd.openxmlformats-officedocument.spreadsheetml.sheet", "new": "xlsx" }]
-}]
+},
+{
+    fileType: "noteImage",
+    maxSize: 15 * 1024, //  MB TO KB
+    mimetype: ["jpg", "jpeg", "png"],
+    fileSavePath: process.env.note_image_path,
+    willEncrypt: false
+}
+
+]
 
 let uploadFile = async (req, fileTypeObjectName = "image", inputFieldName = "unknown") => {
 

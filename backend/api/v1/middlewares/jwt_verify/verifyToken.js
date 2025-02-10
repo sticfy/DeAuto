@@ -154,6 +154,7 @@ router.use(async function (req, res, next) {
                         uuid: decoded.identity_id
                     };
 
+
                     req.decoded = decoded;
                     // req.decoded.language = (!isEmpty(req.headers['language']) && ['en', 'bn'].includes(req.headers['language'])) ? req.headers['language'] : 'en';
 

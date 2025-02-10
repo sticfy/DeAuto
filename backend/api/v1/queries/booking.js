@@ -1,13 +1,14 @@
 const isEmpty = require("is-empty");
-let table_name = "deautodb_otp";
+let table_name = "deautodb_bookings";
 
 let getList = () => {
-    return `SELECT * FROM ${table_name}  where status != 0`;
+    return `SELECT * FROM ${table_name}  where status != 0 order by id DESC`;
 }
 
 let getActiveList = () => {
-    return `SELECT * FROM ${table_name}  where status = 1`;
+    return `SELECT * FROM ${table_name}  where status = 1  order by id DESC`;
 }
+
 
 let getByTitle = () => {
     return `SELECT * FROM ${table_name} where  title = ? and status != 0`;
@@ -15,10 +16,6 @@ let getByTitle = () => {
 
 let getById = () => {
     return `SELECT * FROM ${table_name} where  id = ? and status != 0`;
-}
-
-let updateCounter = () => {
-    return `UPDATE ${table_name} set counter = ? where id = ?  `;
 }
 
 let addNew = () => {
@@ -58,7 +55,7 @@ let getDataByWhereCondition = (data = {}, orderBy = {}, limit, offset, columnLis
         if (Array.isArray(data[keys[0]])) {
             query += ` where ${keys[0]} BETWEEN ? and ? `
 
-         } else if (["GR||&&", "GR&&||", "GRL||&&", "GRL&&||"].includes(keys[0].toUpperCase()) && typeof data[keys[0]] === 'object') { // Group-OR(internal)-AND (out) like =>  where (field1 = ? or field2 = ?)
+        } else if (["GR||&&", "GR&&||", "GRL||&&", "GRL&&||"].includes(keys[0].toUpperCase()) && typeof data[keys[0]] === 'object') { // Group-OR(internal)-AND (out) like =>  where (field1 = ? or field2 = ?)
 
             let grOrAndObjectKeys = Object.keys(data[keys[0]]);
             let operator = (keys[0].toUpperCase()).startsWith("GRL") ? " Like " : " = ";
@@ -195,8 +192,6 @@ let getDataByWhereCondition = (data = {}, orderBy = {}, limit, offset, columnLis
 
 
 
-
-
 module.exports = {
     getList,
     getActiveList,
@@ -204,6 +199,5 @@ module.exports = {
     getById,
     addNew,
     updateById,
-    getDataByWhereCondition,
-    updateCounter
+    getDataByWhereCondition
 }

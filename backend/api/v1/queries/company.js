@@ -205,7 +205,10 @@ let getDataByWhereCondition = (data = {}, orderBy = {}, limit, offset, columnLis
         }
     }
 
-    query += `LIMIT ${offset}, ${limit}`;
+    if (!["skip", "SKIP", "Skip"].includes(limit)) {
+        query += `LIMIT ${offset}, ${limit}`;
+    }
+
     return query;
 }
 

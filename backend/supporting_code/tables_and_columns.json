@@ -110,6 +110,75 @@
     ]
   },
   {
+    "name": "deautodb_bookings",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "company_id",
+        "type": "int"
+      },
+      {
+        "name": "service_id",
+        "type": "int"
+      },
+      {
+        "name": "company_service_id",
+        "type": "varchar"
+      },
+      {
+        "name": "date",
+        "type": "datetime"
+      },
+      {
+        "name": "time_slot",
+        "type": "int"
+      },
+      {
+        "name": "license_plate_number",
+        "type": "varchar"
+      },
+      {
+        "name": "travel_km",
+        "type": "float"
+      },
+      {
+        "name": "note",
+        "type": "text"
+      },
+      {
+        "name": "image",
+        "type": "varchar"
+      },
+      {
+        "name": "application_status",
+        "type": "int"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
     "name": "deautodb_categories",
     "property": [
       {
@@ -273,6 +342,51 @@
       {
         "name": "image",
         "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_company_reviews",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "user_id",
+        "type": "int"
+      },
+      {
+        "name": "company_id",
+        "type": "int"
+      },
+      {
+        "name": "rating",
+        "type": "double"
+      },
+      {
+        "name": "opinion",
+        "type": "text"
       },
       {
         "name": "status",
@@ -566,6 +680,51 @@
     ]
   },
   {
+    "name": "deautodb_consumer_save_cars",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "consumer_id",
+        "type": "int"
+      },
+      {
+        "name": "license_plate_number",
+        "type": "varchar"
+      },
+      {
+        "name": "travel_km",
+        "type": "float"
+      },
+      {
+        "name": "details",
+        "type": "text"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
     "name": "deautodb_consumers",
     "property": [
       {
@@ -697,6 +856,47 @@
       {
         "name": "answer",
         "type": "longtext"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_favorites",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "user_id",
+        "type": "int"
+      },
+      {
+        "name": "item_id",
+        "type": "int"
+      },
+      {
+        "name": "type",
+        "type": "varchar"
       },
       {
         "name": "status",
@@ -1346,7 +1546,7 @@
       },
       {
         "name": "social_provider_id",
-        "type": "varchar"
+        "type": "text"
       },
       {
         "name": "status",

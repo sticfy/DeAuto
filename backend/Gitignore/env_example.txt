@@ -32,6 +32,9 @@ flag_image_path = "public/default/images/flags/"
 category_image_path_name = "/category"
 category_image_path = "public/upload/images/category/"
 
+note_image_path_name = "/booking-note"
+note_image_path = "public/upload/images/booking-note/"
+
 send_email_host="smtp.zoho.com"
 send_email_address="shovon56.study@zohomail.com"
 send_email_password="shovonMedinatec12"

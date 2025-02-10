@@ -39,6 +39,7 @@ app.use(process.env.company_user_image_path_name, express.static(process.env.com
 app.use(process.env.company_image_path_name, express.static(process.env.company_image_path));
 app.use(process.env.flag_image_path_name, express.static(process.env.flag_image_path));
 app.use(process.env.category_image_path_name, express.static(process.env.category_image_path));
+app.use(process.env.note_image_path_name, express.static(process.env.note_image_path));
 
 
 app.use(express.json());

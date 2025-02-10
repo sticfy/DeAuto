@@ -738,6 +738,7 @@ router.get("/my-company-details", [verifyToken], async (req, res) => {
 
 router.get("/details/:id", [verifyToken], async (req, res) => {
 
+    let language = req.headers['language'];
 
     let id = req.params.id;
 
@@ -788,6 +789,11 @@ router.get("/details/:id", [verifyToken], async (req, res) => {
     } else {
         companyDetailsById[0].companyImages = companyImages;
     }
+
+    // review and rating
+    let companyOtherInformation = await commonObject.companyOtherInformationById(id, req.decoded.userInfo.id,language);
+
+    companyDetailsById[0].companyOtherInformation = companyOtherInformation;
 
     return res.status(200).send({
         success: true,
