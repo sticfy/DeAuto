@@ -1,0 +1,138 @@
+.up-text{
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 28.8px;
+    margin-bottom: 32px;
+}
+.btn-color{
+    background-color: #F74C07;
+    color: white;
+}
+.nav{
+    border-bottom: solid 1px #E8E8E8;
+}
+a{
+    color:#676767;
+}
+.active a{
+    color:#F74C07;
+}
+.active{
+    z-index: 2;
+    border-bottom: solid 3px #F74C07;
+}
+.nav-item{
+  margin-right: 24px;
+}
+.table_body{
+    font-family: "Poppins", serif;
+  border: 1px solid #E8E8E8;
+  margin-top: 16px;
+  border-radius: 14px;
+  font-size: 14px;
+}
+.table_inner{
+    padding: 0px 24px 0px 24px;
+}
+table {
+    border-collapse:separate; 
+    border-spacing: 0 1em;
+    font-size: 14px;
+}
+th{
+    font-weight: 500;
+}
+.details li a{
+    font-size: 16px;
+    color:#1C1C1C ;
+}
+.details li:last-child a{
+    color:#CD1C18;
+  }
+.dot{
+    padding-left: 20px;
+    font-size: 16px;
+} 
+.modal-footer{
+    border-top: unset !important;
+    padding-top: unset !important;
+    justify-content:space-evenly;
+}
+/* switch */
+
+/* switch */
+.btn-color{
+  background-color: #F74C07;
+}
+.chek{
+  padding-bottom: 8px;
+  border-bottom: 1px solid #E8E8E8;
+}
+.paid{
+    background-color: #D1FAB3;
+    color:#29760D;
+    padding: 4px;
+}
+.pending{
+    background-color: #FFEEBB;
+    color:#99760B;
+    padding: 4px;
+}
+.invoices{
+    font-size: 24px;
+    font-weight: 600;
+
+}
+.plan_s{
+    background-color: #FEEDE6;
+    padding:8px;
+}
+.plan_ss{
+    background-color: #FEEDE6;
+    padding:14px;
+}
+.plan_t{
+    font-weight: 500;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.plan{
+    border:0.8px solid #ECECEC;
+    border-radius: 4px;
+}
+.plan_n{
+    font-size: 8px;
+    color: #676767;
+}
+.plan_D{
+    font-size: 10px;
+    color: #676767;
+}
+.paymatName{
+    font-size: 12px;
+}
+.plan_name{
+    font-size: 14px;
+}
+.plan_b{
+    padding: 16px;
+    margin-top: 10px;
+}
+.plan_bb{
+    padding: 12px 12px 32px 12px;
+    margin: 32px 12px 10px 12px;
+    border: 0.8px solid #ECECEC;
+    border-radius: 4px;
+}
+.planDay{
+    padding: 16px;
+}
+.progress{
+    --bs-progress-bar-bg: #F74C07 !important;
+}
+.card{
+    text-indent: 24px;
+  }
+.pass{
+    padding-right: 30px;
+}

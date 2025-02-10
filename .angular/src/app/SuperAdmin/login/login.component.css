@@ -1,0 +1,24 @@
+.btn-color{
+    background-color: #F74C07;
+}
+.hover{
+    /* box-shadow:   3px 3px 3px 3px #7c7b7b00; */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 16px;
+}
+.full_body{
+    padding-top: 72px;
+    height: 100vh;
+    background-color: #f2f2f2;
+    font-family:"Poppins", serif
+}
+.cards{
+    padding: 24px;
+}
+.error{
+    padding: 14px;
+    background-color: rgb(255, 213, 213);
+    border-radius: 8px;
+    color: #F74C07
+
+}

@@ -1,0 +1,31 @@
+.active{
+    color:#F74C07 !important;
+    background-color: white;
+    border-radius: 8px;
+    border: solid#E8E8E8 1px;
+}
+.nav-link{
+    font-family:Poppins;
+    color: black;
+    margin-bottom:8px;
+}
+.sidebar{
+    padding-top: 24px;
+    padding-left: 40px;
+    font-size: 18px;
+    height: 99vh;
+    overflow-y: auto;
+}
+.nav a{
+    color:#676767;
+}
+.f-s-14{
+    font-size: 14px;
+}
+/* .profileFooter{
+    position: absolute;
+    bottom: 10px;
+    padding-top: 16px;
+    border-top: 1px solid #E8E8E8;
+    width: 83%
+} */

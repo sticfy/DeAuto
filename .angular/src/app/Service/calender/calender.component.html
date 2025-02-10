@@ -1,0 +1,103 @@
+
+<div class="calendar-container">
+    <div class="calendar">
+      <div class="calendar-headline p-3">
+        <div class="calendar-headline-month ">
+            Upcoming schedule:
+          {{ firstDayOfActiveMonth().monthShort }},
+          {{ firstDayOfActiveMonth().year }}
+        </div>
+        <div class="calendar-headline-controls">
+          <div class="calendar-headline-control" (click)="goToPreviousMonth()">
+            «
+          </div>
+          <div
+            class="calendar-headline-control calendar-headline-control-today"
+            (click)="goToToday()"
+          >
+            Today
+          </div>
+          <div class="calendar-headline-control" (click)="goToNextMonth()">»</div>
+        </div>
+      </div>
+      <div class="calendar-weeks-grid">
+        @for (weekDay of weekDays(); track $index) {
+          <div class="calendar-weeks-grid-cell">{{ weekDay }}</div>
+        }
+      </div>
+      <div class="calendar-grid">
+        @for (dayOfMonth of daysOfMonth(); track $index) {
+          <div [class]="{'calendar-grid-cell': true,'calendar-grid-cell-active':activeDay()?.toISODate() === dayOfMonth.toISODate(),'calendar-grid-cell-inactive':dayOfMonth.month !== firstDayOfActiveMonth().month}"(click)="activeDay.set(dayOfMonth)" >
+            {{ dayOfMonth.day }}
+          </div>
+        }
+      </div>
+    </div>
+    <div class="px-3">
+        <hr style="color: #EDEDED;opacity: 1;">
+    </div>
+    <div class="calendar_details">
+        <div>
+            <div class="d-flex details">
+                <div class="box">
+                   <span class="m-auto">15</span>
+                </div>
+                <div class="box-text">
+                    <div>Review Manual Checkin</div>
+                    <span>{{'Customer-mail@example.com'}}</span>
+                </div>
+                <div class="box-time">
+                    10.30 pm
+                </div>
+            </div>
+            <div class="d-flex details">
+                <div class="box">
+                   <span class="m-auto">20</span>
+                </div>
+                <div class="box-text">
+                    <div>Review Manual Checkin</div>
+                    <span>{{'Customer-mail@example.com'}}</span>
+                </div>
+                <div class="box-time">
+                    10.30 pm
+                </div>
+            </div>
+            <div class="d-flex details">
+                <div class="box">
+                   <span class="m-auto">25</span>
+                </div>
+                <div class="box-text">
+                    <div>Review Manual Checkin</div>
+                    <span>{{'Customer-mail@example.com'}}</span>
+                </div>
+                <div class="box-time">
+                    10.30 pm
+                </div>
+            </div>  
+            <div class="d-flex details">
+                <div class="box">
+                   <span class="m-auto">25</span>
+                </div>
+                <div class="box-text">
+                    <div>Review Manual Checkin</div>
+                    <span>{{'Customer-mail@example.com'}}</span>
+                </div>
+                <div class="box-time">
+                    10.30 pm
+                </div>
+            </div>  
+            <div class="d-flex details">
+                <div class="box">
+                   <span class="m-auto">25</span>
+                </div>
+                <div class="box-text">
+                    <div>Review Manual Checkin</div>
+                    <span>{{'Customer-mail@example.com'}}</span>
+                </div>
+                <div class="box-time">
+                    10.30 pm
+                </div>
+            </div>  
+        </div>
+    </div>
+  </div>

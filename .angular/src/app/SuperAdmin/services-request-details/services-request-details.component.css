@@ -1,0 +1,37 @@
+.up-text{
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 28.8px;
+    margin-bottom: 16px;
+}
+.box{
+    padding: 16px;
+    border: 1px solid #E7E7E7;
+    border-radius: 12px;
+    margin-top: 16px;
+}
+.qu{
+    font-size: 18px;
+    font-weight: 600;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #E8E8E8;
+}
+.sub{
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 16px;
+}
+.cost{
+    margin-top: 16px;
+    font-size: 28px;
+    font-weight: 500;
+}
+.btn{
+    width: 165px;
+}
+.btn-success{
+    background-color: #008000;
+}
+.btn-danger{
+    background-color: #CD1C18;
+}

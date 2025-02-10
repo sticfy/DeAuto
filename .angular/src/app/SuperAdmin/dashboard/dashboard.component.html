@@ -1,0 +1,92 @@
+
+<section>
+    <div class="d-flex">
+        <div><h2><b>Dashboard</b></h2></div>
+        
+    </div>
+</section>
+<section class="section">
+    <div>
+        <div class="d-flex">
+            <div class="outer">
+                <div class="box">
+                    <div class="inner">
+                        <div><div class="number">1000</div></div>
+                        <span>New Bookings</span>
+                    </div>
+                   
+                </div>
+            </div>
+            <div class="outer">
+                <div class="box">
+                    <div class="inner">
+                        <div class="d-flex"><div class="number">1200</div> <div class="f-s-12 rate-Up"><i class="me-1"><svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.9998 4.0893C11.0045 3.93716 10.9488 3.78349 10.8327 3.66737C10.7179 3.55259 10.5664 3.49685 10.416 3.50014L6.42845 3.5C6.11285 3.49999 5.85702 3.75582 5.85696 4.07141C5.85696 4.387 6.11279 4.64284 6.42839 4.64285L9.04896 4.64294L3.16737 10.5245C2.94417 10.7476 2.94417 11.1095 3.16737 11.3326C3.39051 11.5558 3.75234 11.5558 3.97548 11.3326L9.85699 5.45115L9.85718 8.07147C9.8572 8.38707 10.1131 8.64284 10.4286 8.64284C10.7442 8.64284 11.0001 8.38695 11 8.07135L10.9998 4.0893Z"/>
+                            </svg></i>1.8%</div></div>
+                        <span>Shop visited (This month)</span>
+                    </div>
+                   
+                </div>
+            </div>
+            <div class="outer">
+                <div class="box">
+                    <div class="inner">
+                        <div class="d-flex"><div class="number">12587</div><div class="f-s-12 rate-Down"><i class="me-1"><svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.9998 10.9107C11.0045 11.0628 10.9488 11.2165 10.8327 11.3326C10.7179 11.4474 10.5664 11.5031 10.416 11.4999L6.42845 11.5C6.11285 11.5 5.85702 11.2442 5.85696 10.9286C5.85696 10.613 6.11279 10.3572 6.42839 10.3571L9.04896 10.3571L3.16737 4.47551C2.94417 4.25237 2.94417 3.89054 3.16737 3.6674C3.39051 3.4442 3.75234 3.4442 3.97548 3.6674L9.85699 9.54885L9.85718 6.92853C9.8572 6.61293 10.1131 6.35716 10.4286 6.35716C10.7442 6.35716 11.0001 6.61305 11 6.92865L10.9998 10.9107Z" />
+                            </svg></i>1.8%</div></div>
+                        <span>Total impression (This month)</span>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="section">
+    <div class="d-flex">
+        <div class="chart">
+            <app-chart [data]="data" [label]="label"></app-chart>
+            <div class="table_body">
+                <div class="table_inner">
+                    <table class="table table-borderless">
+                        <thead>
+                            <tr>
+                                <th>Service name</th>
+                                <th>Car model</th>
+                                <th>Date & Time slot</th>
+                                <th>Status</th>
+                            </tr> 
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Review Manual Checkin</td>
+                                <td>Audi A6</td>
+                                <td>25.12.2024; 13:58</td>
+                                <td><small class="booking px-2">Booked</small></td>
+                            </tr>
+                            <tr>
+                                <td>Review Manual Checkin</td>
+                                <td>Audi A6</td>
+                                <td>25.12.2024; 13:58</td>
+                                <td><small class="booking px-2">Booked</small></td>
+                            </tr>
+                            <tr>
+                                <td>Review Manual Checkin</td>
+                                <td>Audi A6</td>
+                                <td>25.12.2024; 13:58</td>
+                                <td><small class="booking px-2">Booked</small></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+        <div class="calender ms-3">
+            <app-calender></app-calender>
+        </div>
+    </div>
+    
+    
+    
+</section>

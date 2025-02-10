@@ -11,8 +11,5 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent {
-  @Input() data:any
-  ngOnInit(): void {
-    console.log('data',this.data)
-  }
+
 }

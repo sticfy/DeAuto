@@ -1,0 +1,39 @@
+.footer{
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-top: 87px;
+    padding-bottom: 56px;
+    background-color: #E8E8E8;
+}
+.help{
+    font-size: 18px;
+}
+.navitem{
+    padding-bottom: 48px;
+    border-bottom: 1px solid #B9B9B9;
+}
+.year{
+    margin-top: auto;
+    font-size: 10px;
+    color: #676767;
+}
+@media only screen and (max-width: 800px) {
+    .footer{
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-top: 27px;
+        padding-bottom: 26px;
+        background-color: #E8E8E8;
+    }
+    .nav{
+        margin-bottom: 70px;
+       
+    }
+    .nav a{
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .socialIcon{
+        margin-top: 24px;
+    }
+}

@@ -1,0 +1,19 @@
+.px-80{
+    padding-left: 100px;
+    padding-right: 100px;
+}
+.btn-color{
+    background-color: #F74C07;
+}
+.display{
+    display: none;
+}
+@media only screen and (max-width: 800px) {
+    .px-80{
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    img{
+        height: 40px;
+    }
+}

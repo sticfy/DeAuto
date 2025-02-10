@@ -1,0 +1,193 @@
+<section>
+    <div class="up-text">
+        Bookings
+    </div>
+    <div class="ms-2">
+        <ul class="nav">
+            <li class="nav-item active">
+              <a class="nav-link ">Ongoing</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " aria-current="page">Completed</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" >Canceled</a>
+            </li>
+          </ul>
+    </div>
+    <div class="d-flex">
+      <div class="me-auto">
+        <form action="" >
+          <div class="mt-3 d-flex">
+            <i class="fa-solid fa-magnifying-glass"style="margin-left: 11px; margin-top: 11px; cursor: pointer; color: #676767;position: absolute;"></i>
+              <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Search bookings...">
+            </div> 
+        </form>
+      </div>
+      <div>
+        <div class="">
+          <div class="dropdown">
+            <a class="btn dropdown-toggle mt-3 border"  style="font-size: 10px;" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Filter by date
+            </a>
+          
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Action</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>   
+    </div>
+</section>
+<section>
+  <div>
+    <div class="table_body">
+      <div class="table_inner">
+          <table class="">
+              <thead>
+                  <tr>
+                      <th>Service name</th>
+                      <th>Car model</th>
+                      <th>License number</th>
+                      <th>Customer e-mail</th>
+                      <th>Date & Time slot</th>
+                      <th>Action</th>
+                  </tr> 
+              </thead>
+              <tbody>
+                  <tr>
+                      <td>Review Manual Checkin</td>
+                      <td>Audi A6</td>
+                      <td>12322</td>
+                      <td>{{'john@example.com'}}</td>
+                      <td>25.12.2024; 13:58</td>
+                      <td class="dropdown details"><span class="dot" data-bs-toggle="dropdown" aria-expanded="false">...</span>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" routerLink="/custom/booking-details"><i class="me-3"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 10C1 5.75736 1 3.63604 2.31802 2.31802C3.63604 1 5.75736 1 10 1C14.2426 1 16.3639 1 17.682 2.31802C19 3.63604 19 5.75736 19 10C19 14.2426 19 16.3639 17.682 17.682C16.3639 19 14.2426 19 10 19C5.75736 19 3.63604 19 2.31802 17.682C1 16.3639 1 14.2426 1 10Z" stroke="#1C1C1C" stroke-width="1.5"/>
+                            <path d="M9.05261 5.26318H14.7368" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M5.26318 5.26318H6.21055" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M5.26318 10H6.21055" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M5.26318 14.7368H6.21055" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M9.05261 10H14.7368" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M9.05261 14.7368H14.7368" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>                            
+                            </i>Details</a></li>
+                          <li><a data-bs-target="#myModal1" data-bs-toggle="modal"class="dropdown-item"><i class="me-3"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 10C19 5.02943 14.9705 1 10 1C5.02943 1 1 5.02943 1 10C1 14.9705 5.02943 19 10 19C14.9705 19 19 14.9705 19 10Z" stroke="#1C1C1C" stroke-width="1.5"/>
+                            <path d="M6.3999 10L9.0999 12.7L13.5999 7.30005" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            </i>Mark as completed</a></li>
+                          <li><a data-bs-target="#myModal" data-bs-toggle="modal"class="dropdown-item"><i class="me-3"><svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.6994 13.2L7.29993 7.80005M7.3005 13.2L12.6999 7.80005" stroke="#CD1C18" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M19 10.5C19 5.52943 14.9705 1.5 10 1.5C5.02943 1.5 1 5.52943 1 10.5C1 15.4705 5.02943 19.5 10 19.5C14.9705 19.5 19 15.4705 19 10.5Z" stroke="#CD1C18" stroke-width="1.5"/>
+                            </svg>
+                            </i>Cancel booking</a></li>
+                        </ul>
+                      </td>
+                  </tr>
+                  <tr>
+                    <td>Review Manual Checkin</td>
+                    <td>Audi A6</td>
+                    <td>12322</td>
+                    <td>{{'john@example.com'}}</td>
+                    <td>25.12.2024; 13:58</td>
+                    <td class="dropdown details"><span class="dot" data-bs-toggle="dropdown" aria-expanded="false">...</span>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item"><i class="me-3"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M1 10C1 5.75736 1 3.63604 2.31802 2.31802C3.63604 1 5.75736 1 10 1C14.2426 1 16.3639 1 17.682 2.31802C19 3.63604 19 5.75736 19 10C19 14.2426 19 16.3639 17.682 17.682C16.3639 19 14.2426 19 10 19C5.75736 19 3.63604 19 2.31802 17.682C1 16.3639 1 14.2426 1 10Z" stroke="#1C1C1C" stroke-width="1.5"/>
+                          <path d="M9.05261 5.26318H14.7368" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                          <path d="M5.26318 5.26318H6.21055" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                          <path d="M5.26318 10H6.21055" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                          <path d="M5.26318 14.7368H6.21055" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                          <path d="M9.05261 10H14.7368" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                          <path d="M9.05261 14.7368H14.7368" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                          </svg>                            
+                          </i>Details</a></li>
+                        <li><a data-bs-target="#myModal1" data-bs-toggle="modal"class="dropdown-item"><i class="me-3"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M19 10C19 5.02943 14.9705 1 10 1C5.02943 1 1 5.02943 1 10C1 14.9705 5.02943 19 10 19C14.9705 19 19 14.9705 19 10Z" stroke="#1C1C1C" stroke-width="1.5"/>
+                          <path d="M6.3999 10L9.0999 12.7L13.5999 7.30005" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                          </i>Mark as completed</a></li>
+                        <li><a data-bs-target="#myModal" data-bs-toggle="modal"class="dropdown-item"><i class="me-3"><svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12.6994 13.2L7.29993 7.80005M7.3005 13.2L12.6999 7.80005" stroke="#CD1C18" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M19 10.5C19 5.52943 14.9705 1.5 10 1.5C5.02943 1.5 1 5.52943 1 10.5C1 15.4705 5.02943 19.5 10 19.5C14.9705 19.5 19 15.4705 19 10.5Z" stroke="#CD1C18" stroke-width="1.5"/>
+                          </svg>
+                          </i>Cancel booking</a></li>
+                      </ul>
+                    </td>
+                </tr>
+                <tr>
+                  <td>Review Manual Checkin</td>
+                  <td>Audi A6</td>
+                  <td>12322</td>
+                  <td>{{'john@example.com'}}</td>
+                  <td>25.12.2024; 13:58</td>
+                  <td class="dropdown details"><span class="dot"data-bs-toggle="dropdown" aria-expanded="false">...</span>
+                    <ul class="dropdown-menu">
+                      <li ><a  class="dropdown-item trigger-btn"><i class="me-3"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 10C1 5.75736 1 3.63604 2.31802 2.31802C3.63604 1 5.75736 1 10 1C14.2426 1 16.3639 1 17.682 2.31802C19 3.63604 19 5.75736 19 10C19 14.2426 19 16.3639 17.682 17.682C16.3639 19 14.2426 19 10 19C5.75736 19 3.63604 19 2.31802 17.682C1 16.3639 1 14.2426 1 10Z" stroke="#1C1C1C" stroke-width="1.5"/>
+                        <path d="M9.05261 5.26318H14.7368" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M5.26318 5.26318H6.21055" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M5.26318 10H6.21055" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M5.26318 14.7368H6.21055" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M9.05261 10H14.7368" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M9.05261 14.7368H14.7368" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>                            
+                        </i>Details</a></li>
+                      <li><a data-bs-target="#myModal1" data-bs-toggle="modal"class="dropdown-item"><i class="me-3"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 10C19 5.02943 14.9705 1 10 1C5.02943 1 1 5.02943 1 10C1 14.9705 5.02943 19 10 19C14.9705 19 19 14.9705 19 10Z" stroke="#1C1C1C" stroke-width="1.5"/>
+                        <path d="M6.3999 10L9.0999 12.7L13.5999 7.30005" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        </i>Mark as completed</a></li>
+                      <li><a data-bs-target="#myModal" data-bs-toggle="modal"class="dropdown-item"><i class="me-3"><svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12.6994 13.2L7.29993 7.80005M7.3005 13.2L12.6999 7.80005" stroke="#CD1C18" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19 10.5C19 5.52943 14.9705 1.5 10 1.5C5.02943 1.5 1 5.52943 1 10.5C1 15.4705 5.02943 19.5 10 19.5C14.9705 19.5 19 15.4705 19 10.5Z" stroke="#CD1C18" stroke-width="1.5"/>
+                        </svg>
+                        </i>Cancel booking</a></li>
+                    </ul>
+                  </td>
+              </tr>
+              </tbody>
+          </table>
+      </div>
+      
+  </div>
+  </div>
+</section>
+<section>
+  <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-confirm modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Cancel booking?</h5>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to mark this booking as complete? This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn border px-3" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger px-3">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="myModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-confirm modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Booking completed?</h5>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to mark this booking as complete? This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn border px-3" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn px-3" style="background-color: #F74C07; color:white">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

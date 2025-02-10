@@ -1,0 +1,28 @@
+<app-navber ></app-navber>
+<section class="full_body">
+    <div class="card col-4 mx-auto hover">
+        <div class="card-body cards">
+          <h4 class="card-title"><b>Welcome back!</b></h4>
+            <form action="" [formGroup]="LoginForm">
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Work e-mail</label>
+                    <input type="email" formControlName="email" class="form-control" id="exampleFormControlInput1" placeholder="json@example.com">
+                </div>
+                <div class="mb-3 ">
+                    <label for="exampleFormControlInput1" class="form-label">Password</label>
+                    <div class="d-flex">
+                        <input formControlName="password" [type]="password?'password':'text'" class="form-control" id="exampleFormControlInput1">
+                        <i [class]="password?'far fa-eye-slash':'far fa-eye'" id="togglePassword"(click)="togglePassword()" style="margin-left: -30px; margin-top: 11px; cursor: pointer; color:#676767;"></i>
+                    </div>     
+                </div>
+                <div *ngIf="loginCheck" class="my-2 error"><span class="c_e_5 "><i class="fa-solid fa-triangle-exclamation me-2"></i>E-mail or Password incorrect</span></div>
+                <div class="mb-3 ">
+                  <button class="btn  btn-color text-white col-12" (click)="login()">Login</button>
+                </div>
+            </form>
+            <div class="text-center">
+                <span style="color:#676767">Already have an account? <a class="text-black">Sign Up</a> </span>
+            </div>
+        </div>
+      </div>
+</section>
