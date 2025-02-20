@@ -117,6 +117,10 @@
         "type": "int"
       },
       {
+        "name": "user_id",
+        "type": "int"
+      },
+      {
         "name": "company_id",
         "type": "int"
       },
@@ -126,18 +130,38 @@
       },
       {
         "name": "company_service_id",
-        "type": "varchar"
+        "type": "int"
       },
       {
-        "name": "date",
+        "name": "category_id",
+        "type": "int"
+      },
+      {
+        "name": "booking_date",
         "type": "datetime"
+      },
+      {
+        "name": "car_id",
+        "type": "int"
       },
       {
         "name": "time_slot",
         "type": "int"
       },
       {
-        "name": "license_plate_number",
+        "name": "license_no",
+        "type": "varchar"
+      },
+      {
+        "name": "brand_name",
+        "type": "varchar"
+      },
+      {
+        "name": "model",
+        "type": "varchar"
+      },
+      {
+        "name": "registration_year",
         "type": "varchar"
       },
       {
@@ -149,11 +173,15 @@
         "type": "text"
       },
       {
+        "name": "address",
+        "type": "text"
+      },
+      {
         "name": "image",
         "type": "varchar"
       },
       {
-        "name": "application_status",
+        "name": "booking_status",
         "type": "int"
       },
       {
@@ -259,12 +287,12 @@
         "type": "varchar"
       },
       {
-        "name": "year_of_establishment",
-        "type": "int"
-      },
-      {
         "name": "company_size",
         "type": "varchar"
+      },
+      {
+        "name": "year_of_establishment",
+        "type": "int"
       },
       {
         "name": "latitude",
@@ -283,10 +311,6 @@
         "type": "text"
       },
       {
-        "name": "street",
-        "type": "varchar"
-      },
-      {
         "name": "house_no",
         "type": "varchar"
       },
@@ -299,12 +323,20 @@
         "type": "varchar"
       },
       {
+        "name": "street",
+        "type": "varchar"
+      },
+      {
         "name": "city",
         "type": "varchar"
       },
       {
         "name": "website_url",
         "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "double"
       },
       {
         "name": "status",
@@ -540,11 +572,11 @@
         "type": "int"
       },
       {
-        "name": "total_available_user",
+        "name": "total_available_services",
         "type": "int"
       },
       {
-        "name": "total_available_services",
+        "name": "total_available_bookings",
         "type": "int"
       },
       {
@@ -687,16 +719,24 @@
         "type": "int"
       },
       {
-        "name": "consumer_id",
+        "name": "user_id",
         "type": "int"
       },
       {
-        "name": "license_plate_number",
+        "name": "license_no",
         "type": "varchar"
       },
       {
-        "name": "travel_km",
-        "type": "float"
+        "name": "brand_name",
+        "type": "varchar"
+      },
+      {
+        "name": "model",
+        "type": "varchar"
+      },
+      {
+        "name": "registration_year",
+        "type": "varchar"
       },
       {
         "name": "details",
@@ -897,6 +937,116 @@
       {
         "name": "type",
         "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_invoice_items",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "invoice_id",
+        "type": "int"
+      },
+      {
+        "name": "price",
+        "type": "double"
+      },
+      {
+        "name": "title",
+        "type": "JSON"
+      },
+      {
+        "name": "qty",
+        "type": "int"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_invoices",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "user_id",
+        "type": "int"
+      },
+      {
+        "name": "company_id",
+        "type": "int"
+      },
+      {
+        "name": "transaction_id",
+        "type": "int"
+      },
+      {
+        "name": "inv_no",
+        "type": "varchar"
+      },
+      {
+        "name": "type",
+        "type": "int"
+      },
+      {
+        "name": "sub_total_price",
+        "type": "double"
+      },
+      {
+        "name": "discount_price",
+        "type": "double"
+      },
+      {
+        "name": "total_price",
+        "type": "double"
+      },
+      {
+        "name": "related_info_id",
+        "type": "int"
       },
       {
         "name": "status",
@@ -1456,6 +1606,79 @@
       },
       {
         "name": "created_at",
+        "type": "datetime"
+      }
+    ]
+  },
+  {
+    "name": "deautodb_transactions",
+    "property": [
+      {
+        "name": "id",
+        "type": "int"
+      },
+      {
+        "name": "user_id",
+        "type": "int"
+      },
+      {
+        "name": "company_id",
+        "type": "int"
+      },
+      {
+        "name": "item_id",
+        "type": "int"
+      },
+      {
+        "name": "item_table_name",
+        "type": "varchar"
+      },
+      {
+        "name": "transaction_reference_id",
+        "type": "varchar"
+      },
+      {
+        "name": "transaction_type",
+        "type": "int"
+      },
+      {
+        "name": "amount",
+        "type": "double"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "transaction_response",
+        "type": "text"
+      },
+      {
+        "name": "transaction_status",
+        "type": "int"
+      },
+      {
+        "name": "details",
+        "type": "text"
+      },
+      {
+        "name": "status",
+        "type": "int"
+      },
+      {
+        "name": "created_by",
+        "type": "int"
+      },
+      {
+        "name": "updated_by",
+        "type": "int"
+      },
+      {
+        "name": "created_at",
+        "type": "datetime"
+      },
+      {
+        "name": "updated_at",
         "type": "datetime"
       }
     ]

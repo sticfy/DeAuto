@@ -1,5 +1,6 @@
 const isEmpty = require("is-empty");
 let table_name = "deautodb_companies";
+let company_service_table_name = "deautodb_company_services";
 
 let getList = () => {
     return `SELECT * FROM ${table_name}  where status != 0`;
@@ -77,7 +78,7 @@ let getDataByWhereCondition = (data = {}, orderBy = {}, limit, offset, columnLis
         if (Array.isArray(data[keys[0]])) {
             query += ` where ${keys[0]} BETWEEN ? and ? `
 
-         } else if (["GR||&&", "GR&&||", "GRL||&&", "GRL&&||"].includes(keys[0].toUpperCase()) && typeof data[keys[0]] === 'object') { // Group-OR(internal)-AND (out) like =>  where (field1 = ? or field2 = ?)
+        } else if (["GR||&&", "GR&&||", "GRL||&&", "GRL&&||"].includes(keys[0].toUpperCase()) && typeof data[keys[0]] === 'object') { // Group-OR(internal)-AND (out) like =>  where (field1 = ? or field2 = ?)
 
             let grOrAndObjectKeys = Object.keys(data[keys[0]]);
             let operator = (keys[0].toUpperCase()).startsWith("GRL") ? " Like " : " = ";
@@ -216,6 +217,89 @@ let getDetailsByIdAndWhereIn = () => {
     return `SELECT id,question,status FROM ${table_name} where  id IN (?) and status = 1`;
 }
 
+let getCompaniesByDefaultSearch = (searchData = {}) => {
+    return `SELECT 
+    id, company_name, latitude, longitude, rating, status,  -- Add a comma before distance
+    (
+        6371 * 
+        ACOS(
+            COS(RADIANS(${searchData.latitude})) * 
+            COS(RADIANS(latitude)) * 
+            COS(RADIANS(longitude) - RADIANS(${searchData.longitude})) + 
+            SIN(RADIANS(${searchData.latitude})) *  
+            SIN(RADIANS(latitude))
+        )
+    ) AS distance
+    FROM 
+        ${table_name}
+    WHERE 
+        status = 1
+    HAVING 
+        distance <= 10  -- Distance in kilometers (adjust as needed , now it's 10 kilometers)
+    ORDER BY 
+        distance ASC
+    LIMIT ?, ?;
+    `;
+
+}
+
+
+let getCompaniesBySearchWithServiceAndCategory = (searchData = {}) => {
+
+    // ${company_service_table_name}.id as company_service_id,${company_service_table_name}.category_id as category_id,
+    // ${company_service_table_name}.service_id as service_id,
+
+    let query = `SELECT 
+    ${table_name}.id, ${table_name}.company_name, ${table_name}.latitude, ${table_name}.longitude, ${table_name}.rating, ${table_name}.status,
+
+
+    (
+        6371 * 
+        ACOS(
+            COS(RADIANS(${searchData.latitude})) * 
+            COS(RADIANS(latitude)) * 
+            COS(RADIANS(longitude) - RADIANS(${searchData.longitude})) + 
+            SIN(RADIANS(${searchData.latitude})) *  
+            SIN(RADIANS(latitude))
+        )
+    ) AS distance
+    FROM 
+        ${table_name}
+        JOIN ${company_service_table_name} on (${company_service_table_name}.company_id = ${table_name}.id) 
+    WHERE 
+        ${table_name}.status = 1 and ${company_service_table_name}.status = 1 `;
+
+    if (searchData.category_id != undefined && searchData.service_id != undefined) {
+        query += ` and ${company_service_table_name}.category_id = ${searchData.category_id}`;
+        query += ` and ${company_service_table_name}.service_id = ${searchData.service_id}`;
+    } else if (searchData.category_id != undefined && searchData.service_id == undefined) {
+        query += ` and ${company_service_table_name}.category_id = ${searchData.category_id}`;
+    } else if (searchData.category_id == undefined && searchData.service_id != undefined) {
+        query += ` and ${company_service_table_name}.service_id = ${searchData.service_id}`;
+    }
+
+    // if (searchData.service_id != undefined) {
+    //     query += ` and ${company_service_table_name}.service_id = ${searchData.service_id}`;
+    // }
+
+    if (searchData.rating_min != undefined && searchData.rating_max != undefined) {
+        query += ` and  (${table_name}.rating BETWEEN ${searchData.rating_min} AND ${searchData.rating_max})`;
+    }
+
+    query += ` GROUP BY 
+        ${table_name}.id  -- Ensure unique companies
+
+         HAVING 
+         distance <= 10  -- Distance in kilometers (adjust as needed)
+        
+    ORDER BY 
+        distance ASC
+    LIMIT ?, ?`;
+
+
+    return query;
+}
+
 
 
 
@@ -229,6 +313,8 @@ module.exports = {
     updateById,
     updateCompanyDataById,
     getDataByWhereCondition,
-    getDetailsByIdAndWhereIn
+    getDetailsByIdAndWhereIn,
+    getCompaniesByDefaultSearch,
+    getCompaniesBySearchWithServiceAndCategory
 
 }

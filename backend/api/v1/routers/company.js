@@ -14,6 +14,8 @@ const tempUserModel = require('../models/temp-user');
 const userModel = require("../models/user");
 const roleModel = require("../models/role");
 const permissionModel = require('../models/permission');
+const serviceModel = require('../models/service');
+const categoryModel = require('../models/category');
 
 
 // const companySubscribedPackageModel = require("../models/company-subscribed-package");
@@ -791,9 +793,12 @@ router.get("/details/:id", [verifyToken], async (req, res) => {
     }
 
     // review and rating
-    let companyOtherInformation = await commonObject.companyOtherInformationById(id, req.decoded.userInfo.id,language);
+    let companyOtherInformation = await commonObject.companyOtherInformationById(id, req.decoded.userInfo.id, language);
+
 
     companyDetailsById[0].companyOtherInformation = companyOtherInformation;
+    companyDetailsById[0].companyOtherInformation.averageReview = companyDetailsById[0].rating;
+
 
     return res.status(200).send({
         success: true,
@@ -1426,6 +1431,295 @@ router.get('/user-list', [verifyToken], async (req, res) => {
 });
 
 
+// default search
+router.post('/default-search', [verifyToken], async (req, res) => {
+
+    if (req.decoded.role.id != 3) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "You cant access this."
+        });
+    }
+
+    let reqData = {
+        "limit": req.body.limit,
+        "offset": req.body.offset,
+    }
+
+    if (!(await commonObject.checkItsNumber(reqData.limit)).success || reqData.limit < 1) {
+        reqData.limit = 50;
+    }
+
+    if (!(await commonObject.checkItsNumber(reqData.offset)).success || reqData.offset < 0) {
+        reqData.offset = 0;
+    }
+
+    let dataSearchConditionObject = {};
+
+
+    // latitude and longitude test
+    const latitude = req.headers["latitude"];
+    const longitude = req.headers["longitude"];
+    const language = req.headers['language'];
+
+    let result;
+    let totalData;
+    if (latitude == null || longitude == null) {
+
+        // default all company list
+        result = await companyModel.getDataByWhereCondition(
+            dataSearchConditionObject,
+            { "rating": "DESC" },
+            reqData.limit,
+            reqData.offset,
+            ["id", "company_name", "logo", "latitude", "longitude", "rating", "status"]
+        );
+
+        totalData = await companyModel.getDataByWhereCondition(
+            dataSearchConditionObject,
+            { "id": "ASC" },
+            "skip",
+            undefined, []
+        );
+
+    } else if (latitude != null && longitude != null) {
+        dataSearchConditionObject.latitude = latitude;
+        dataSearchConditionObject.longitude = longitude;
+
+        result = await companyModel.getCompaniesByDefaultSearch(dataSearchConditionObject, reqData.limit, reqData.offset);
+
+        totalData = await companyModel.getCompaniesByDefaultSearch(dataSearchConditionObject);
+    }
+
+    for (let index = 0; index < result.length; index++) {
+        const element = result[index];
+
+        let companyBasedInformation = await commonObject.companyOtherInformationById(element.id, req.decoded.userInfo.id, language);
+        element.companyOtherInfo = companyBasedInformation;
+
+        // if (!isEmpty(language) && !isEmpty(element.companyOtherInfo.categoryList)) {
+        //     for (let index = 0; index < element.companyOtherInfo.categoryList.length; index++) {
+        //         const category = element.companyOtherInfo.categoryList[index];
+        //         category.title = category.title[language];
+        //     }
+        // }
+    }
+
+
+    return res.status(200).send({
+        "success": true,
+        "status": 200,
+        "message": "Company Default Search List.",
+        "companyLogoFolderPath": companyLogoFolderPath,
+        "totalCount": totalData.length,
+        "count": result.length,
+        "data": result
+    });
+
+});
+
+
+
+//  search with service id,category id, rating
+router.post('/search-with-other-data', [verifyToken], async (req, res) => {
+
+    if (req.decoded.role.id != 3) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "You cant access this."
+        });
+    }
+
+    let reqData = {
+        "limit": req.body.limit,
+        "offset": req.body.offset
+    }
+
+    let dataSearchConditionObject = {};
+
+    if (req.body.category_id == undefined && req.body.service_id == undefined) {
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Please provide service or category ."
+        });
+    }
+
+    // category
+    if (req.body.category_id != undefined) {
+        reqData.category_id = req.body.category_id;
+
+        // validate category_id 
+        let validateCategoryId = await commonObject.checkItsNumber(reqData.category_id);
+        if (validateCategoryId.success == false) {
+
+            return res.status(400).send({
+                "success": false,
+                "status": 400,
+                "message": "Category Value should be integer.",
+                "id": reqData.category_id
+
+            });
+        } else {
+            req.body.category_id = validateCategoryId.data;
+            reqData.category_id = validateCategoryId.data;
+
+        }
+
+        let categoryDetails = await categoryModel.getDataByWhereCondition({
+            "status": 1, id: reqData.category_id
+        }, undefined, undefined, undefined, ["id", "title"]);
+
+        if (isEmpty(categoryDetails)) {
+
+            return res.status(404).send({
+                "success": false,
+                "status": 404,
+                "message": "No data found on category",
+
+            });
+        } else {
+            dataSearchConditionObject.category_id = reqData.category_id;
+        }
+    }
+
+    // service
+    if (req.body.service_id != undefined) {
+        reqData.service_id = req.body.service_id;
+
+        // validate service id
+        let validateId = await commonObject.checkItsNumber(reqData.service_id);
+        if (validateId.success == false) {
+
+            return res.status(400).send({
+                "success": false,
+                "status": 400,
+                "message": "Service Value should be integer.",
+                "id": reqData.service_id
+
+            });
+        } else {
+            req.body.service_id = validateId.data;
+            reqData.service_id = validateId.data;
+
+        }
+
+        let serviceDetails;
+        if (req.body.category_id != undefined) {
+            serviceDetails = await serviceModel.getDataByWhereCondition({
+                "status": 1, id: reqData.service_id, category_id: reqData.category_id
+            }, undefined, undefined, undefined, ["id", "title"]);
+        } else {
+            serviceDetails = await serviceModel.getDataByWhereCondition({
+                "status": 1, id: reqData.service_id
+            }, undefined, undefined, undefined, ["id", "title"]);
+        }
+
+        if (isEmpty(serviceDetails)) {
+
+            return res.status(404).send({
+                "success": false,
+                "status": 404,
+                "message": "No data found on Service.",
+
+            });
+        } else {
+            dataSearchConditionObject.service_id = reqData.service_id;
+        }
+    }
+
+
+    // rating check
+    if (req.body.rating != undefined) {
+        let validateRating = await commonObject.checkItsNumber(req.body.rating);
+        if (validateRating.success == false) {
+
+            return res.status(400).send({
+                "success": false,
+                "status": 400,
+                "message": "Rating Value should be integer.",
+                "id": req.body.rating
+
+            });
+        } else {
+            req.body.rating = validateRating.data;
+            reqData.rating = validateRating.data;
+
+            if (reqData.rating > 5 || reqData.rating < 1) {
+                return res.status(400).send({
+                    "success": false,
+                    "status": 400,
+                    "message": "Invalid Rating."
+                });
+            }
+
+            dataSearchConditionObject.rating_max = reqData.rating;
+            dataSearchConditionObject.rating_min = reqData.rating - 1;
+
+        }
+    }
+
+    if (!(await commonObject.checkItsNumber(reqData.limit)).success || reqData.limit < 1) {
+        reqData.limit = 50;
+    }
+
+    if (!(await commonObject.checkItsNumber(reqData.offset)).success || reqData.offset < 0) {
+        reqData.offset = 0;
+    }
+
+
+    // latitude and longitude test
+    const latitude = req.headers["latitude"];
+    const longitude = req.headers["longitude"];
+    const language = req.headers['language'];
+
+    let result;
+    let totalData;
+    if (latitude == null || longitude == null) {
+
+        return res.status(400).send({
+            "success": false,
+            "status": 400,
+            "message": "Please provide your current location."
+        });
+
+    } else if (latitude != null && longitude != null) {
+        dataSearchConditionObject.latitude = latitude;
+        dataSearchConditionObject.longitude = longitude;
+
+        result = await companyModel.getCompaniesBySearchWithServiceAndCategory(dataSearchConditionObject, reqData.limit, reqData.offset);
+
+        totalData = await companyModel.getCompaniesBySearchWithServiceAndCategory(dataSearchConditionObject);
+    }
+
+    for (let index = 0; index < result.length; index++) {
+        const element = result[index];
+
+        let companyBasedInformation = await commonObject.companyOtherInformationById(element.id, req.decoded.userInfo.id, language);
+        element.companyOtherInfo = companyBasedInformation;
+
+        // if (!isEmpty(language) && !isEmpty(element.companyOtherInfo.categoryList)) {
+        //     for (let index = 0; index < element.companyOtherInfo.categoryList.length; index++) {
+        //         const category = element.companyOtherInfo.categoryList[index];
+        //         category.title = category.title[language];
+        //     }
+        // }
+    }
+
+
+    return res.status(200).send({
+        "success": true,
+        "status": 200,
+        "message": "Company Default Search List.",
+        "companyLogoFolderPath": companyLogoFolderPath,
+        "totalCount": totalData.length,
+        "count": result.length,
+        "data": result
+    });
+
+});
 
 
 

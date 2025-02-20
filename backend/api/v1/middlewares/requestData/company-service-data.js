@@ -5,6 +5,7 @@ const commonObject = require('../../common/common');
 const categoryModel = require('../../models/category');
 const serviceModel = require('../../models/service');
 const companyServiceModel = require('../../models/company-service');
+const companySubscribedPackageModel = require('../../models/company-subscribed-package');
 let moment = require('moment');
 
 // var upload = multer({ storage: storage });
@@ -19,6 +20,32 @@ router.use(async function (req, res, next) {
             message: "Can't access this route.",
         });
     }
+
+    // check this company has the limit of adding service or not
+    let currentSubscribedPackage = await companySubscribedPackageModel.getDataByWhereCondition(
+        { company_id: req.decoded.profileInfo.company_id, status: 1 }
+    );
+
+    let packageData = {};
+    if (isEmpty(currentSubscribedPackage)) {
+        return res.status(400).send({
+            success: false,
+            status: 400,
+            message: "You are not associated with any subscription package."
+        });
+    } else {
+        if (currentSubscribedPackage[0].total_available_services <= 0) {
+            return res.status(400).send({
+                success: false,
+                status: 400,
+                message: "Adding Service limit has been crossed."
+            });
+        } else {
+            packageData.id = currentSubscribedPackage[0].id;
+            packageData.total_available_services = currentSubscribedPackage[0].total_available_services;
+        }
+    }
+
 
     let reqUserData = {
         "category_id": req.body.category_id,
@@ -232,6 +259,7 @@ router.use(async function (req, res, next) {
 
 
     req.requestData = reqUserData;
+    req.packageData = packageData;
     next();
 
 });

@@ -199,7 +199,7 @@ router.post('/my-favourite-list', [verifyToken], async (req, res) => {
         { "created_at": "DESC" },
         reqData.limit,
         reqData.offset,
-        ["id", "company_name", "logo", "status"]
+        ["id", "company_name", "logo", "rating", "status"]
     );
 
     for (let index = 0; index < result.length; index++) {
@@ -207,6 +207,7 @@ router.post('/my-favourite-list', [verifyToken], async (req, res) => {
 
         let companyBasedInformation = await commonObject.companyOtherInformationById(element.id, req.decoded.userInfo.id);
         element.companyOtherInfo = companyBasedInformation;
+        element.companyOtherInfo.averageReview = element.rating;
 
         if (!isEmpty(language) && !isEmpty(element.companyOtherInfo.categoryList)) {
             for (let index = 0; index < element.companyOtherInfo.categoryList.length; index++) {

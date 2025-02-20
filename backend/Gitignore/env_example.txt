@@ -74,5 +74,11 @@ GOOGLE_MAPS_API_KEY = "AIzaSyACtMl0u5b8sU_6M5JqMlKRLNgdn_hvKQc"
 
 ##################### MAP RELATED ####################
 
+CURRENCY = "eur"
 
 
+# Client STRIPE test mode
+STRIPE_API_SECRET_KEY = "sk_test_51QjGgyG8dUHy7wOnO5IJBpp5yGrdLbyBofQTDzZFE02GCC2BlAZE9Uqc9EEDJXR31XGzPm4qO2SLuCyDniXjOFRw00E0NFKYmD"
+STRIPE_PUBLISHABLE_KEY = "pk_test_51QjGgyG8dUHy7wOnQbr3IckDcmAbQvLodETEb4w3pXCXyTac2Hihnc7atQJ6fB8dgnvK1dfSpQvuuHtrGykaQDkd00Mth4MLpU"
+
+# Client STRIPE live mode

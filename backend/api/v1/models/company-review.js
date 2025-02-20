@@ -1,5 +1,6 @@
 const { connectionDeAutoMYSQL } = require('../connections/connection');
 const queries = require('../queries/company-review');
+const companyModel = require('./company');
 
 const isEmpty = require("is-empty");
 let databaseColum = [{ "name": "id", "type": "int" }, { "name": "user_id", "type": "int" }, { "name": "company_id", "type": "int" },
@@ -318,6 +319,63 @@ let companyAverageReviewById = async (companyId = 0) => {
     });
 }
 
+let addWithMultipleInfo = async (info = {}) => {
+
+    return new Promise((resolve, reject) => {
+
+        connectionDeAutoMYSQL.getConnection(function (err, conn) {
+
+            conn.beginTransaction(async function (error) {
+                if (error) return conn.rollback(function () {
+                    conn.release();
+                    resolve([]);
+                });
+
+
+                let result = await addNew(info, conn);
+                if (result.affectedRows == undefined || result.affectedRows < 1)
+                    return conn.rollback(function () {
+                        conn.release();
+                        resolve(result);
+                    });
+
+                // get the average rating of the company and update it
+                let averageRating = await companyAverageReviewById(info.company_id);
+               
+                if (averageRating[0].rating > 0) {
+                    // update company review
+                    let updateData = {
+                        rating: averageRating[0].rating,
+                        updated_at: info.updated_at
+                    }
+
+
+                    let updateReview = await companyModel.updateCompanyDataById(info.company_id, updateData, conn);
+
+                    if (updateReview.affectedRows == undefined || updateReview.affectedRows < 1)
+                        return conn.rollback(function () {
+                            conn.release();
+                            resolve(updateReview);
+                        });
+                }
+
+
+                conn.commit(function (err) {
+                    if (err) return conn.rollback(function () {
+                        conn.release();
+                        resolve([]);
+                    });
+
+                    conn.release();
+                    return resolve(result);
+
+                });
+
+            });
+        });
+    });
+}
+
 
 module.exports = {
     getList,
@@ -329,6 +387,7 @@ module.exports = {
     getDataByWhereCondition,
     updateById,
     getDetailsByIdAndWhereIn,
-    companyAverageReviewById
+    companyAverageReviewById,
+    addWithMultipleInfo
 }
 

@@ -101,7 +101,7 @@ router.post('/add', [verifyToken], async (req, res) => {
         });
     }
 
-    let result = await companyReviewModel.addNew(reqData);
+    let result = await companyReviewModel.addWithMultipleInfo(reqData);
 
     if (result.affectedRows == undefined || result.affectedRows < 1) {
         return res.status(500).send({
@@ -142,7 +142,7 @@ router.post('/list', [verifyToken], async (req, res) => {
     }
 
     let companyDetails = await companyModel.getDataByWhereCondition({ "status": 1, "id": reqData.company_id }, { "id": "DESC" }, undefined, undefined,
-        ["id", "company_name", "status"]);
+        ["id", "company_name", "rating", "status"]);
 
     if (isEmpty(companyDetails)) {
 
@@ -220,13 +220,15 @@ router.post('/list', [verifyToken], async (req, res) => {
     }
 
     // average review check
-    let averageReview = await companyReviewModel.companyAverageReviewById(dataSearchConditionObject.company_id);
+    // let averageReview = await companyReviewModel.companyAverageReviewById(dataSearchConditionObject.company_id);
 
-    if (averageReview[0].rating == null) {
-        averageReview = "";
-    } else {
-        averageReview = averageReview[0].rating.toFixed(1);
-    }
+    // if (averageReview[0].rating == null) {
+    //     averageReview = "";
+    // } else {
+    //     averageReview = averageReview[0].rating.toFixed(1);
+    // }
+
+    let averageReview = companyDetails[0].rating;
 
 
     let totalData = await companyReviewModel.getDataByWhereCondition(

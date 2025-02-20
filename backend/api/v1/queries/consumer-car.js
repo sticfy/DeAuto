@@ -1,24 +1,17 @@
 const isEmpty = require("is-empty");
-let table_name = "deautodb_company_reviews";
+let table_name = "deautodb_consumer_save_cars";
 
 let getList = () => {
-    return `SELECT * FROM ${table_name}  where status != 0`;
+    return `SELECT * FROM ${table_name}  where status != 0 order by id DESC`;
 }
 
 let getActiveList = () => {
-    return `SELECT * FROM ${table_name}  where status = 1`;
+    return `SELECT * FROM ${table_name}  where status = 1  order by id DESC`;
 }
+
 
 let getByTitle = () => {
     return `SELECT * FROM ${table_name} where  title = ? and status != 0`;
-}
-
-let getByJSONTitle = () => {
-    return `SELECT * FROM ${table_name} 
-            WHERE 
-            (JSON_UNQUOTE(JSON_EXTRACT(title, '$.en')) = ? 
-            OR JSON_UNQUOTE(JSON_EXTRACT(title, '$.dutch')) = ?)
-            AND status != 0`;
 }
 
 let getById = () => {
@@ -197,26 +190,14 @@ let getDataByWhereCondition = (data = {}, orderBy = {}, limit, offset, columnLis
     return query;
 }
 
-let getDetailsByIdAndWhereIn = () => {
-    return `SELECT id,title,status FROM ${table_name} where  id IN (?) and status = 1`;
-}
-
-let companyAverageReviewById = () => {
-    return `SELECT ROUND(AVG(rating), 2) AS rating FROM ${table_name} where company_id = ? and status = 1;`;
-}
-
 
 
 module.exports = {
     getList,
     getActiveList,
     getByTitle,
-    getByJSONTitle,
     getById,
     addNew,
     updateById,
-    getDataByWhereCondition,
-    getDetailsByIdAndWhereIn,
-    companyAverageReviewById
-
+    getDataByWhereCondition
 }

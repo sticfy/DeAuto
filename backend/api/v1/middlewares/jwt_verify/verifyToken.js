@@ -83,7 +83,7 @@ router.use(async function (req, res, next) {
                             let companyDetails = await companyModel.getDataByWhereCondition(
                                 { id: profileInfo[0].company_id, status: 1 }, undefined, undefined, undefined, ["id", "company_name", "status"]
                             );
-            
+
                             if (isEmpty(companyDetails)) {
                                 return res.status(404).send({
                                     success: false,
@@ -95,6 +95,20 @@ router.use(async function (req, res, next) {
 
                     } else if (userData[0].role_id == 3) {
                         profileInfo = await consumerModel.getById(userData[0].profile_id);
+
+                        //  language load, if there is no language, it automatic load default language
+                        let languageList = global.config.language;
+                        let userLanguage = "du";
+
+                        for (let languageIndex = 0; languageIndex < languageList.length; languageIndex++) {
+                            const language = languageList[languageIndex];
+                            if (req.headers['language'] == language.short_name) {
+                                userLanguage = language.short_name;
+                                break;
+                            }
+                        }
+
+                        req.headers['language'] = userLanguage;
 
                     } else {
                         return res.status(400)
@@ -154,9 +168,9 @@ router.use(async function (req, res, next) {
                         uuid: decoded.identity_id
                     };
 
-
                     req.decoded = decoded;
-                    // req.decoded.language = (!isEmpty(req.headers['language']) && ['en', 'bn'].includes(req.headers['language'])) ? req.headers['language'] : 'en';
+
+
 
 
                     next();

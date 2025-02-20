@@ -28,6 +28,8 @@ const companyServiceRouter = require('./routers/company-service');
 const favouriteRouter = require('./routers/favourite');
 const companyReviewRouter = require('./routers/company-review');
 const bookingRouter = require('./routers/booking');
+const consumerCarRouter = require('./routers/consumer-car');
+const companySubscribedPackageRouter = require('./routers/company-subscribed-package');
 
 
 router.use('/role', roleRouter);
@@ -50,6 +52,8 @@ router.use('/company-service', companyServiceRouter);
 router.use('/favourite', favouriteRouter);
 router.use('/company-review', companyReviewRouter);
 router.use('/booking', bookingRouter);
+router.use('/consumer-car', consumerCarRouter);
+router.use('/subscribed-package', companySubscribedPackageRouter);
 
 
 router.get('/connection_check', (req, res) => {

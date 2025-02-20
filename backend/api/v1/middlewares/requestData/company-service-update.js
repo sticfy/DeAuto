@@ -266,6 +266,7 @@ router.use(async function (req, res, next) {
     delete reqUserData.details_en;
     delete reqUserData.details_dutch;
 
+    reqUserData.is_data_coming_from_update = 1;
 
     req.requestData = reqUserData;
     next();

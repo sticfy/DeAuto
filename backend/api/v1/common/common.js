@@ -15,6 +15,8 @@ const companyModel = require("../models/company");
 const companyUserModel = require("../models/company-user");
 const companyServiceModel = require("../models/company-service");
 const companyReviewModel = require("../models/company-review");
+const packageModel = require("../models/package");
+const companySubscribedPackageModel = require("../models/company-subscribed-package");
 const categoryModel = require("../models/category");
 const favouriteModel = require("../models/favourite");
 const cacheDataObject = require('../common/cache-data');
@@ -502,8 +504,8 @@ let characterLimitCheck = async (value = "", modelField = "", willAllowExtraSpac
 //     return currentGMT;
 // };
 
-// Asia/Dhaka
-let getGMT = async (dateTime = undefined) => { // now gmt is set for dhaka , check server.js
+
+let getGMT = async (dateTime = undefined) => { // now gmt is set for , check server.js
     let currentGMT = "";
     if (dateTime === undefined) {
         // dateTime = new Date();
@@ -608,7 +610,7 @@ let getWeekDay = async (date) => {
 let getTodayDate = async () => {
     let date = new Date(
         new Date().toLocaleString("en-US", {
-            timeZone: "Asia/Dhaka",
+            timeZone: "Europe/Amsterdam",
         })
     );
 
@@ -968,29 +970,30 @@ let generateOTP = async (otpLength = 4) => {
 
 let getUserInfoByUserId = async (userId = 0) => {
 
-    let userDetails = await userModel.getUserById(userId);
+    // let userDetails = await userModel.getUserById(userId);
+    let userDetails = await userModel.getDataByWhereCondition({ "id": userId }, {}, 1, 0, ["id", "role_id", "profile_id", "email", "phone", "social_provider_name", "social_provider_id"]);
 
-    if (isEmpty(userDetails)) {
-        return { "success": false, "message": "No Data found", "data": {} };
-    }
+    if (isEmpty(userDetails)) return { "success": false, "message": "No Data found", "data": {} };
+
 
     let profileInfo = [];
     let role;
 
     if (userDetails[0].role_id === 1) {
 
-        profileInfo = await superAdminModel.getById(userDetails[0].profile_id);
+        profileInfo = await superAdminModel.getDataByWhereCondition({ "id": userDetails[0].profile_id });
         profileInfo[0].role = "Super Admin";
         profileInfo[0].role_id = 1;
     } else if (userDetails[0].role_id === 2) {
-        profileInfo = await companyUserModel.getById(userDetails[0].profile_id);
+        profileInfo = await companyUserModel.getDataByWhereCondition({ "id": userDetails[0].profile_id });
         profileInfo[0].role = "Company Admin";
         profileInfo[0].role_id = 2;
     } else if (userDetails[0].role_id === 3) {
-        profileInfo = await consumerModel.getById(userDetails[0].profile_id);
+        profileInfo = await consumerModel.getDataByWhereCondition({ "id": userDetails[0].profile_id });
         profileInfo[0].role = "General User";
         profileInfo[0].role_id = 3;
     }
+
 
     if (isEmpty(profileInfo)) {
         return { "success": false, "message": "", "data": {} };
@@ -1203,17 +1206,17 @@ let companyOtherInformationById = async (companyId = 0, userId = 0, language = '
 
 
         // average review check
-        let averageReview = await companyReviewModel.companyAverageReviewById(companyId);
+        // let averageReview = await companyReviewModel.companyAverageReviewById(companyId);
 
-        if (averageReview[0].rating == null) {
-            finalData.averageReview = 5;
-        } else {
-            finalData.averageReview = averageReview[0].rating.toFixed(1);
-        }
+        // if (averageReview[0].rating == null) {
+        //     finalData.averageReview = 5;
+        // } else {
+        //     finalData.averageReview = averageReview[0].rating.toFixed(1);
+        // }
 
         let allReviewList = await companyReviewModel.getDataByWhereCondition({ company_id: companyId, status: 1 }, { "id": "ASC" },
             "skip",
-            undefined,["id"]
+            undefined, ["id"]
         );
 
         finalData.totalReview = allReviewList.length;
@@ -1225,7 +1228,53 @@ let companyOtherInformationById = async (companyId = 0, userId = 0, language = '
 };
 
 
+let getCompanyCurrentPackageByCompanyId = async (companyId = 0) => {
 
+    let tempCompanyPackageDetails = await companySubscribedPackageModel.getDataByWhereCondition(
+        { company_id: companyId, "status": 1 }, {}, undefined, undefined, [
+        "id", "package_id", "company_id", "total_available_services", "total_available_bookings", "expired_date", "details", "status"
+    ]
+    );
+
+    if (isEmpty(tempCompanyPackageDetails)) {
+        // console.log("object");
+        tempCompanyPackageDetails = undefined;
+        // tempCompanyPackageDetails = {
+        //   company_id: companyId,
+        //   total_available_user: 1,
+        //   total_available_sent_sms: 0,
+        //   total_available_sent_sms: 0,
+        //   details: 'No package details',
+        //   package_details: undefined
+        // }
+    } else {
+
+        tempCompanyPackageDetails = tempCompanyPackageDetails[0];
+
+        // get package info
+
+        let paymentPackage = await packageModel.getDataByWhereCondition(
+            { "id": tempCompanyPackageDetails.package_id, "status": { "not eq": 0 } }, {}, undefined, undefined,
+            ["id", "title", "duration", "price", "discount_amount", "discount_percentage", "service_limit", "appointment_limit", "status"],"en"
+        );
+
+        if (!isEmpty(paymentPackage)) {
+            paymentPackage = paymentPackage[0];
+        } else {
+
+            // get package data from details
+            try {
+                paymentPackage = JSON.parse(tempCompanyPackageDetails.details);
+            } catch (error) {
+                paymentPackage = undefined;
+            }
+        }
+
+        tempCompanyPackageDetails.package_details = paymentPackage;
+    }
+
+    return tempCompanyPackageDetails;
+};
 
 
 module.exports = {
@@ -1264,5 +1313,6 @@ module.exports = {
     companyOtherInformationById,
     convertToEnglishDigits,
     addSixtyMinuteToGMT,
-    validateLatitudeLongitude
+    validateLatitudeLongitude,
+    getCompanyCurrentPackageByCompanyId
 };

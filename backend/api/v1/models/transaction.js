@@ -1,11 +1,20 @@
 const { connectionDeAutoMYSQL } = require('../connections/connection');
-const queries = require('../queries/company-service');
-const serviceModel = require('./service');
-const companySubscribedPackageModel = require('./company-subscribed-package');
-const isEmpty = require("is-empty");
+const queries = require('../queries/transaction');
 
-let databaseColum = [{ "name": "id", "type": "int" }, { "name": "company_id", "type": "int" }, { "name": "category_id", "type": "varchar" }, { "name": "service_id", "type": "int" }, { "name": "service_name", "type": "json" }, { "name": "price_start_from", "type": "double" }, { "name": "service_start_date", "type": "date" }, { "name": "service_end_date", "type": "date" }, { "name": "details", "type": "json" }, { "name": "is_data_coming_from_update", "type": "int" },{ "name": "status", "type": "int" }, { "name": "created_by", "type": "int" }, { "name": "updated_by", "type": "int" }, { "name": "created_at", "type": "datetime" }, { "name": "updated_at", "type": "datetime" }];
-let jsonColum = ['service_name', 'details'];
+const queriesCompanySubscribedPackage = require('../queries/company-subscribed-package');
+const isEmpty = require("is-empty");
+const invoiceModel = require('../models/invoice');
+const invoiceItemModel = require('../models/invoice-item');
+const companySubscribedPackageHistoryModel = require('./company-subscribed-package-history');
+
+const companySubscribedPackageModel = require('./company-subscribed-package');
+const { now } = require('moment');
+
+const commonObject = require('../common/common');
+
+let databaseColum = [{"name":"id","type":"int"},{"name":"user_id","type":"int"},{"name":"company_id","type":"int"},{"name":"item_id","type":"int"},{"name":"item_table_name","type":"varchar"},{"name":"transaction_reference_id","type":"varchar"},{"name":"transaction_type","type":"int"},{"name":"amount","type":"double"},{"name":"email","type":"varchar"},{"name":"transaction_response","type":"text"},{"name":"transaction_status","type":"int"},{"name":"details","type":"text"},{"name":"status","type":"int"},{"name":"created_by","type":"int"},{"name":"updated_by","type":"int"},{"name":"created_at","type":"datetime"},{"name":"updated_at","type":"datetime"}];
+
+let jsonColum = [];
 
 // Promises Method
 
@@ -36,22 +45,6 @@ let getByTitle = async (title = "") => {
     });
 }
 
-let getByJSONTitle = async (data = {}) => {
-    const { en, dutch } = data; // Extract values from data object
-
-    return new Promise((resolve, reject) => {
-        connectionDeAutoMYSQL.query(
-            queries.getByJSONTitle(), // Query
-            [en, dutch],          // Bind values for placeholders
-            (error, result, fields) => {
-                if (error) reject(error);
-                else resolve(result);
-            }
-        );
-    });
-};
-
-
 let getById = async (id = 0) => {
     return new Promise((resolve, reject) => {
         connectionDeAutoMYSQL.query(queries.getById(), [id], (error, result, fields) => {
@@ -61,16 +54,19 @@ let getById = async (id = 0) => {
     });
 }
 
-let addNew = async (info) => {
+let addNew = async (info = {}, conn = undefined) => {
+    let connection = connectionDeAutoMYSQL;
+    if (conn !== undefined) connection = conn;
+
     return new Promise((resolve, reject) => {
-        connectionDeAutoMYSQL.query(queries.addNew(), [info], (error, result, fields) => {
+        connection.query(queries.addNew(), [info], (error, result, fields) => {
             if (error) reject(error)
             else resolve(result)
         });
     });
 }
 
-let updateById = async (id = 0, updateData = {}, conn = undefined) => {
+let updateById = async (id = 0, updateData = {}, processedData = {}, conn = undefined) => {
 
     let connection = connectionDeAutoMYSQL;
     if (conn !== undefined) connection = conn;
@@ -85,9 +81,109 @@ let updateById = async (id = 0, updateData = {}, conn = undefined) => {
     }
 
     return new Promise((resolve, reject) => {
-        connection.query(queries.updateById(updateData), [...dataParameterUpdateData, id], (error, result, fields) => {
-            if (error) reject(error);
-            else resolve(result);
+        connectionDeAutoMYSQL.getConnection(function (err, conn) {
+
+            conn.beginTransaction(async function (error) {
+                if (error) {
+                    return conn.rollback(function () {
+                        conn.release();
+                        resolve([]);
+                    });
+                }
+
+
+                conn.query(queries.updateById(updateData), [...dataParameterUpdateData, id], async (error, result, fields) => {
+
+                    if (error) {
+                        console.log(error);
+                        return conn.rollback(function () {
+                            conn.release();
+                            resolve([]);
+                        });
+                    }
+
+                    // add property on package history object
+                    processedData.packageSubscribeHistoryData.enroll_date = await commonObject.getTodayDate();
+                    processedData.packageSubscribeHistoryData.created_at = await commonObject.getGMT();
+                    processedData.packageSubscribeHistoryData.updated_at = await commonObject.getGMT();
+
+                    // add property on invoice object
+
+                    // invoice id generate 
+                    let totalInvoices = await invoiceModel.getDataByWhereCondition();
+
+                    let inv_no = 0;
+                    if (isEmpty(totalInvoices)) {
+                        inv_no = 1;
+                    } else {
+                        let lastId = totalInvoices[totalInvoices.length - 1].id + 1;
+                        inv_no = lastId;
+                    }
+
+                    let invoiceIdGenerate =
+                        totalInvoices.length < 10 ? "000000" :
+                            totalInvoices.length < 100 ? "00000" :
+                                totalInvoices.length < 1000 ? "0000" :
+                                    totalInvoices.length < 10000 ? "000" :
+                                        totalInvoices.length < 100000 ? "00" :
+                                            totalInvoices.length < 100000 ? "00" : "";
+
+
+                    processedData.invoiceInfo.inv_no = invoiceIdGenerate + inv_no;
+
+                    processedData.invoiceInfo.transaction_id = id;
+                    processedData.invoiceInfo.created_at = await commonObject.getGMT();
+                    processedData.invoiceInfo.updated_at = await commonObject.getGMT();
+
+                    // add property on invoice item object
+                    processedData.invoiceItemInfo.created_at = await commonObject.getGMT();
+                    processedData.invoiceItemInfo.updated_at = await commonObject.getGMT();
+
+
+
+                    // for adding
+                    if (processedData.hasOwnProperty("packageSubscribeCreatedData")) {
+                        console.log("create object");
+
+                        let addNewData = await companySubscribedPackageModel.addNewWithMultipleInfo(processedData.packageSubscribeCreatedData, processedData.packageSubscribeHistoryData, processedData.invoiceInfo, processedData.invoiceItemInfo);
+
+                        if (addNewData.affectedRows == undefined || addNewData.affectedRows < 1) {
+                            return conn.rollback(function () {
+                                conn.release();
+                                resolve(addNewData);
+                            });
+                        }
+                    }
+
+                    // for updating
+                    if (processedData.hasOwnProperty("packageSubscribeUpdatedData")) {
+                        console.log("update object");
+
+                        let updateData = await companySubscribedPackageModel.updateWithMultipleInfo(processedData.packageSubscribeUpdatedData, processedData.packageSubscribeHistoryData, processedData.invoiceInfo, processedData.invoiceItemInfo);
+
+                        if (updateData.affectedRows == undefined || updateData.affectedRows < 1) {
+                            return conn.rollback(function () {
+                                conn.release();
+                                resolve(updateData);
+                            });
+                        }
+                    }
+
+                    conn.commit(function (err) {
+                        if (err) {
+                            console.log(err);
+                            return conn.rollback(function () {
+                                conn.release();
+                                resolve([err]);
+                            });
+                        }
+                        conn.release();
+                        return resolve(result);
+                    });
+
+                });
+
+            });
         });
     });
 }
@@ -299,6 +395,7 @@ let regenerateWhereField = (whereObject = {}, language = undefined) => {
 
     return finalWhere;
 }
+
 let getDetailsByIdAndWhereIn = async (expertTypeId = []) => {
     return new Promise((resolve, reject) => {
         connectionDeAutoMYSQL.query(queries.getDetailsByIdAndWhereIn(), [expertTypeId], (error, result, fields) => {
@@ -308,197 +405,15 @@ let getDetailsByIdAndWhereIn = async (expertTypeId = []) => {
     });
 }
 
-let updateWithMultipleInfo = async (companyServiceId = 0, companyServiceUpdateData = {}, serviceData = {}, packageId = 0, packageUpdateData = {}) => {
-    return new Promise((resolve, reject) => {
-
-
-        connectionDeAutoMYSQL.getConnection(function (err, conn) {
-
-            conn.beginTransaction(async function (error) {
-                if (error) {
-                    return conn.rollback(function () {
-                        conn.release();
-                        resolve([]);
-                    });
-                }
-
-
-
-                // service data insert
-                let serviceDataInsertResult = await serviceModel.addNew(serviceData, conn);
-
-                if (serviceDataInsertResult.affectedRows == undefined || serviceDataInsertResult.affectedRows < 1) {
-                    return conn.rollback(function () {
-                        conn.release();
-                        resolve(serviceDataInsertResult);
-                    });
-                }
-
-                let serviceId = serviceDataInsertResult.insertId;
-
-                companyServiceUpdateData.service_id = serviceId;
-
-                let result = await updateById(companyServiceId, companyServiceUpdateData, conn);
-
-                if (result.affectedRows == undefined || result.affectedRows < 1) {
-                    return conn.rollback(function () {
-                        conn.release();
-                        resolve(result);
-                    });
-                }
-
-                if (packageId > 0 && !isEmpty(packageUpdateData)) {
-                    let updatePackageData = await companySubscribedPackageModel.updateById(packageId, packageUpdateData, conn);
-
-                    if (updatePackageData.affectedRows == undefined || updatePackageData.affectedRows < 1) {
-                        return conn.rollback(function () {
-                            conn.release();
-                            resolve(updatePackageData);
-                        });
-                    }
-                }
-
-                // response = result; //  for otp request
-
-                conn.commit(function (err) {
-                    if (err) {
-                        return conn.rollback(function () {
-                            conn.release();
-                            resolve([]);
-                        });
-                    }
-                    conn.release();
-                    return resolve(result);
-
-                });
-
-            });
-        });
-
-    });
-}
-
-let addWithMultipleInfo = async (info = {}, packageData = {}) => {
-
-    return new Promise((resolve, reject) => {
-
-        connectionDeAutoMYSQL.getConnection(function (err, conn) {
-
-            conn.beginTransaction(async function (error) {
-                if (error) return conn.rollback(function () {
-                    conn.release();
-                    resolve([]);
-                });
-
-
-                let result = await addNew(info, conn);
-                if (result.affectedRows == undefined || result.affectedRows < 1)
-                    return conn.rollback(function () {
-                        conn.release();
-                        resolve(result);
-                    });
-
-                // update available services
-                let updateData = {
-                    total_available_services: packageData.total_available_services - 1,
-                    updated_at: info.updated_at,
-                    updated_by: info.updated_by
-                }
-
-
-                let updatePackageData = await companySubscribedPackageModel.updateById(packageData.id, updateData, conn);
-
-                if (updatePackageData.affectedRows == undefined || updatePackageData.affectedRows < 1)
-                    return conn.rollback(function () {
-                        conn.release();
-                        resolve(updatePackageData);
-                    });
-
-
-
-                conn.commit(function (err) {
-                    if (err) return conn.rollback(function () {
-                        conn.release();
-                        resolve([]);
-                    });
-
-                    conn.release();
-                    return resolve(result);
-
-                });
-
-            });
-        });
-    });
-}
-
-let deleteWithMultipleInfo = async (companyServiceId = 0, companyServiceUpdateData = {}, packageId = 0, packageUpdateData = {}) => {
-    return new Promise((resolve, reject) => {
-
-
-        connectionDeAutoMYSQL.getConnection(function (err, conn) {
-
-            conn.beginTransaction(async function (error) {
-                if (error) {
-                    return conn.rollback(function () {
-                        conn.release();
-                        resolve([]);
-                    });
-                }
-
-
-                let result = await updateById(companyServiceId, companyServiceUpdateData, conn);
-
-                if (result.affectedRows == undefined || result.affectedRows < 1) {
-                    return conn.rollback(function () {
-                        conn.release();
-                        resolve(result);
-                    });
-                }
-
-                // packageData data update
-                let updatePackageData = await companySubscribedPackageModel.updateById(packageId, packageUpdateData, conn);
-
-                if (updatePackageData.affectedRows == undefined || updatePackageData.affectedRows < 1) {
-                    return conn.rollback(function () {
-                        conn.release();
-                        resolve(updatePackageData);
-                    });
-                }
-
-                // response = result; //  for otp request
-
-                conn.commit(function (err) {
-                    if (err) {
-                        return conn.rollback(function () {
-                            conn.release();
-                            resolve([]);
-                        });
-                    }
-                    conn.release();
-                    return resolve(result);
-
-                });
-
-            });
-        });
-
-    });
-}
-
 
 module.exports = {
     getList,
     getActiveList,
     getByTitle,
-    getByJSONTitle,
     getById,
     addNew,
     getDataByWhereCondition,
     updateById,
-    getDetailsByIdAndWhereIn,
-    updateWithMultipleInfo,
-    addWithMultipleInfo,
-    deleteWithMultipleInfo
+    getDetailsByIdAndWhereIn
 }
 

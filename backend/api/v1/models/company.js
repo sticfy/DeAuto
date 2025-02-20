@@ -6,7 +6,7 @@ const userModel = require('./user');
 const companyImageModel = require('./company-image');
 const isEmpty = require("is-empty");
 
-let databaseColum = [{ "name": "id", "type": "int" }, { "name": "current_package_id", "type": "int" }, { "name": "kvk_no", "type": "varchar" }, { "name": "company_name", "type": "varchar" }, { "name": "owner_first_name", "type": "varchar" }, { "name": "owner_last_name", "type": "varchar" }, { "name": "phone", "type": "varchar" }, { "name": "email", "type": "varchar" }, { "name": "logo", "type": "varchar" }, { "name": "cover_image", "type": "varchar" }, { "name": "year_of_establishment", "type": "int" }, { "name": "company_size", "type": "varchar" }, { "name": "latitude", "type": "varchar" }, { "name": "longitude", "type": "varchar" }, { "name": "available_days", "type": "text" }, { "name": "tagline", "type": "text" }, { "name": "street", "type": "varchar" }, { "name": "house_no", "type": "varchar" }, { "name": "postal_code", "type": "varchar" }, { "name": "province", "type": "varchar" }, { "name": "city", "type": "varchar" }, { "name": "website_url", "type": "varchar" }, { "name": "status", "type": "int" }, { "name": "created_by", "type": "int" }, { "name": "updated_by", "type": "int" }, { "name": "created_at", "type": "datetime" }, { "name": "updated_at", "type": "datetime" }];
+let databaseColum = [{ "name": "id", "type": "int" }, { "name": "current_package_id", "type": "int" }, { "name": "kvk_no", "type": "varchar" }, { "name": "company_name", "type": "varchar" }, { "name": "owner_first_name", "type": "varchar" }, { "name": "owner_last_name", "type": "varchar" }, { "name": "phone", "type": "varchar" }, { "name": "email", "type": "varchar" }, { "name": "logo", "type": "varchar" }, { "name": "cover_image", "type": "varchar" }, { "name": "year_of_establishment", "type": "int" }, { "name": "company_size", "type": "varchar" }, { "name": "latitude", "type": "varchar" }, { "name": "longitude", "type": "varchar" }, { "name": "available_days", "type": "text" }, { "name": "tagline", "type": "text" }, { "name": "street", "type": "varchar" }, { "name": "house_no", "type": "varchar" }, { "name": "postal_code", "type": "varchar" }, { "name": "province", "type": "varchar" }, { "name": "city", "type": "varchar" }, { "name": "website_url", "type": "varchar" }, { "name": "status", "type": "int" }, { "name": "created_by", "type": "int" }, { "name": "updated_by", "type": "int" }, { "name": "created_at", "type": "datetime" }, { "name": "updated_at", "type": "datetime" }, { "name": "rating", "type": "double" }];
 let jsonColum = [];
 
 
@@ -477,6 +477,29 @@ let regenerateWhereField = (whereObject = {}, language = undefined) => {
     return finalWhere;
 }
 
+
+let getCompaniesByDefaultSearch = async (searchData = {}, limit = 50, offset = 0) => {
+
+
+    return new Promise((resolve, reject) => {
+        connectionDeAutoMYSQL.query(queries.getCompaniesByDefaultSearch(searchData), [offset, limit], (error, result, fields) => {
+            if (error) reject(error)
+            else resolve(result)
+        });
+    });
+}
+
+let getCompaniesBySearchWithServiceAndCategory = async (searchData = {}, limit = 50, offset = 0) => {
+
+
+    return new Promise((resolve, reject) => {
+        connectionDeAutoMYSQL.query(queries.getCompaniesBySearchWithServiceAndCategory(searchData), [offset, limit], (error, result, fields) => {
+            if (error) reject(error)
+            else resolve(result)
+        });
+    });
+}
+
 module.exports = {
     getAllList,
     getById,
@@ -489,6 +512,8 @@ module.exports = {
     updateCompanyDataById,
     updateCompanyAndImageById,
     updateEmailById,
-    getDataByWhereCondition
+    getDataByWhereCondition,
+    getCompaniesByDefaultSearch,
+    getCompaniesBySearchWithServiceAndCategory
 }
 

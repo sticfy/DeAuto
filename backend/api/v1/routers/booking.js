@@ -3,22 +3,28 @@ const isEmpty = require("is-empty");
 const router = express.Router();
 const commonObject = require('../common/common');
 const bookingModel = require('../models/booking');
-const consumerCarsModel = require('../models/consumer-cars');
+const consumerCarsModel = require('../models/consumer-car');
 const companyServiceModel = require('../models/company-service');
+const serviceModel = require('../models/service');
+const categoryModel = require('../models/category');
+const companyModel = require('../models/company');
+const companyImageModel = require('../models/company-image');
 const verifyToken = require('../middlewares/jwt_verify/verifyToken');
 const { routeAccessChecker } = require('../middlewares/routeAccess');
 const fileUploaderCommonObject = require("../common/fileUploader");
 require('dotenv').config();
 let moment = require('moment');
 
-
+const companyImageFolderPath = `${process.env.backend_url}${process.env.company_image_path_name}`;
+const noteImageFolderPath = `${process.env.backend_url}${process.env.note_image_path_name}`;
+const profileImageFolderPath = `${process.env.backend_url}${process.env.user_profile_image_path}`;
 
 router.post('/app-user-booking-list', [verifyToken], async (req, res) => {
 
     if (req.decoded.role.id != 3) return res.status(401)
         .send({ "success": false, "status": 401, "message": "You are not eligible on this route." });
 
-    let imageFolderPath = `${process.env.backend_url}${process.env.note_image_path_name}`;
+
     let reqData = {
         "limit": req.body.limit,
         "offset": req.body.offset
@@ -57,16 +63,53 @@ router.post('/app-user-booking-list', [verifyToken], async (req, res) => {
 
 
     let result = await bookingModel.getDataByWhereCondition(
-        searchDataObject, orderByObject, reqData.limit, reqData.offset
+        searchDataObject, orderByObject, reqData.limit, reqData.offset,
     );
 
     let totalCountResult = await bookingModel.getDataByWhereCondition(
         searchDataObject, orderByObject, "skip", undefined, ["id"]
     );
 
-    if (req.body.booking_status == 0)
-        for (let resultIndex = 0; resultIndex < result.length; resultIndex++)
-            result[resultIndex].booking_status = 0;
+
+
+
+    for (let resultIndex = 0; resultIndex < result.length; resultIndex++) {
+
+        let bookingDetails = result[resultIndex];
+        let companyOtherInformation = await commonObject.companyOtherInformationById(bookingDetails.company_id, req.decoded.userInfo.id, req.headers['language']);
+
+        try { // delete extra information
+            delete companyOtherInformation.pricingStart;
+            delete companyOtherInformation.categoryList;
+        } catch (error) { }
+
+        bookingDetails.companyOtherInformation = isEmpty(companyOtherInformation) ? {} : companyOtherInformation;
+        bookingDetails.booking_status = (req.body.booking_status == 0) ? 0 : req.body.booking_status; // some time, booking date is Over & user did not coming to the service 
+
+
+        let companyDetails = await companyModel.getDataByWhereCondition(
+            { "id": bookingDetails.company_id }, {}, 1, 0, ["id", "company_name", "logo", "rating", "status"], req.headers['language']
+        );
+
+        bookingDetails.company_details = isEmpty(companyDetails) ? {} : companyDetails[0];
+        bookingDetails.companyOtherInformation.averageReview = companyDetails[0].rating;
+
+
+        let companyImages = await companyImageModel.getDataByWhereCondition(
+            { company_id: bookingDetails.company_id, status: 1 }, undefined, undefined, undefined, ["image"]
+        );
+
+
+        bookingDetails.company_images = isEmpty(companyImages) ? [] : companyImages;
+
+        let serviceDetails = await serviceModel.getDataByWhereCondition({ "id": bookingDetails.service_id }, {}, 1, 0, ["id", "title"], req.headers['language']);
+        let categoryDetails = await categoryModel.getDataByWhereCondition({ "id": bookingDetails.category_id }, {}, 1, 0, ["id", "title"], req.headers['language']);
+
+
+        bookingDetails.service_details = isEmpty(serviceDetails) ? {} : serviceDetails[0];
+        bookingDetails.category_details = isEmpty(categoryDetails) ? {} : categoryDetails[0];
+
+    }
 
 
 
@@ -75,7 +118,8 @@ router.post('/app-user-booking-list', [verifyToken], async (req, res) => {
         "status": 200,
         "message": "App user booking list.",
         "count": totalCountResult.length,
-        "imageFolderPath": imageFolderPath,
+        "note_mage_folder_path": noteImageFolderPath,
+        "company_image_folder_path": companyImageFolderPath,
         "data": result
     });
 });
@@ -86,7 +130,6 @@ router.post('/company-booking-list', [verifyToken], async (req, res) => {
         .send({ "success": false, "status": 401, "message": "You are not eligible on this route." });
 
 
-    let imageFolderPath = `${process.env.backend_url}${process.env.note_image_path_name}`;
     let reqData = {
         "limit": req.body.limit,
         "offset": req.body.offset
@@ -134,9 +177,18 @@ router.post('/company-booking-list', [verifyToken], async (req, res) => {
     );
 
 
-    if (req.body.booking_status == 0)
-        for (let resultIndex = 0; resultIndex < result.length; resultIndex++)
-            result[resultIndex].booking_status = 0;
+    for (let resultIndex = 0; resultIndex < result.length; resultIndex++) {
+
+        let bookingDetails = result[resultIndex];
+        let serviceDetails = await serviceModel.getDataByWhereCondition({ "id": bookingDetails.service_id }, {}, 1, 0, ["id", "title"], req.headers['language']);
+        let categoryDetails = await categoryModel.getDataByWhereCondition({ "id": bookingDetails.category_id }, {}, 1, 0, ["id", "title"], req.headers['language']);
+        let customerDetails = await commonObject.getUserInfoByUserId(bookingDetails.user_id);
+
+        bookingDetails.service_details = isEmpty(serviceDetails) ? {} : serviceDetails[0];
+        bookingDetails.category_details = isEmpty(categoryDetails) ? {} : categoryDetails[0];
+        bookingDetails.booking_status = (req.body.booking_status == 0) ? 0 : req.body.booking_status; // some time, booking date is Over & user did not coming to the service 
+        bookingDetails.customer_info = customerDetails.success ? customerDetails.data : {};
+    }
 
 
     return res.status(200).send({
@@ -144,13 +196,17 @@ router.post('/company-booking-list', [verifyToken], async (req, res) => {
         "status": 200,
         "message": "Company booking list.",
         "count": totalCountResult.length,
-        "imageFolderPath": imageFolderPath,
+        "note_mage_folder_path": noteImageFolderPath,
+        "company_image_folder_path": companyImageFolderPath,
+        "consumer_image_folder_path": profileImageFolderPath,
         "data": result
     });
 });
 
-
 router.post('/add', [verifyToken], async (req, res) => {
+
+    if (req.decoded.role.id != 3) return res.status(401)
+        .send({ "success": false, "status": 401, "message": "You are not eligible on this route." });
 
     let reqData = {
         "company_service_id": req.body.company_service_id,
@@ -163,6 +219,7 @@ router.post('/add', [verifyToken], async (req, res) => {
         "registration_year": req.body.registration_year,
         "company_service_id": req.body.company_service_id,
         "note": req.body.note,
+        "address": req.body.address,
         "booking_status": 1,
         "car_id": req.body.car_id
     }
@@ -272,8 +329,8 @@ router.post('/add', [verifyToken], async (req, res) => {
                     model: reqData.model,
                     brand_name: reqData.brand_name, registration_year: reqData.registration_year,
                     user_id: req.decoded.userInfo.id, status: 1,
-                    created_by: req.decoded.userInfo.id, created_at: today,
-                    updated_by: req.decoded.userInfo.id, updated_at: today
+                    created_by: req.decoded.userInfo.id, created_at: await commonObject.getGMT(),
+                    updated_by: req.decoded.userInfo.id, updated_at: await commonObject.getGMT()
                 };
             } else {
                 reqData.license_no = checkDataExistForConsumer[0].license_no;
@@ -309,6 +366,7 @@ router.post('/add', [verifyToken], async (req, res) => {
 
 
     reqData.note = isEmpty(reqData.note) ? "" : reqData.note;
+    reqData.address = isEmpty(reqData.address) ? "" : reqData.address;
 
 
     //  file codes
@@ -371,6 +429,7 @@ router.put('/update', [verifyToken], async (req, res) => {
         "license_no": req.body.license_plate_number,
         "travel_km": req.body.travel_km,
         "note": req.body.note,
+        "address": req.body.address,
         "brand_name": req.body.brand_name,
         "model": req.body.model,
         "registration_year": req.body.registration_year
@@ -378,16 +437,11 @@ router.put('/update', [verifyToken], async (req, res) => {
 
 
     let validateId = await commonObject.checkItsNumber(reqData.id);
-    if (validateId.success == false) {
-
+    if (validateId.success == false)
         return res.status(400).send({
-            "success": false,
-            "status": 400,
-            "message": "Booking id value should be integer.",
-            "id": reqData.id
+            "success": false, "status": 400, "message": "Booking id value should be integer.", "id": reqData.id
         });
-
-    } else {
+    else {
         req.body.id = validateId.data;
         reqData.id = validateId.data;
     }
@@ -399,21 +453,24 @@ router.put('/update', [verifyToken], async (req, res) => {
 
 
     if (req.decoded.role.id == 3)
-        searchDataObject.user_id = req.decoded.userInfo.id;
+        searchDataObject.user_id = req.decoded.userInfo.id;  // question !!
+    else return res.status(404).send({ "success": false, "status": 401, "message": "You are not eligible on this route. Only consumer can update the booking info" });
 
 
     let existingDataById = await bookingModel.getDataByWhereCondition(searchDataObject);
-
-
     if (isEmpty(existingDataById))
         return res.status(404).send({ "success": false, "status": 404, "message": "No data found" });
 
 
-    // let previousFile = existingDataById[0].image;
+    let today = await commonObject.getTodayDate();
+    if (existingDataById[0].booking_status != 1) {
+        let errorMessage = existingDataById[0].booking_status == 2 ? "Booking already completed. You can't update the booking info." : "Booking already canceled. You can't update the booking info.";
+        return res.status(404).send({ "success": false, "status": 401, "message": errorMessage });
+    }
+
+
+
     let updateData = {};
-
-
-    let today = new Date();
     if (isEmpty(reqData.booking_date))
         return res.status(400).send({ "success": false, "status": 400, "message": "Please give date." });
 
@@ -479,6 +536,11 @@ router.put('/update', [verifyToken], async (req, res) => {
 
     }
 
+
+    if (!isEmpty(reqData.note)) updateData.note = reqData.note;
+    if (!isEmpty(reqData.address)) updateData.address = reqData.address;
+
+
     updateData.booking_date = reqData.booking_date;
     updateData.time_slot = reqData.time_slot;
     updateData.license_no = reqData.license_no;
@@ -501,194 +563,135 @@ router.put('/update', [verifyToken], async (req, res) => {
         });
     }
 
+    return res.status(200).send({ "success": true, "status": 200, "message": "Booking successfully updated." });
+
+});
+
+
+router.put('/changeStatus', [verifyToken], async (req, res) => {
+
+    let reqData = {
+        "id": req.body.id,
+        "request_status": req.body.status
+    }
+
+
+    let validateId = await commonObject.checkItsNumber(reqData.id);
+    if (validateId.success == false)
+        return res.status(400).send({ "success": false, "status": 400, "message": "Value should be integer." });
+    else {
+        req.body.id = validateId.data;
+        reqData.id = validateId.data;
+    }
+
+
+    if (![0, 2, '0', '2'].includes(reqData.request_status))
+        return res.status(400).send({ "success": false, "status": 400, "message": "Please give status. Status should be 2 = completed,  0 = canceled" });
+
+
+    let searchDataObject = { "id": reqData.id }
+    if (req.decoded.role.id == 3) searchDataObject.user_id = req.decoded.userInfo.id;
+    else if (req.decoded.role.id == 2) searchDataObject.company_id = req.decoded.profileInfo.company_id;
+
+
+    let existingDataById = await bookingModel.getDataByWhereCondition(searchDataObject, {}, 1);
+    if (isEmpty(existingDataById))
+        return res.status(404).send({ "success": false, "status": 404, "message": "No data found" });
+
+
+    if (existingDataById[0].booking_status != 1) {
+        let errorMessage = existingDataById[0].booking_status == 2 ? "Booking already completed. You can't change the booking status." : "Booking already canceled. You can't change the booking status.";
+        return res.status(404).send({ "success": false, "status": 401, "message": errorMessage });
+    }
+
+
+    let data = {
+        booking_status: reqData.request_status,
+        updated_by: req.decoded.userInfo.id,
+        updated_at: await commonObject.getGMT()
+    }
+
+    let result = await bookingModel.updateById(reqData.id, data);
+    if (result.affectedRows == undefined || result.affectedRows < 1) {
+        return res.status(500).send({
+            "success": true,
+            "status": 500,
+            "message": "Something Wrong in system database."
+        });
+    }
+
 
     return res.status(200).send({
         "success": true,
         "status": 200,
-        "message": "Booking successfully updated."
+        "message": "Booking status has successfully changed."
     });
-
 
 });
 
-// router.delete('/delete', [verifyToken], async (req, res) => {
 
-//     let reqData = {
-//         "id": req.body.id
-//     }
+router.get("/details/:id", [verifyToken], async (req, res) => {
 
-//     reqData.updated_by = req.decoded.userInfo.id;
+    let id = req.params.id;
+    let validateId = await commonObject.checkItsNumber(id);
 
-//     let validateId = await commonObject.checkItsNumber(reqData.id);
+    if (validateId.success == false) return res.status(400).send({ "success": false, "status": 400, "message": "Value should be integer." });
+    else id = validateId.data;
 
+    let searchDataObject = {
+        "id": id,
+    }
 
-//     if (validateId.success == false) {
-
-//         return res.status(400).send({
-//             "success": false,
-//             "status": 400,
-//             "message": "Value should be integer."
-
-//         });
-//     } else {
-//         req.body.id = validateId.data;
-//         reqData.id = validateId.data;
-
-//     }
-
-//     let existingDataById = await bookingModel.getById(reqData.id);
-//     if (isEmpty(existingDataById)) {
-
-//         return res.status(404).send({
-//             "success": false,
-//             "status": 404,
-//             "message": "No data found",
-
-//         });
-//     }
-
-//     let previousFile = existingDataById[0].image;
-
-//     let data = {
-//         status: 0,
-//         updated_by: reqData.updated_by
-//     }
-
-//     let result = await bookingModel.updateById(reqData.id, data);
-
-//     // existing file delete
-//     if (previousFile != null) {
-//         if (previousFile != "default_image.png") {
-//             let fileDelete = {};
-
-//             fileDelete = await fileUploaderCommonObject.fileRemove(
-//                 previousFile,
-//                 "bookingImage"
-//             );
-//         }
-//     }
+    if (req.decoded.role.id == 3) searchDataObject.user_id = req.decoded.userInfo.id;
+    else if (req.decoded.role.id == 2) searchDataObject.company_id = req.decoded.profileInfo.company_id;
 
 
-//     if (result.affectedRows == undefined || result.affectedRows < 1) {
-//         return res.status(500).send({
-//             "success": true,
-//             "status": 500,
-//             "message": "Something Wrong in system database."
-//         });
-//     }
+    let result = await bookingModel.getDataByWhereCondition(searchDataObject, {}, 1, 0);
+    if (isEmpty(result))
+        return res.status(404).send({ success: false, status: 404, message: "No data found" });
+    else {
 
+        result = result[0];
+        let today = await commonObject.getTodayDate();
 
-//     return res.status(200).send({
-//         "success": true,
-//         "status": 200,
-//         "message": "Booking successfully deleted."
-//     });
+        let serviceDetails = await serviceModel.getDataByWhereCondition({ "id": result.service_id }, {}, 1, 0, ["id", "title"], req.headers['language']);
+        let categoryDetails = await categoryModel.getDataByWhereCondition({ "id": result.category_id }, {}, 1, 0, ["id", "title"], req.headers['language']);
+        let customerDetails = await commonObject.getUserInfoByUserId(result.user_id);
 
-// });
+        let companyDetails = await companyModel.getDataByWhereCondition(
+            { "id": result.company_id }, {}, 1, 0, ["id", "company_name", "logo", "rating", "status"], req.headers['language']
+        );
 
-// router.put('/changeStatus', [verifyToken], async (req, res) => {
+        let companyImages = await companyImageModel.getDataByWhereCondition(
+            { company_id: result.company_id, status: 1 }, undefined, undefined, undefined, ["image"]
+        );
 
-//     let reqData = {
-//         "id": req.body.id
-//     }
+        if (req.decoded.role.id == 2) {
 
-//     reqData.updated_by = req.decoded.userInfo.id;
+            let companyOtherInformation = await commonObject.companyOtherInformationById(result.company_id, req.decoded.userInfo.id, req.headers['language']);
 
-//     let validateId = await commonObject.checkItsNumber(reqData.id);
+            try { // delete extra information
+                delete companyOtherInformation.pricingStart;
+                // delete companyOtherInformation.categoryList;
+            } catch (error) { }
 
+            result.companyOtherInformation = isEmpty(companyOtherInformation) ? {} : companyOtherInformation;
+            result.companyOtherInformation.averageReview = companyDetails[0].rating;
+        }
 
-//     if (validateId.success == false) {
+        result.service_details = isEmpty(serviceDetails) ? {} : serviceDetails[0];
+        result.category_details = isEmpty(categoryDetails) ? {} : categoryDetails[0];
+        result.booking_status = (result.booking_status == 1 && await commonObject.compareTwoDate(today, result.booking_date)) ? 0 : result.booking_status;
+        result.customer_info = customerDetails.success ? customerDetails.data : {};
+        result.company_details = isEmpty(companyDetails) ? {} : companyDetails[0];
+        result.company_images = isEmpty(companyImages) ? [] : companyImages;
 
-//         return res.status(400).send({
-//             "success": false,
-//             "status": 400,
-//             "message": "Value should be integer."
+        return res.status(200).send({
+            success: true, status: 200, message: "Booking Details.", "note_mage_folder_path": noteImageFolderPath, "company_image_folder_path": companyImageFolderPath, "consumer_image_folder_path": profileImageFolderPath, data: result
+        });
+    }
 
-//         });
-//     } else {
-//         req.body.id = validateId.data;
-//         reqData.id = validateId.data;
-
-//     }
-
-//     let existingDataById = await bookingModel.getById(reqData.id);
-//     if (isEmpty(existingDataById)) {
-
-//         return res.status(404).send({
-//             "success": false,
-//             "status": 404,
-//             "message": "No data found",
-
-//         });
-//     }
-
-//     let data = {
-//         status: existingDataById[0].status == 1 ? 2 : 1,
-//         updated_by: reqData.updated_by
-//     }
-
-//     let result = await bookingModel.updateById(reqData.id, data);
-
-
-//     if (result.affectedRows == undefined || result.affectedRows < 1) {
-//         return res.status(500).send({
-//             "success": true,
-//             "status": 500,
-//             "message": "Something Wrong in system database."
-//         });
-//     }
-
-
-//     return res.status(200).send({
-//         "success": true,
-//         "status": 200,
-//         "message": "Booking status has successfully changed."
-//     });
-
-// });
-
-// router.get("/details/:id", [], async (req, res) => {
-
-//     let imageFolderPath = `${process.env.backend_url}${process.env.note_image_path_name}`;
-//     let id = req.params.id;
-
-//     let validateId = await commonObject.checkItsNumber(id);
-
-
-//     if (validateId.success == false) {
-//         return res.status(400).send({
-//             "success": false,
-//             "status": 400,
-//             "message": "Value should be integer."
-//         });
-//     } else {
-//         id = validateId.data;
-//     }
-
-//     let result = await bookingModel.getById(id);
-
-//     if (isEmpty(result)) {
-
-//         return res.status(404).send({
-//             success: false,
-//             status: 404,
-//             message: "No data found",
-//         });
-
-//     } else {
-
-//         return res.status(200).send({
-//             success: true,
-//             status: 200,
-//             message: "Booking Details.",
-//             imageFolderPath: imageFolderPath,
-//             data: result[0],
-//         });
-
-//     }
-
-// }
-// );
+});
 
 
 

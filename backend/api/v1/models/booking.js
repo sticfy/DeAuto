@@ -1,10 +1,10 @@
 const { connectionDeAutoMYSQL } = require('../connections/connection');
 const queries = require('../queries/booking');
-const consumerCarModels = require('../models/consumer-cars');
+const consumerCarModels = require('./consumer-car');
 
 const isEmpty = require("is-empty");
 
-let databaseColum = [{ "name": "id", "type": "int" }, { "name": "car_id", "type": "int" }, { "name": "company_id", "type": "int" }, { "name": "service_id", "type": "int" }, { "name": "company_service_id", "type": "int" }, { "name": "category_id", "type": "int" }, { "name": "booking_date", "type": "datetime" }, { "name": "time_slot", "type": "int" }, { "name": "license_no", "type": "varchar" }, { "name": "brand_name", "type": "varchar" }, { "name": "model", "type": "varchar" }, { "name": "registration_year", "type": "varchar" }, { "name": "travel_km", "type": "float" }, { "name": "note", "type": "text" }, { "name": "image", "type": "varchar" }, { "name": "booking_status", "type": "int" }, { "name": "status", "type": "int" }, { "name": "created_by", "type": "int" }, { "name": "updated_by", "type": "int" }, { "name": "created_at", "type": "datetime" }, { "name": "updated_at", "type": "datetime" }];
+let databaseColum = [{ "name": "id", "type": "int" }, { "name": "car_id", "type": "int" }, { "name": "user_id", "type": "int" }, { "name": "company_id", "type": "int" }, { "name": "service_id", "type": "int" }, { "name": "company_service_id", "type": "int" }, { "name": "category_id", "type": "int" }, { "name": "booking_date", "type": "datetime" }, { "name": "time_slot", "type": "int" }, { "name": "license_no", "type": "varchar" }, { "name": "brand_name", "type": "varchar" }, { "name": "model", "type": "varchar" }, { "name": "registration_year", "type": "varchar" }, { "name": "travel_km", "type": "float" }, { "name": "note", "type": "text" }, { "name": "image", "type": "varchar" }, { "name": "booking_status", "type": "int" }, { "name": "status", "type": "int" }, { "name": "created_by", "type": "int" }, { "name": "updated_by", "type": "int" }, { "name": "created_at", "type": "datetime" }, { "name": "updated_at", "type": "datetime" }];
 
 let jsonColum = [];
 
