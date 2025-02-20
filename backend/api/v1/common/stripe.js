@@ -31,28 +31,39 @@ let checkoutSessionCreate = async () => {
 // payment intent create
 let paymentIntentCreate = async (amount, currency) => {
 
-    const paymentIntent = await stripe.paymentIntents.create({
-        amount: amount * 100,
-        currency: currency,
-        automatic_payment_methods: { enabled: true },
-    });
+    let response = {};
 
+    try {
 
-    return {
-        "status": true,
-        "data": paymentIntent
-    };
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: amount * 100,
+            currency: currency,
+            automatic_payment_methods: { enabled: true },
+        });
+
+        response.status = true;
+        response.data = paymentIntent;
+
+    } catch (error) {
+        response.status = false;
+        response.data = {};
+    }
+
+    return response;
 
 }
 
 let paymentIntentRetrieve = async (payment_intent_id) => {
 
-    const paymentIntentGet = await stripe.paymentIntents.retrieve(payment_intent_id);
+    // 
+    let paymentIntentGet;
+    try {
+        paymentIntentGet = await stripe.paymentIntents.retrieve(payment_intent_id);
+    } catch (error) {
+        paymentIntentGet = false;
+        // console.log(error);
+    }
 
-    // return {
-    //     "status": true,
-    //     "data": paymentIntentGet
-    // };
     return paymentIntentGet;
 
 }

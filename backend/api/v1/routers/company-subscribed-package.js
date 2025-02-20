@@ -305,7 +305,8 @@ router.post('/verify-payment', [verifyToken], async (req, res) => {
 
     let responsePaymentIntent = await stripeCallObject.paymentIntentRetrieve(payment_intent_id);
 
-    if (responsePaymentIntent.statusCode == 404) {
+   
+    if (responsePaymentIntent == false) {
         return res.status(404).send({
             "success": false,
             "status": 404,
